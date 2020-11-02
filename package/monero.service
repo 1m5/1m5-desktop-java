@@ -1,0 +1,22 @@
+[Unit]
+Description=Monerod
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/monerod -daemon -printtoconsole -pid=/monero/monerod.pid
+ExecStop=/usr/local/bin/monero-cli stop
+
+Type=forking
+PIDFile=/mondero/monerod.pid
+Restart=on-failure
+
+User=monero
+Group=monero
+
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target

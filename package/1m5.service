@@ -1,0 +1,23 @@
+[Unit]
+Description=1m5d
+
+[Service]
+ExecStart=/usr/bin/java -Djava.util.logging.config.file=/usr/share/1m5/config/logging.properties -jar /usr/share/lib/1m5/1m5.jar "java.util.logging.config.file=/usr/share/1m5/config/logging.properties"
+ExecStop=/usr/local/bin/1m5-cli stop
+
+Type=forking
+PIDFile=/1m5/platform/pid/1m5.pid
+Restart=on-failure
+
+User=1m5
+Group=1m5
+
+PrivateTmp=true
+ProtectSystem=full
+NoNewPrivileges=true
+PrivateDevices=true
+
+WorkingDirectory=/usr/share/1m5
+
+[Install]
+WantedBy=multi-user.target

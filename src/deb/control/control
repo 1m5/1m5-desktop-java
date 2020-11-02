@@ -1,0 +1,8 @@
+Package: 1m5
+Version: 0.6.5
+Section: misc
+Priority: low
+Architecture: all
+Description: 1M5 - Invisible Matrix Services
+Maintainer: objectorange <objectorange@1m5.io>
+Depends: default-jre | java11-runtime
