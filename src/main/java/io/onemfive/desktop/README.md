@@ -1,2 +1,2 @@
 # 1M5 Desktop
-The GUI for using DApps that user the 1M5 router.
+A Desktop for showcasing 1M5 capabilities.
