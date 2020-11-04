@@ -1,15 +1,10 @@
 package io.onemfive.desktop;
 
-import io.onemfive.data.Envelope;
 import io.onemfive.desktop.util.FrameRateTimer;
 import io.onemfive.desktop.util.Timer;
 import io.onemfive.desktop.views.BaseView;
 import io.onemfive.desktop.views.View;
-import io.onemfive.network.NetworkService;
-import io.onemfive.network.NetworkState;
-import io.onemfive.util.DLC;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -69,12 +64,12 @@ public class MVC {
         return view;
     }
 
-    public static void updateNetwork(NetworkState networkState) {
-        Envelope e = Envelope.documentFactory();
-        DLC.addData(NetworkState.class, networkState, e);
-        DLC.addRoute(NetworkService.class, NetworkService.OPERATION_UPDATE_NETWORK_CONFIG, e);
-        DesktopService.deliver(e);
-    }
+//    public static void updateNetwork(NetworkState networkState) {
+//        Envelope e = Envelope.documentFactory();
+//        DLC.addData(NetworkState.class, networkState, e);
+//        DLC.addRoute(NetworkManagerService.class, NetworkManagerService.OPERATION_UPDATE_NETWORK_STATE, e);
+//        DesktopService.deliver(e);
+//    }
 
     public static void execute(Runnable command) {
         MVC.executor.execute(command);
