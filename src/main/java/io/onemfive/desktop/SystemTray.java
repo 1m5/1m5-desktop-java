@@ -1,8 +1,8 @@
 package io.onemfive.desktop;
 
-import io.onemfive.util.Res;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import ra.util.Resources;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -30,8 +30,8 @@ public class SystemTray {
     public static final String QUITTING = "Quitting";
     public static final String ERRORED = "Error";
 
-    private static final String SHOW_WINDOW_LABEL = Res.get("systemTray.show");
-    private static final String HIDE_WINDOW_LABEL = Res.get("systemTray.hide");
+    private static final String SHOW_WINDOW_LABEL = Resources.get("systemTray.show");
+    private static final String HIDE_WINDOW_LABEL = Resources.get("systemTray.hide");
 
     private String status = INITIALIZING;
     private final Stage stage;
@@ -67,9 +67,9 @@ public class SystemTray {
         // Later we only let it close via the system trays exit.
         Platform.setImplicitExit(false);
 
-        showItem = new MenuItem(Res.get("systemTray.show"));
-        aboutItem = new MenuItem(Res.get("systemTray.info"));
-        quitItem = new MenuItem(Res.get("systemTray.exit"));
+        showItem = new MenuItem(Resources.get("systemTray.show"));
+        aboutItem = new MenuItem(Resources.get("systemTray.info"));
+        quitItem = new MenuItem(Resources.get("systemTray.exit"));
 
         PopupMenu popupMenu = new PopupMenu();
         popupMenu.add(showItem);
@@ -80,15 +80,15 @@ public class SystemTray {
         popupMenu.addSeparator();
         popupMenu.add(quitItem);
         try {
-            trayIcon = new TrayIcon(ImageIO.read(Resources.ICON_WHITE));
+            trayIcon = new TrayIcon(ImageIO.read(OneMFiveResources.ICON_WHITE));
 
-            whiteIcon = ImageIO.read(Resources.ICON_WHITE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            yellowIcon = ImageIO.read(Resources.ICON_YELLOW).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            orangeIcon = ImageIO.read(Resources.ICON_ORANGE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            redIcon = ImageIO.read(Resources.ICON_RED).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            blueIcon = ImageIO.read(Resources.ICON_BLUE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            greenIcon = ImageIO.read(Resources.ICON_GREEN).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
-            grayIcon = ImageIO.read(Resources.ICON_GRAY).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            whiteIcon = ImageIO.read(OneMFiveResources.ICON_WHITE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            yellowIcon = ImageIO.read(OneMFiveResources.ICON_YELLOW).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            orangeIcon = ImageIO.read(OneMFiveResources.ICON_ORANGE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            redIcon = ImageIO.read(OneMFiveResources.ICON_RED).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            blueIcon = ImageIO.read(OneMFiveResources.ICON_BLUE).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            greenIcon = ImageIO.read(OneMFiveResources.ICON_GREEN).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
+            grayIcon = ImageIO.read(OneMFiveResources.ICON_GRAY).getScaledInstance(trayIcon.getSize().width, -1, Image.SCALE_SMOOTH);
 
             // On Windows and Linux the icon needs to be resized
             // On macOS we get the correct size from the provided image
@@ -103,7 +103,7 @@ public class SystemTray {
 //            }
 
             trayIcon.setPopupMenu(popupMenu);
-            trayIcon.setToolTip(Res.get("systemTray.tooltip"));
+            trayIcon.setToolTip(Resources.get("systemTray.tooltip"));
 
             java.awt.SystemTray.getSystemTray().add(trayIcon);
         } catch (AWTException e1) {
