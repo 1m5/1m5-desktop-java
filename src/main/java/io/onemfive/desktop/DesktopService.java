@@ -1,6 +1,5 @@
 package io.onemfive.desktop;
 
-import onemfive.Platform;
 import io.onemfive.desktop.views.TopicListener;
 import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.ops.network.bluetooth.BluetoothSensorOpsView;
@@ -20,7 +19,6 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WifiDirectSensorSettingsView;
-import onemfive.RouterService;
 import ra.common.DLC;
 import ra.common.Envelope;
 import ra.common.identity.DID;
@@ -122,7 +120,7 @@ public class DesktopService extends BaseService {
             LOG.warning("DesktopService's parent failed to start.");
             return false;
         }
-        RouterService.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
+        MVC.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
             LOG.info("Updating ManCon status...");
             HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
             v.updateManConBox();
@@ -147,7 +145,7 @@ public class DesktopService extends BaseService {
                 });
         DLC.addData(SubscriptionRequest.class, subscriptionRequest1M5Status, e1M5Status);
         DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, e1M5Status);
-        Platform.sendRequest(e1M5Status);
+        BusClient.sendRequest(e1M5Status);
 
         // TOR Network State Update
         Envelope eTorStatus = Envelope.documentFactory();
@@ -168,7 +166,7 @@ public class DesktopService extends BaseService {
         });
         DLC.addData(SubscriptionRequest.class, subscriptionRequestTorStatus, eTorStatus);
         DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eTorStatus);
-        Platform.sendRequest(eTorStatus);
+        BusClient.sendRequest(eTorStatus);
 
         // I2P Network State Update
         Envelope eI2PStatus = Envelope.documentFactory();
@@ -189,7 +187,7 @@ public class DesktopService extends BaseService {
                 });
         DLC.addData(SubscriptionRequest.class, subscriptionRequestI2PStatus, eI2PStatus);
         DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eI2PStatus);
-        Platform.sendRequest(eI2PStatus);
+        BusClient.sendRequest(eI2PStatus);
 
         // WiFi Direct Network State Update
         Envelope eWFDStatus = Envelope.documentFactory();
