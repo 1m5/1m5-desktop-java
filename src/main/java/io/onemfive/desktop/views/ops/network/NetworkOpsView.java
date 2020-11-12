@@ -14,13 +14,12 @@ import io.onemfive.desktop.views.ops.network.lifi.LiFiSensorOpsView;
 import io.onemfive.desktop.views.ops.network.satellite.SatelliteSensorOpsView;
 import io.onemfive.desktop.views.ops.network.tor.TORSensorOpsView;
 import io.onemfive.desktop.views.ops.network.wifidirect.WifiDirectSensorOpsView;
-import io.onemfive.desktop.views.settings.SettingsView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.util.Resources;
 
 public class NetworkOpsView extends ActivatableView {
 
@@ -35,14 +34,14 @@ public class NetworkOpsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        imsTab.setText(Res.get("ops.network.tab.ims").toUpperCase());
-        torTab.setText(Res.get("ops.network.tab.tor").toUpperCase());
-        i2pTab.setText(Res.get("ops.network.tab.i2p").toUpperCase());
-        wifiDirectTab.setText(Res.get("ops.network.tab.wifiDirect").toUpperCase());
-        bluetoothTab.setText(Res.get("ops.network.tab.bluetooth").toUpperCase());
-        satelliteTab.setText(Res.get("ops.network.tab.satellite").toUpperCase());
-        fsRadioTab.setText(Res.get("ops.network.tab.fsRadio").toUpperCase());
-        lifiTab.setText(Res.get("ops.network.tab.lifi").toUpperCase());
+        imsTab.setText(Resources.get("ops.network.tab.ims").toUpperCase());
+        torTab.setText(Resources.get("ops.network.tab.tor").toUpperCase());
+        i2pTab.setText(Resources.get("ops.network.tab.i2p").toUpperCase());
+        wifiDirectTab.setText(Resources.get("ops.network.tab.wifiDirect").toUpperCase());
+        bluetoothTab.setText(Resources.get("ops.network.tab.bluetooth").toUpperCase());
+        satelliteTab.setText(Resources.get("ops.network.tab.satellite").toUpperCase());
+        fsRadioTab.setText(Resources.get("ops.network.tab.fsRadio").toUpperCase());
+        lifiTab.setText(Resources.get("ops.network.tab.lifi").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 4 && viewPath.indexOf(NetworkOpsView.class) == 2)
