@@ -2,11 +2,9 @@ package io.onemfive.desktop.views.commons.browser;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import io.onemfive.data.ManCon;
-import io.onemfive.data.ManConStatus;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.Navigation;
-import io.onemfive.desktop.Resources;
+import io.onemfive.desktop.OneMFiveResources;
 import io.onemfive.desktop.util.KeystrokeUtil;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.ViewPath;
@@ -28,9 +26,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
+import onemfive.ManCon;
+import onemfive.ManConStatus;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 
 public class BrowserView extends ActivatableView {
@@ -155,7 +153,7 @@ public class BrowserView extends ActivatableView {
                     }
                 });
 
-        engine.load(Resources.IMS_WEB_INDEX.toExternalForm());
+        engine.load(OneMFiveResources.IMS_WEB_INDEX.toExternalForm());
 
         history.getEntries().addListener(new ListChangeListener<WebHistory.Entry>() {
                  @Override
@@ -206,7 +204,7 @@ public class BrowserView extends ActivatableView {
         if(url.toLowerCase().startsWith("1m5:")) {
             LOG.info("No proxy used - P2P web.");
             path = url.substring("1m5://".length(), url.indexOf(".1m5"));
-            newURL = Resources.class.getResource("/web/" + path);
+            newURL = OneMFiveResources.class.getResource("/web/" + path);
             path = newURL.toString();
             if (!path.endsWith(".html") || !path.endsWith(".htm")) {
                 path += "/index.html";
