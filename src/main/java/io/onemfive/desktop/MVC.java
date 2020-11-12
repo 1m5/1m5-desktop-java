@@ -5,6 +5,7 @@ import io.onemfive.desktop.util.Timer;
 import io.onemfive.desktop.views.BaseView;
 import io.onemfive.desktop.views.View;
 import javafx.fxml.FXMLLoader;
+import onemfive.ManConStatusListener;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ public class MVC {
 
     private static Class<? extends Timer> timerClass;
     private static Executor executor;
+    private static List<ManConStatusListener> listeners = new ArrayList<>();
 
     static {
         executor = Executors.newFixedThreadPool(8);
@@ -38,6 +40,10 @@ public class MVC {
 
     public static void setExecutor(Executor executor) {
         MVC.executor = executor;
+    }
+
+    public static void registerManConStatusListener(ManConStatusListener listener) {
+        listeners.add(listener);
     }
 
     public static View loadView(Class<? extends View> viewClass) {
