@@ -7,16 +7,15 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.settings.about.AboutView;
 import io.onemfive.desktop.views.settings.network.NetworkSettingsView;
-import io.onemfive.desktop.views.settings.network.ims.IMSSettingsView;
 import io.onemfive.desktop.views.settings.platform.PlatformSettingsView;
 import io.onemfive.desktop.views.settings.preferences.PreferencesView;
 import io.onemfive.desktop.views.settings.services.ServicesSettingsView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.util.Resources;
 
 public class SettingsView extends ActivatableView {
 
@@ -31,11 +30,11 @@ public class SettingsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        preferencesTab.setText(Res.get("settings.tab.preferences").toUpperCase());
-        servicesTab.setText(Res.get("settings.tab.services").toUpperCase());
-        networkTab.setText(Res.get("settings.tab.network").toUpperCase());
-        platformTab.setText(Res.get("settings.tab.platform").toUpperCase());
-        aboutTab.setText(Res.get("settings.tab.about").toUpperCase());
+        preferencesTab.setText(Resources.get("settings.tab.preferences").toUpperCase());
+        servicesTab.setText(Resources.get("settings.tab.services").toUpperCase());
+        networkTab.setText(Resources.get("settings.tab.network").toUpperCase());
+        platformTab.setText(Resources.get("settings.tab.platform").toUpperCase());
+        aboutTab.setText(Resources.get("settings.tab.about").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(SettingsView.class) == 1)
