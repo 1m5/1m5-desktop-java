@@ -17,6 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.11</java.version>
+        <ra.version>1.0.0</ra.version>
 	</properties>
 
 	<developers>
@@ -75,6 +76,16 @@
             <groupId>io.onemfive</groupId>
             <artifactId>cr</artifactId>
             <version>0.6.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>resolvingarchitecture</groupId>
+            <artifactId>did</artifactId>
+            <version>${ra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>resolvingarchitecture</groupId>
+            <artifactId>keyring</artifactId>
+            <version>${ra.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
