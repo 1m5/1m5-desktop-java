@@ -1,16 +1,11 @@
 package io.onemfive.desktop.views.ops.network.i2p;
 
-import onemfive.Cmd;
+import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.network.NetworkState;
-import io.onemfive.network.sensors.SensorStatus;
-import io.onemfive.network.sensors.i2p.I2PSensor;
-import io.onemfive.util.Res;
-import io.onemfive.util.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
@@ -18,34 +13,42 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import ra.common.network.NetworkState;
+import ra.common.network.NetworkStatus;
+import ra.common.service.ServiceStatus;
+import ra.i2p.I2PService;
+import ra.util.Resources;
+import ra.util.StringUtil;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class I2PSensorOpsView extends ActivatableView implements TopicListener {
+public class I2POpsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private SensorStatus sensorStatus = SensorStatus.NOT_INITIALIZED;
-    private String sensorStatusField = StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' '));
+    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
+
+    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField sensorStatusTextField;
 
     private ToggleButton powerButton;
     private CheckBox hardStop;
 
-    private String i2PFingerprint = Res.get("ops.network.notKnownYet");
+    private String i2PFingerprint = Resources.get("ops.network.notKnownYet");
     private TextField i2PFingerprintTextField;
 
-    private String i2PAddress = Res.get("ops.network.notKnownYet");
+    private String i2PAddress = Resources.get("ops.network.notKnownYet");
     private TextArea i2PAddressTextArea;
 
-    private String i2PIPv6Address = Res.get("ops.network.notKnownYet");
+    private String i2PIPv6Address = Resources.get("ops.network.notKnownYet");
     private TextField i2PIPv6AddressTextField;
 
-    private String port = Res.get("ops.network.notKnownYet");
+    private String port = Resources.get("ops.network.notKnownYet");
     private TextField portTextField;
 
-    public I2PSensorOpsView() {
+    public I2POpsView() {
         super();
     }
 
@@ -54,21 +57,21 @@ public class I2PSensorOpsView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Res.get("ops.network.status"));
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
-        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Res.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
-        powerButton = addSlideToggleButton(pane, ++gridRow, Res.get("ops.network.sensorPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
-        hardStop = addCheckBox(pane, ++gridRow, Res.get("ops.network.hardStop"));
+        powerButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.sensorPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        hardStop = addCheckBox(pane, ++gridRow, Resources.get("ops.network.hardStop"));
 
-        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 6, Res.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);
-        i2PFingerprintTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.i2p.fingerprintLabel"), i2PFingerprint, Layout.TWICE_FIRST_ROW_DISTANCE).second;
-        i2PAddressTextArea = addCompactTopLabelTextAreaWithText(pane, i2PAddress, ++gridRow, Res.get("ops.network.i2p.addressLabel"), true).second;
-        i2PIPv6AddressTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.i2p.ipv6Label"), i2PIPv6Address).second;
-        portTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.i2p.portLabel"), port).second;
+        i2PFingerprintTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.fingerprintLabel"), i2PFingerprint, Layout.TWICE_FIRST_ROW_DISTANCE).second;
+        i2PAddressTextArea = addCompactTopLabelTextAreaWithText(pane, i2PAddress, ++gridRow, Resources.get("ops.network.i2p.addressLabel"), true).second;
+        i2PIPv6AddressTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.ipv6Label"), i2PIPv6Address).second;
+        portTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.portLabel"), port).second;
 
         LOG.info("Initialized");
     }
@@ -84,7 +87,7 @@ public class I2PSensorOpsView extends ActivatableView implements TopicListener {
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.startSensor(I2PSensor.class.getName());
+                            BusClient.startService(I2PService.class);
                         }
                     });
                 } else {
@@ -92,7 +95,7 @@ public class I2PSensorOpsView extends ActivatableView implements TopicListener {
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.stopSensor(I2PSensor.class.getName(), hardStop.isSelected());
+                            BusClient.shutdownService(I2PService.class, hardStop.isSelected());
                         }
                     });
                 }
@@ -113,13 +116,13 @@ public class I2PSensorOpsView extends ActivatableView implements TopicListener {
         if(object instanceof NetworkState) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
-            if(this.sensorStatus != networkState.sensorStatus) {
-                this.sensorStatus = networkState.sensorStatus;
+            if(this.networkStatus != networkState.networkStatus) {
+                this.networkStatus = networkState.networkStatus;
                 if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' ')));
+                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
-            if(sensorStatus==SensorStatus.NETWORK_CONNECTED) {
+            if(networkStatus ==NetworkStatus.CONNECTED) {
                 if (networkState.localPeer != null) {
                     i2PAddress = networkState.localPeer.getDid().getPublicKey().getAddress();
                     i2PFingerprint = networkState.localPeer.getDid().getPublicKey().getFingerprint();
@@ -147,47 +150,50 @@ public class I2PSensorOpsView extends ActivatableView implements TopicListener {
     }
 
     private void reset() {
-        i2PAddress = Res.get("ops.network.notKnownYet");
-        i2PFingerprint = Res.get("ops.network.notKnownYet");
+        i2PAddress = Resources.get("ops.network.notKnownYet");
+        i2PFingerprint = Resources.get("ops.network.notKnownYet");
         if(i2PAddressTextArea!=null)
             i2PAddressTextArea.setText(i2PAddress);
         if(i2PFingerprintTextField!=null)
             i2PFingerprintTextField.setText(i2PFingerprint);
-        port = Res.get("ops.network.notKnownYet");
+        port = Resources.get("ops.network.notKnownYet");
         if(portTextField!=null) {
             portTextField.setText(port);
         }
-        i2PIPv6Address = Res.get("ops.network.notKnownYet");
+        i2PIPv6Address = Resources.get("ops.network.notKnownYet");
         if(i2PIPv6AddressTextField!=null)
             i2PIPv6AddressTextField.setText(i2PIPv6Address);
     }
 
     private void updateComponents() {
-        if(sensorStatus==SensorStatus.NOT_INITIALIZED
-                || sensorStatus==SensorStatus.NETWORK_PORT_CONFLICT
-                || sensorStatus==SensorStatus.SHUTDOWN
-                || sensorStatus==SensorStatus.GRACEFULLY_SHUTDOWN) {
+        if(networkStatus ==NetworkStatus.NOT_INSTALLED
+                || networkStatus ==NetworkStatus.PORT_CONFLICT
+                || serviceStatus==ServiceStatus.SHUTDOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {
+            // Power is off and able to turn it on
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(false);
-        } else if(sensorStatus==SensorStatus.INITIALIZING
-                || sensorStatus==SensorStatus.WAITING
-                || sensorStatus==SensorStatus.STARTING) {
+        } else if(networkStatus ==NetworkStatus.WARMUP
+                || networkStatus ==NetworkStatus.WAITING) {
+            // Power is on, but not yet able to turn it off - starting up
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(false);
-        } else if(sensorStatus==SensorStatus.SHUTTING_DOWN
-                || sensorStatus==SensorStatus.GRACEFULLY_SHUTTING_DOWN
-                || sensorStatus==SensorStatus.UNREGISTERED
-                || sensorStatus==SensorStatus.NETWORK_UNAVAILABLE
-                || sensorStatus==SensorStatus.ERROR
-                || sensorStatus==SensorStatus.NETWORK_ERROR) {
+        } else if(serviceStatus==ServiceStatus.SHUTTING_DOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTTING_DOWN
+                || networkStatus ==NetworkStatus.ERROR) {
+            // Power is off and unable to turn it on as it is shutting down
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(true);
             hardStop.disableProperty().setValue(true);
-        } else if(sensorStatus==SensorStatus.NETWORK_CONNECTING
-                || sensorStatus==SensorStatus.NETWORK_CONNECTED) {
+        } else if(networkStatus ==NetworkStatus.CONNECTING
+                || networkStatus ==NetworkStatus.CONNECTED
+                || networkStatus ==NetworkStatus.VERIFIED
+                || networkStatus ==NetworkStatus.HANGING
+                || networkStatus ==NetworkStatus.DISCONNECTED) {
+            // Power is on and shutting it down is available
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(true);
