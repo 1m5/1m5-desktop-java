@@ -1,6 +1,5 @@
 package io.onemfive.desktop.views.community;
 
-import io.onemfive.data.social.Group;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.Navigation;
 import io.onemfive.desktop.views.ActivatableView;
@@ -11,13 +10,14 @@ import io.onemfive.desktop.views.community.dashboard.DashboardView;
 import io.onemfive.desktop.views.community.social.SocialView;
 import io.onemfive.desktop.views.community.wallet.WalletView;
 import io.onemfive.desktop.views.home.HomeView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.common.social.Group;
+import ra.util.Resources;
 
 import java.util.Map;
 
@@ -43,12 +43,12 @@ public class CommunityView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        agoraTab.setText(Res.get("communityView.tabs.agora").toUpperCase());
-        calendarTab.setText(Res.get("communityView.tabs.calendar").toUpperCase());
-        dashboardTab.setText(Res.get("communityView.tabs.dashboard").toUpperCase());
-        socialTab.setText(Res.get("communityView.tabs.social").toUpperCase());
-        searchTab.setText(Res.get("communityView.tabs.search").toUpperCase());
-        walletTab.setText(Res.get("communityView.tabs.wallet").toUpperCase());
+        agoraTab.setText(Resources.get("communityView.tabs.agora").toUpperCase());
+        calendarTab.setText(Resources.get("communityView.tabs.calendar").toUpperCase());
+        dashboardTab.setText(Resources.get("communityView.tabs.dashboard").toUpperCase());
+        socialTab.setText(Resources.get("communityView.tabs.social").toUpperCase());
+        searchTab.setText(Resources.get("communityView.tabs.search").toUpperCase());
+        walletTab.setText(Resources.get("communityView.tabs.wallet").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(CommunityView.class) == 1)
