@@ -1,20 +1,23 @@
 package io.onemfive.desktop;
 
-import onemfive.Platform;
-import io.onemfive.core.ServiceStatus;
-import io.onemfive.core.ServiceStatusObserver;
-import io.onemfive.core.admin.AdminService;
-import io.onemfive.data.Envelope;
 import io.onemfive.desktop.user.Preferences;
 import io.onemfive.desktop.util.ImageUtil;
 import io.onemfive.desktop.views.home.HomeView;
-import io.onemfive.util.AppThread;
-import io.onemfive.util.DLC;
-import io.onemfive.util.LocaleUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import ra.common.DLC;
+import ra.common.Envelope;
+import ra.common.service.ServiceNotAccessibleException;
+import ra.common.service.ServiceNotSupportedException;
+import ra.common.service.ServiceStatus;
+import ra.common.service.ServiceStatusObserver;
+import ra.util.AppThread;
+import ra.util.Config;
+import ra.util.LocaleUtil;
+import ra.util.Wait;
 
 import java.awt.*;
 import java.util.*;
@@ -46,7 +49,8 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
     private boolean shutdownOnException = true;
     private ServiceStatus uiServiceStatus = ServiceStatus.NOT_INITIALIZED;
 
-    private static Platform platform;
+    private Properties properties;
+    private AppThread busThread;
 
     public DesktopApp() {
         shutDownHandler = this::stop;
@@ -56,31 +60,30 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
     public void init() {
         LOG.info("DesktopApp initializing...\n\tThread name: " + Thread.currentThread().getName());
         LocaleUtil.currentLocale = Locale.US; // Default - TODO: load locale from preferences
-        // Launch Router
-        String[] args = {};
-        platform = new Platform();
-        AppThread routerThread = new AppThread(() -> platform.start(args));
-        routerThread.setDaemon(true);
-        routerThread.start();
+        // Launch Service Bus
+        // TODO: Check to see if Service Bus already running. If so, use it.
+        try {
+            properties = Config.loadFromClasspath("onemfive-desktop.config");
+        } catch (Exception e) {
+            LOG.severe(e.getLocalizedMessage());
+        }
 
-        // Register UIService
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, List<ServiceStatusObserver>> observers = new HashMap<>();
-                observers.put(DesktopService.class.getName(), Arrays.asList(new ServiceStatusObserver() {
-                    @Override
-                    public void statusUpdated(ServiceStatus serviceStatus) {
-                        uiServiceStatus = serviceStatus;
-                    }
-                }));
-                Envelope e = Envelope.documentFactory();
-                DLC.addData(ServiceStatusObserver.class, observers, e);
-                DLC.addEntity(Arrays.asList(DesktopService.class),e);
-                DLC.addRoute(AdminService.class, AdminService.OPERATION_REGISTER_SERVICES, e);
-                Platform.sendRequest(e);
-            }
-        }).start();
+        busThread = new AppThread(() -> BusClient.start(properties));
+        busThread.setDaemon(true);
+        busThread.start();
+
+        Wait.aSec(500); // Give some room for the bus to startup
+
+        // Register DesktopService
+        try {
+            Map<String, List<ServiceStatusObserver>> observers = new HashMap<>();
+            observers.put(DesktopService.class.getName(), Arrays.asList(serviceStatus -> uiServiceStatus = serviceStatus));
+            BusClient.registerService(DesktopService.class, properties, observers.get(DesktopService.class.getName()));
+        } catch (ServiceNotAccessibleException e) {
+            LOG.severe(e.getLocalizedMessage());
+        } catch (ServiceNotSupportedException e) {
+            LOG.severe(e.getLocalizedMessage());
+        }
 
         shutDownHandler = new Runnable() {
             @Override
@@ -154,13 +157,13 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
 //                });
 //            }, 200, TimeUnit.MILLISECONDS);
             shutDownRequested = true;
-            Platform.stop();
-            javafx.application.Platform.exit();
+            BusClient.shutdown(false);
+            Platform.exit();
         }
     }
 
     public static void execute(Runnable runnable) {
-        javafx.application.Platform.runLater(runnable);
+        Platform.runLater(runnable);
     }
 
     @Override
