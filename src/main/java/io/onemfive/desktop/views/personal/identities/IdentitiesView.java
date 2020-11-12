@@ -3,14 +3,10 @@ package io.onemfive.desktop.views.personal.identities;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
-import onemfive.Platform;
-import io.onemfive.core.keyring.KeyRingService;
+import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.DesktopApp;
 import io.onemfive.desktop.DesktopService;
 import io.onemfive.desktop.views.ActivatableView;
-import io.onemfive.did.DIDService;
-import io.onemfive.util.DLC;
-import io.onemfive.util.Res;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,8 +16,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import ra.common.DLC;
+import ra.common.Envelope;
+import ra.common.identity.DID;
+import ra.did.AuthenticateDIDRequest;
+import ra.did.DIDService;
+import ra.keyring.AuthNRequest;
+import ra.keyring.KeyRingService;
+import ra.util.Resources;
 
 import java.util.List;
+
 
 public class IdentitiesView extends ActivatableView {
 
@@ -57,7 +62,7 @@ public class IdentitiesView extends ActivatableView {
         identitiesPane.setPrefWidth(DesktopApp.WIDTH-10);
         basePlane.getChildren().add(identitiesPane);
 
-        Text currentIdentity = new Text(Res.get("personalIdentitiesView.current"));
+        Text currentIdentity = new Text(Resources.get("personalIdentitiesView.current"));
         if(activeDID!=null)
             currentIdentity.setText(activeDID.getUsername()+": "+activeDID.getPublicKey().getFingerprint());
         identitiesPane.getChildren().add(currentIdentity);
@@ -69,29 +74,29 @@ public class IdentitiesView extends ActivatableView {
 
         JFXTextField identityAliasTxt = new JFXTextField();
         identityAliasTxt.setLabelFloat(true);
-        identityAliasTxt.setPromptText(Res.get("shared.alias"));
+        identityAliasTxt.setPromptText(Resources.get("shared.alias"));
         identityAliasTxt.setPrefWidth(200);
         addIdentityBox.getChildren().add(identityAliasTxt);
 
         JFXTextField identityPwdText = new JFXTextField();
         identityPwdText.setLabelFloat(true);
-        identityPwdText.setPromptText(Res.get("shared.passphrase"));
+        identityPwdText.setPromptText(Resources.get("shared.passphrase"));
         identityPwdText.setPrefWidth(200);
         addIdentityBox.getChildren().add(identityPwdText);
 
         JFXTextField identityPwd2Text = new JFXTextField();
         identityPwd2Text.setLabelFloat(true);
-        identityPwd2Text.setPromptText(Res.get("shared.passphraseAgain"));
+        identityPwd2Text.setPromptText(Resources.get("shared.passphraseAgain"));
         identityPwd2Text.setPrefWidth(200);
         addIdentityBox.getChildren().add(identityPwd2Text);
 
         JFXTextField identityDescription = new JFXTextField();
         identityDescription.setLabelFloat(true);
-        identityDescription.setPromptText(Res.get("shared.description"));
+        identityDescription.setPromptText(Resources.get("shared.description"));
         identityDescription.setPrefWidth(400);
         addIdentityBox.getChildren().add(identityDescription);
 
-        JFXButton addIdentity = new JFXButton(Res.get("shared.generate"));
+        JFXButton addIdentity = new JFXButton(Resources.get("shared.generate"));
         addIdentity.getStyleClass().add("button-raised");
         addIdentity.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -126,7 +131,7 @@ public class IdentitiesView extends ActivatableView {
                     DLC.addData(AuthNRequest.class, ar, e);
                     DLC.addRoute(KeyRingService.class, KeyRingService.OPERATION_AUTHN, e);
                     // Send
-                    Platform.sendRequest(e);
+                    BusClient.sendRequest(e);
                 } else {
                     // TODO: show in pop up
                     LOG.warning("Alias, pwd, pwd again required.");
@@ -142,7 +147,7 @@ public class IdentitiesView extends ActivatableView {
         identitiesList.getStyleClass().add("listView");
         identitiesPane.getChildren().add(identitiesList);
 
-        JFXButton deleteIdentity = new JFXButton(Res.get("shared.delete"));
+        JFXButton deleteIdentity = new JFXButton(Resources.get("shared.delete"));
         deleteIdentity.getStyleClass().add("button-raised");
         deleteIdentity.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -162,13 +167,13 @@ public class IdentitiesView extends ActivatableView {
         Envelope e1 = Envelope.documentFactory();
         DLC.addRoute(DesktopService.class, DesktopService.OPERATION_UPDATE_IDENTITIES, e1);
         DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES, e1);
-        Platform.sendRequest(e1);
+        BusClient.sendRequest(e1);
 
         // Get Active Identity
         Envelope e3 = Envelope.documentFactory();
         DLC.addRoute(DesktopService.class, DesktopService.OPERATION_UPDATE_ACTIVE_IDENTITY, e3);
         DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY, e3);
-        Platform.sendRequest(e3);
+        BusClient.sendRequest(e3);
 
         LOG.info("Initialized.");
     }
