@@ -11,13 +11,13 @@ import io.onemfive.desktop.views.personal.calendar.CalendarView;
 import io.onemfive.desktop.views.personal.dashboard.DashboardView;
 import io.onemfive.desktop.views.personal.identities.IdentitiesView;
 import io.onemfive.desktop.views.personal.wallet.WalletView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.util.Resources;
 
 public class PersonalView extends ActivatableView {
 
@@ -35,12 +35,12 @@ public class PersonalView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        blogTab.setText(Res.get("personalView.tabs.blog").toUpperCase());
-        agoraTab.setText(Res.get("personalView.tabs.agora").toUpperCase());
-        calendarTab.setText(Res.get("personalView.tabs.calendar").toUpperCase());
-        dashboardTab.setText(Res.get("personalView.tabs.dashboard").toUpperCase());
-        identitiesTab.setText(Res.get("personalView.tabs.identities").toUpperCase());
-        walletTab.setText(Res.get("personalView.tabs.wallet").toUpperCase());
+        blogTab.setText(Resources.get("personalView.tabs.blog").toUpperCase());
+        agoraTab.setText(Resources.get("personalView.tabs.agora").toUpperCase());
+        calendarTab.setText(Resources.get("personalView.tabs.calendar").toUpperCase());
+        dashboardTab.setText(Resources.get("personalView.tabs.dashboard").toUpperCase());
+        identitiesTab.setText(Resources.get("personalView.tabs.identities").toUpperCase());
+        walletTab.setText(Resources.get("personalView.tabs.wallet").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(PersonalView.class) == 1)
