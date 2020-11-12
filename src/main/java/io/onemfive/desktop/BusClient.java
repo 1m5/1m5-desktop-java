@@ -22,6 +22,22 @@ public class BusClient {
         bus.registerService(serviceClass, p, observers);
     }
 
+    public static boolean startService(Class serviceClass) {
+        return bus.startService(serviceClass);
+    }
+
+    public static boolean pauseService(Class serviceClass) {
+        return bus.pauseService(serviceClass);
+    }
+
+    public static boolean unpauseService(Class serviceClass) {
+        return bus.unpauseService(serviceClass);
+    }
+
+    public static boolean shutdownService(Class serviceClass, boolean gracefully) {
+        return bus.shutdownService(serviceClass, gracefully);
+    }
+
     public static boolean start(Properties properties) {
         bus = new ServiceBus();
         return bus.start(properties);
