@@ -1,40 +1,40 @@
 package io.onemfive.desktop.views.ops.network.bluetooth;
 
-import onemfive.Cmd;
+import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.network.NetworkState;
-import io.onemfive.network.sensors.SensorStatus;
-import io.onemfive.util.Res;
-import io.onemfive.util.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import ra.common.network.NetworkState;
+import ra.common.network.NetworkStatus;
+import ra.util.Resources;
+import ra.util.StringUtil;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class BluetoothSensorOpsView extends ActivatableView implements TopicListener {
+public class BluetoothOpsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private SensorStatus sensorStatus = SensorStatus.NOT_INITIALIZED;
-    private String sensorStatusField = StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' '));
+    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField sensorStatusTextField;
 
     private ToggleButton discoverButton;
 
-    private String friendlyName = Res.get("ops.network.notKnownYet");
-    private String address = Res.get("ops.network.notKnownYet");
+    private String friendlyName = Resources.get("ops.network.notKnownYet");
+    private String address = Resources.get("ops.network.notKnownYet");
     private TextField friendlynameTextField;
     private TextField addressTextField;
 
-    public BluetoothSensorOpsView() {
+    public BluetoothOpsView() {
         super();
     }
 
@@ -43,18 +43,18 @@ public class BluetoothSensorOpsView extends ActivatableView implements TopicList
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Res.get("ops.network.status"));
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
-        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Res.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
-        discoverButton = addSlideToggleButton(pane, ++gridRow, Res.get("ops.network.bluetooth.discoverButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        discoverButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.bluetooth.discoverButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
 
-        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 3, Res.get("ops.network.localNode"), Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.localNode"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);
-        friendlynameTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.bluetooth.friendlyNameLabel"), friendlyName, Layout.TWICE_FIRST_ROW_DISTANCE).second;
-        addressTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.bluetooth.addressLabel"), address).second;
+        friendlynameTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.bluetooth.friendlyNameLabel"), friendlyName, Layout.TWICE_FIRST_ROW_DISTANCE).second;
+        addressTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.bluetooth.addressLabel"), address).second;
 
         LOG.info("Initialized");
     }
@@ -69,14 +69,14 @@ public class BluetoothSensorOpsView extends ActivatableView implements TopicList
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.startBluetoothDiscovery();
+//                            BusClient.startService(BluetoothService.class);
                         }
                     });
                 } else {
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.stopBluetoothDiscovery();
+//                            BusClient.shutdownService(BluetoothService.class, true);
                         }
                     });
                 }
@@ -95,14 +95,14 @@ public class BluetoothSensorOpsView extends ActivatableView implements TopicList
         if(object instanceof NetworkState) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
-            if(this.sensorStatus != networkState.sensorStatus) {
-                this.sensorStatus = networkState.sensorStatus;
+            if(this.networkStatus != networkState.networkStatus) {
+                this.networkStatus = networkState.networkStatus;
                 if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' ')));
+                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
-            if(sensorStatus==SensorStatus.NETWORK_CONNECTING
-                    || sensorStatus==SensorStatus.NETWORK_CONNECTED) {
+            if(networkStatus == NetworkStatus.CONNECTING
+                    || networkStatus == NetworkStatus.CONNECTED) {
                 if (networkState.localPeer != null) {
                     friendlyName = networkState.localPeer.getDid().getUsername();
                     if (friendlynameTextField != null) {
@@ -114,8 +114,8 @@ public class BluetoothSensorOpsView extends ActivatableView implements TopicList
                     }
                 }
                 discoverButton.disableProperty().setValue(false);
-            } else if(sensorStatus==SensorStatus.NETWORK_WARMUP
-                    || sensorStatus==SensorStatus.STARTING) {
+            } else if(networkStatus == NetworkStatus.WARMUP
+                    || networkStatus == NetworkStatus.WAITING) {
                 discoverButton.disableProperty().setValue(false);
             } else {
                 discoverButton.disableProperty().setValue(true);
