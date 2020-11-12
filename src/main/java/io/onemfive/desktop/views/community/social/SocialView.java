@@ -1,10 +1,10 @@
 package io.onemfive.desktop.views.community.social;
 
-import io.onemfive.data.DID;
 import io.onemfive.desktop.views.InitializableView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.StackPane;
+import ra.common.identity.DID;
 
 import java.util.List;
 
