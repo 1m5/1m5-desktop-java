@@ -7,13 +7,13 @@ import io.onemfive.desktop.components.overlays.popups.Popup;
 import io.onemfive.desktop.user.Preferences;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
-import io.onemfive.util.LanguageUtil;
-import io.onemfive.util.Res;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import ra.util.LanguageUtil;
+import ra.util.Resources;
 
 import java.util.Locale;
 
@@ -39,14 +39,14 @@ public class PreferencesView extends ActivatableView {
         pane = (GridPane)root;
         languageCodes = FXCollections.observableArrayList(LanguageUtil.getUserLanguageCodes());
 
-        TitledGroupBg titledGroupBg = addTitledGroupBg(pane, gridRow, 2, Res.get("setting.preferences.general"));
+        TitledGroupBg titledGroupBg = addTitledGroupBg(pane, gridRow, 2, Resources.get("setting.preferences.general"));
         GridPane.setColumnSpan(titledGroupBg, 1);
-        userLanguageComboBox = addComboBox(pane, ++gridRow, Res.get("shared.language"), Layout.FIRST_ROW_DISTANCE);
+        userLanguageComboBox = addComboBox(pane, ++gridRow, Resources.get("shared.language"), Layout.FIRST_ROW_DISTANCE);
 
-        TitledGroupBg titledGroupBg1 = addTitledGroupBg(pane, ++gridRow, 3, Res.get("setting.preferences.displayOptions"), Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg titledGroupBg1 = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("setting.preferences.displayOptions"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(titledGroupBg1, 1);
-        useAnimations = addSlideToggleButton(pane, ++gridRow, Res.get("setting.preferences.useAnimations"), Layout.TWICE_FIRST_ROW_DISTANCE);
-        useDarkMode = addSlideToggleButton(pane, ++gridRow, Res.get("setting.preferences.useDarkMode"));
+        useAnimations = addSlideToggleButton(pane, ++gridRow, Resources.get("setting.preferences.useAnimations"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        useDarkMode = addSlideToggleButton(pane, ++gridRow, Resources.get("setting.preferences.useDarkMode"));
 
         LOG.info("Initialized");
     }
@@ -83,8 +83,8 @@ public class PreferencesView extends ActivatableView {
             String selectedItem = userLanguageComboBox.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 Preferences.locale = Locale.forLanguageTag(selectedItem);
-                new Popup().information(Res.get("settings.preferences.languageChange"))
-                        .closeButtonText(Res.get("shared.ok"))
+                new Popup().information(Resources.get("settings.preferences.languageChange"))
+                        .closeButtonText(Resources.get("shared.ok"))
                         .show();
             }
         });

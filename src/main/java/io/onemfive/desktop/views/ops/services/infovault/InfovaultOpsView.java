@@ -1,11 +1,7 @@
 package io.onemfive.desktop.views.ops.services.infovault;
 
-import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.views.ActivatableView;
-import io.onemfive.util.Res;
 import javafx.scene.layout.GridPane;
-
-import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;
 
 public class InfovaultOpsView extends ActivatableView {
 

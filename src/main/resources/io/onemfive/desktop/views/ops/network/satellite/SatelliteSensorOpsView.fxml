@@ -27,7 +27,7 @@
 -->
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="root" fx:controller="io.onemfive.desktop.views.ops.network.satellite.SatelliteSensorOpsView"
+<GridPane fx:id="root" fx:controller="io.onemfive.desktop.views.ops.network.satellite.SatelliteOpsView"
           hgap="5.0" vgap="5.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"

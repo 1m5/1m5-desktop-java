@@ -73,7 +73,7 @@
 
 	<dependencies>
         <dependency>
-            <groupId>io.onemfive</groupId>
+            <groupId>onemfive</groupId>
             <artifactId>cr</artifactId>
             <version>0.6.5-SNAPSHOT</version>
         </dependency>
@@ -85,6 +85,21 @@
         <dependency>
             <groupId>resolvingarchitecture</groupId>
             <artifactId>keyring</artifactId>
+            <version>${ra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>resolvingarchitecture</groupId>
+            <artifactId>tor-client</artifactId>
+            <version>${ra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>resolvingarchitecture</groupId>
+            <artifactId>tor-hiddenservice</artifactId>
+            <version>${ra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>resolvingarchitecture</groupId>
+            <artifactId>i2p-client</artifactId>
             <version>${ra.version}</version>
         </dependency>
         <dependency>

@@ -2,8 +2,8 @@ package io.onemfive.desktop.views.settings.network.lifi;
 
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.network.NetworkState;
 import javafx.scene.layout.GridPane;
+import ra.common.network.NetworkState;
 
 public class LiFiSensorSettingsView extends ActivatableView implements TopicListener {
 

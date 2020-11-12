@@ -11,12 +11,12 @@ import io.onemfive.desktop.views.settings.services.monetary.dex.DEXSettingsView;
 import io.onemfive.desktop.views.settings.services.monetary.bitcoin.BitcoinSettingsView;
 import io.onemfive.desktop.views.settings.services.monetary.komodo.KomodoSettingsView;
 import io.onemfive.desktop.views.settings.services.monetary.monero.MoneroSettingsView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.util.Resources;
 
 public class MonetarySettingsView extends ActivatableView {
 
@@ -31,10 +31,10 @@ public class MonetarySettingsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        komodoTab.setText(Res.get("settings.services.monetary.tab.komodo").toUpperCase());
-        moneroTab.setText(Res.get("settings.services.monetary.tab.monero").toUpperCase());
-        bitcoinTab.setText(Res.get("settings.services.monetary.tab.bitcoin").toUpperCase());
-        dexTab.setText(Res.get("settings.services.monetary.tab.dex").toUpperCase());
+        komodoTab.setText(Resources.get("settings.services.monetary.tab.komodo").toUpperCase());
+        moneroTab.setText(Resources.get("settings.services.monetary.tab.monero").toUpperCase());
+        bitcoinTab.setText(Resources.get("settings.services.monetary.tab.bitcoin").toUpperCase());
+        dexTab.setText(Resources.get("settings.services.monetary.tab.dex").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 5 && viewPath.indexOf(SettingsView.class) == 1)

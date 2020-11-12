@@ -790,25 +790,18 @@ public abstract class Overlay<T extends Overlay<T>> {
     }
 
     private void addReportErrorButtons() {
-        messageLabel.setText(Res.get("popup.reportError", truncatedMessage));
+        messageLabel.setText(Resources.get("popup.reportError", truncatedMessage));
 
-        Button logButton = new AutoTooltipButton(Res.get("popup.reportError.log"));
+        Button logButton = new AutoTooltipButton(Resources.get("popup.reportError.log"));
         GridPane.setMargin(logButton, new Insets(20, 0, 0, 0));
         GridPane.setHalignment(logButton, HPos.LEFT);
         GridPane.setRowIndex(logButton, ++rowIndex);
         gridPane.getChildren().add(logButton);
         logButton.setOnAction(event -> {
-            try {
-                File logDir = Platform.getInstance().getLogDir();
-                File logFile = new File(Paths.get(logDir.getPath(), "desktop.log").toString());
-                if(!logFile.exists() && !logFile.createNewFile())
-                    throw new IOException("Unable to create log file: "+logFile.getAbsolutePath());
-            } catch (IOException e) {
-                LOG.warning(e.getLocalizedMessage());
-            }
+            LOG.warning(event.toString());
         });
 
-        Button gitHubButton = new AutoTooltipButton(Res.get("popup.reportError.gitHub"));
+        Button gitHubButton = new AutoTooltipButton(Resources.get("popup.reportError.gitHub"));
         GridPane.setHalignment(gitHubButton, HPos.RIGHT);
         GridPane.setRowIndex(gitHubButton, ++rowIndex);
         gridPane.getChildren().add(gitHubButton);
@@ -832,7 +825,7 @@ public abstract class Overlay<T extends Overlay<T>> {
         if (dontShowAgainId != null) {
             // We might have set it and overridden the default, so we check if it is not set
             if (dontShowAgainText == null)
-                dontShowAgainText = Res.get("popup.doNotShowAgain");
+                dontShowAgainText = Resources.get("popup.doNotShowAgain");
 
             CheckBox dontShowAgainCheckBox = new AutoTooltipCheckBox(dontShowAgainText);
             HBox.setHgrow(dontShowAgainCheckBox, Priority.NEVER);
@@ -850,7 +843,7 @@ public abstract class Overlay<T extends Overlay<T>> {
 
     protected void addButtons() {
         if (!hideCloseButton) {
-            closeButton = new AutoTooltipButton(closeButtonText == null ? Res.get("shared.close") : closeButtonText);
+            closeButton = new AutoTooltipButton(closeButtonText == null ? Resources.get("shared.close") : closeButtonText);
             closeButton.getStyleClass().add("compact-button");
             closeButton.setOnAction(event -> doClose());
             closeButton.setMinWidth(70);
@@ -873,7 +866,7 @@ public abstract class Overlay<T extends Overlay<T>> {
         gridPane.getChildren().add(buttonBox);
 
         if (actionHandlerOptional.isPresent() || actionButtonText != null) {
-            actionButton = new AutoTooltipButton(actionButtonText == null ? Res.get("shared.ok") : actionButtonText);
+            actionButton = new AutoTooltipButton(actionButtonText == null ? Resources.get("shared.ok") : actionButtonText);
 
             if (!disableActionButton)
                 actionButton.setDefaultButton(true);

@@ -4,13 +4,13 @@ import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.fontawesome.AwesomeDude;
 import de.jensd.fx.fontawesome.AwesomeIcon;
 import io.onemfive.desktop.util.GUIUtil;
-import io.onemfive.util.Res;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
+import ra.util.Resources;
 
 public class TextFieldWithCopyIcon extends AnchorPane {
 
@@ -31,7 +31,7 @@ public class TextFieldWithCopyIcon extends AnchorPane {
         Label copyIcon = new Label();
         copyIcon.setLayoutY(3);
         copyIcon.getStyleClass().addAll("icon", "highlight");
-        copyIcon.setTooltip(new Tooltip(Res.get("shared.copyToClipboard")));
+        copyIcon.setTooltip(new Tooltip(Resources.get("shared.copyToClipboard")));
         AwesomeDude.setIcon(copyIcon, AwesomeIcon.COPY);
         copyIcon.setOnMouseClicked(e -> {
             String text = getText();

@@ -11,12 +11,12 @@ import io.onemfive.desktop.views.ops.services.identity.IdentityOpsView;
 import io.onemfive.desktop.views.ops.services.infovault.InfovaultOpsView;
 import io.onemfive.desktop.views.ops.services.keyring.KeyringOpsView;
 import io.onemfive.desktop.views.ops.services.monetary.MonetaryOpsView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ra.util.Resources;
 
 public class ServicesOpsView extends ActivatableView {
 
@@ -31,11 +31,11 @@ public class ServicesOpsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        identityTab.setText(Res.get("ops.services.tab.identity").toUpperCase());
-        infovaultTab.setText(Res.get("ops.services.tab.infovault").toUpperCase());
-        keyringTab.setText(Res.get("ops.services.tab.keyring").toUpperCase());
-        monetaryTab.setText(Res.get("ops.services.tab.monetary").toUpperCase());
-        dcdnTab.setText(Res.get("ops.services.tab.dcdn").toUpperCase());
+        identityTab.setText(Resources.get("ops.services.tab.identity").toUpperCase());
+        infovaultTab.setText(Resources.get("ops.services.tab.infovault").toUpperCase());
+        keyringTab.setText(Resources.get("ops.services.tab.keyring").toUpperCase());
+        monetaryTab.setText(Resources.get("ops.services.tab.monetary").toUpperCase());
+        dcdnTab.setText(Resources.get("ops.services.tab.dcdn").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 4 && viewPath.indexOf(ServicesOpsView.class) == 2)

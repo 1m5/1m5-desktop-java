@@ -1740,7 +1740,7 @@ public class FormBuilder {
         GridPane.setRowIndex(tableView, rowIndex);
         GridPane.setMargin(tableView, new Insets(top + 30, -10, 5, -10));
         gridPane.getChildren().add(tableView);
-        tableView.setPlaceholder(new AutoTooltipLabel(Res.get("table.placeholder.noData")));
+        tableView.setPlaceholder(new AutoTooltipLabel(Resources.get("table.placeholder.noData")));
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return tableView;
     }

@@ -2,7 +2,6 @@ package io.onemfive.desktop.components;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 import io.onemfive.desktop.util.FormBuilder;
-import io.onemfive.util.Res;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -16,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextFlow;
+import ra.util.Resources;
 
 /**
  * Convenience Component for info icon, info text and link display in a GridPane.
@@ -57,7 +57,7 @@ public class InfoDisplay extends Parent {
         // width is set a frame later so we hide it first
         label.setVisible(false);
 
-        link = new Hyperlink(Res.get("shared.readMore"));
+        link = new Hyperlink(Resources.get("shared.readMore"));
         link.setPadding(new Insets(0, 0, 0, -2));
 
         // We need that to know if we have a wrapping or not.
@@ -71,7 +71,7 @@ public class InfoDisplay extends Parent {
 
         testLabel.widthProperty().addListener((ov, o, n) -> {
             useReadMore = (double) n > textFlow.getWidth();
-            link.setText(Res.get(useReadMore ? "shared.readMore" : "shared.openHelp"));
+            link.setText(Resources.get(useReadMore ? "shared.readMore" : "shared.openHelp"));
             Platform.runLater(() -> textFlow.getChildren().setAll(label, link));
         });
 
@@ -90,7 +90,7 @@ public class InfoDisplay extends Parent {
                 if (useReadMore) {
 
                     label.setWrapText(true);
-                    link.setText(Res.get("shared.openHelp"));
+                    link.setText(Resources.get("shared.openHelp"));
                     getScene().getWindow().widthProperty().removeListener(listener);
                     if (label.prefWidthProperty().isBound())
                         label.prefWidthProperty().unbind();

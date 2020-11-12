@@ -2,10 +2,8 @@ package io.onemfive.desktop.views.settings.network.bluetooth;
 
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.network.NetworkState;
-import io.onemfive.network.sensors.i2p.I2PSensor;
 import javafx.scene.layout.GridPane;
-import net.i2p.router.Router;
+import ra.common.network.NetworkState;
 
 public class BluetoothSensorSettingsView extends ActivatableView implements TopicListener {
 

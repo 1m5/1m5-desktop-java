@@ -1,6 +1,6 @@
 package io.onemfive.desktop.util.validation;
 
-import io.onemfive.util.Res;
+import ra.util.Resources;
 
 import java.math.BigInteger;
 
@@ -13,7 +13,7 @@ public class InputValidator {
     protected ValidationResult validateIfNotEmpty(String input) {
         //trim added to avoid empty input
         if (input == null || input.trim().length() == 0)
-            return new ValidationResult(false, Res.get("validation.empty"));
+            return new ValidationResult(false, Resources.get("validation.empty"));
         else
             return new ValidationResult(true);
     }

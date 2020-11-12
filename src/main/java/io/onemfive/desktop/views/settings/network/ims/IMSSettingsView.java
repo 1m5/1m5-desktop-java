@@ -2,8 +2,8 @@ package io.onemfive.desktop.views.settings.network.ims;
 
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.network.NetworkState;
 import javafx.scene.layout.GridPane;
+import ra.common.network.NetworkState;
 
 public class IMSSettingsView extends ActivatableView implements TopicListener {
 

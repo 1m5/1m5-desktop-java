@@ -1,6 +1,6 @@
 package io.onemfive.desktop.util.validation;
 
-import io.onemfive.util.Res;
+import ra.util.Resources;
 
 public class StringValidator extends InputValidator {
 
@@ -11,7 +11,7 @@ public class StringValidator extends InputValidator {
 
         int length = 0;
         if (!isStringWithFixedLength(input, length))
-            return new ValidationResult(false, Res.get("validation.invalidInput", input));
+            return new ValidationResult(false, Resources.get("validation.invalidInput", input));
 
         return validationResult;
     }

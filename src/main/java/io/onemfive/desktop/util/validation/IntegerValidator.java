@@ -1,6 +1,6 @@
 package io.onemfive.desktop.util.validation;
 
-import io.onemfive.util.Res;
+import ra.util.Resources;
 
 public class IntegerValidator extends InputValidator {
 
@@ -12,13 +12,13 @@ public class IntegerValidator extends InputValidator {
             return validationResult;
 
         if (!isInteger(input))
-            return new ValidationResult(false, Res.get("validation.notAnInteger"));
+            return new ValidationResult(false, Resources.get("validation.notAnInteger"));
 
         if (isBelowMinValue(intValue))
-            return new ValidationResult(false, Res.get("validation.btc.toSmall", Integer.MIN_VALUE));
+            return new ValidationResult(false, Resources.get("validation.btc.toSmall", Integer.MIN_VALUE));
 
         if (isAboveMaxValue(intValue))
-            return new ValidationResult(false, Res.get("validation.btc.toLarge", Integer.MAX_VALUE));
+            return new ValidationResult(false, Resources.get("validation.btc.toLarge", Integer.MAX_VALUE));
 
         return validationResult;
     }
