@@ -1,11 +1,9 @@
 package io.onemfive.desktop.views.home;
 
 import com.jfoenix.controls.JFXComboBox;
-import io.onemfive.data.ManCon;
-import io.onemfive.data.ManConStatus;
 import io.onemfive.desktop.DesktopApp;
 import io.onemfive.desktop.MVC;
-import io.onemfive.desktop.Resources;
+import io.onemfive.desktop.OneMFiveResources;
 import io.onemfive.desktop.components.AutoTooltipLabel;
 import io.onemfive.desktop.components.AutoTooltipToggleButton;
 import io.onemfive.desktop.components.Badge;
@@ -18,9 +16,6 @@ import io.onemfive.desktop.views.ops.OpsView;
 import io.onemfive.desktop.views.personal.PersonalView;
 import io.onemfive.desktop.views.settings.SettingsView;
 import io.onemfive.desktop.views.support.SupportView;
-import io.onemfive.util.LanguageUtil;
-import io.onemfive.util.LocaleUtil;
-import io.onemfive.util.Res;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,6 +34,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
+import onemfive.ManCon;
+import onemfive.ManConStatus;
+import ra.util.LanguageUtil;
+import ra.util.LocaleUtil;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -101,18 +100,18 @@ public class HomeView extends InitializableView {
         if (LanguageUtil.isDefaultLanguageRTL())
             rootContainer.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 
-        final ToggleButton personalButton = new NavButton(PersonalView.class, Res.get("homeView.menu.personal").toUpperCase());
+        final ToggleButton personalButton = new NavButton(PersonalView.class, OneMFiveResources.get("homeView.menu.personal").toUpperCase());
 
-        final ToggleButton communityButton = new NavButton(CommunityView.class, Res.get("homeView.menu.community").toUpperCase());
+        final ToggleButton communityButton = new NavButton(CommunityView.class, OneMFiveResources.get("homeView.menu.community").toUpperCase());
 //        communityButton.disableProperty().setValue(true);
-        final ToggleButton commonsButton = new NavButton(CommonsView.class, Res.get("homeView.menu.commons").toUpperCase());
+        final ToggleButton commonsButton = new NavButton(CommonsView.class, OneMFiveResources.get("homeView.menu.commons").toUpperCase());
 //        commonsButton.disableProperty().setValue(true);
 
-        final ToggleButton supportButton = new NavButton(SupportView.class, Res.get("homeView.menu.support").toUpperCase());
+        final ToggleButton supportButton = new NavButton(SupportView.class, OneMFiveResources.get("homeView.menu.support").toUpperCase());
 //        supportButton.disableProperty().setValue(true);
-        final ToggleButton settingsButton = new NavButton(SettingsView.class, Res.get("homeView.menu.settings").toUpperCase());
+        final ToggleButton settingsButton = new NavButton(SettingsView.class, OneMFiveResources.get("homeView.menu.settings").toUpperCase());
 //        settingsButton.disableProperty().setValue(true);
-        final ToggleButton opsButton = new NavButton(OpsView.class, Res.get("homeView.menu.ops").toUpperCase());
+        final ToggleButton opsButton = new NavButton(OpsView.class, OneMFiveResources.get("homeView.menu.ops").toUpperCase());
 //        opsButton.disableProperty().setValue(true);
 
         Badge personalButtonWithBadge = new Badge(personalButton);
@@ -630,7 +629,7 @@ public class HomeView extends InitializableView {
 
         public ManConComboBoxItem(ManCon manConLevel) {
             this.manConLevel = manConLevel;
-            this.manConImageView = new ImageView(new Image(Resources.getManConIcon(manConLevel).toString()));
+            this.manConImageView = new ImageView(new Image(OneMFiveResources.getManConIcon(manConLevel).toString()));
         }
 
     }
