@@ -9,15 +9,13 @@ import io.onemfive.desktop.views.commons.browser.BrowserView;
 import io.onemfive.desktop.views.commons.dashboard.DashboardView;
 import io.onemfive.desktop.views.commons.topics.TopicsView;
 import io.onemfive.desktop.views.home.HomeView;
-import io.onemfive.util.Res;
 import javafx.beans.value.ChangeListener;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyEvent;
+import ra.util.Resources;
 
 public class CommonsView extends ActivatableView {
 
@@ -35,10 +33,10 @@ public class CommonsView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        agoraTab.setText(Res.get("commonsView.tabs.agora").toUpperCase());
-        browserTab.setText(Res.get("commonsView.tabs.browser").toUpperCase());
-        dashboardTab.setText(Res.get("commonsView.tabs.dashboard").toUpperCase());
-        topicsTab.setText(Res.get("commonsView.tabs.topics").toUpperCase());
+        agoraTab.setText(Resources.get("commonsView.tabs.agora").toUpperCase());
+        browserTab.setText(Resources.get("commonsView.tabs.browser").toUpperCase());
+        dashboardTab.setText(Resources.get("commonsView.tabs.dashboard").toUpperCase());
+        topicsTab.setText(Resources.get("commonsView.tabs.topics").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(CommonsView.class) == 1)
