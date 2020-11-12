@@ -5,9 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
-import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class URLStreamFactoryCustomizer {
