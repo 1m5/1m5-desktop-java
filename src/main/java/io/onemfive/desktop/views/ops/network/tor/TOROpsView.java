@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.ops.network.tor;
 
-import onemfive.Cmd;
+import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.HyperlinkWithIcon;
 import io.onemfive.desktop.components.TitledGroupBg;
@@ -11,45 +11,58 @@ import io.onemfive.desktop.views.ViewPath;
 import io.onemfive.desktop.views.commons.CommonsView;
 import io.onemfive.desktop.views.commons.browser.BrowserView;
 import io.onemfive.desktop.views.home.HomeView;
-import io.onemfive.network.NetworkState;
-import io.onemfive.network.sensors.SensorStatus;
-import io.onemfive.network.sensors.tor.TORSensor;
-import io.onemfive.util.Res;
-import io.onemfive.util.StringUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import ra.common.network.NetworkState;
+import ra.common.network.NetworkStatus;
+import ra.common.service.ServiceStatus;
+import ra.tor.TORClientService;
+import ra.tor.TORHiddenService;
+import ra.util.Resources;
+import ra.util.StringUtil;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class TORSensorOpsView extends ActivatableView implements TopicListener {
+public class TOROpsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private SensorStatus sensorStatus = SensorStatus.NOT_INITIALIZED;
-    private String sensorStatusField = StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' '));
+    // Considering TOR Ops is watching both a client and server service,
+    // both client and hidden service status' are taken into account
+    // to determine overall status
+    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
+
+    private NetworkStatus clientNetworkStatus = NetworkStatus.NOT_INSTALLED;
+    private ServiceStatus clientServiceStatus = ServiceStatus.NOT_INITIALIZED;
+
+    private NetworkStatus hsNetworkStatus = NetworkStatus.NOT_INSTALLED;
+    private ServiceStatus hsServiceStatus = ServiceStatus.NOT_INITIALIZED;
+
+    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField sensorStatusTextField;
 
     private ToggleButton powerButton;
     private CheckBox hardStop;
 
-    private String address = Res.get("ops.network.notKnownYet");
+    private String address = Resources.get("ops.network.notKnownYet");
     private TextField addressTextField;
 
-    private String virtualPort = Res.get("ops.network.notKnownYet");
+    private String virtualPort = Resources.get("ops.network.notKnownYet");
     private TextField virtualPortTextField;
 
-    private String targetPort = Res.get("ops.network.notKnownYet");
+    private String targetPort = Resources.get("ops.network.notKnownYet");
     private TextField targetPortTextField;
 
     private String hiddenServiceURL = "http://127.0.0.1";
     private HyperlinkWithIcon hiddenServiceHyperLink;
 
-    public TORSensorOpsView() {
+    public TOROpsView() {
         super();
     }
 
@@ -58,21 +71,21 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Res.get("ops.network.status"));
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
-        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Res.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
-        powerButton = addSlideToggleButton(pane, ++gridRow, Res.get("ops.network.sensorPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
-        hardStop = addCheckBox(pane, ++gridRow, Res.get("ops.network.hardStop"));
+        powerButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.sensorPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        hardStop = addCheckBox(pane, ++gridRow, Resources.get("ops.network.hardStop"));
 
-        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 5, Res.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 5, Resources.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);
-        addressTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.tor.addressLabel"), address, Layout.TWICE_FIRST_ROW_DISTANCE).second;
-        virtualPortTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.tor.vPortLabel"), virtualPort).second;
-        targetPortTextField = addCompactTopLabelTextField(pane, ++gridRow, Res.get("ops.network.tor.tPortLabel"), targetPort).second;
-        hiddenServiceHyperLink = addHyperlinkWithIcon(pane, ++gridRow, Res.get("ops.network.tor.hiddenServiceTestLabel"), hiddenServiceURL);
+        addressTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.tor.addressLabel"), address, Layout.TWICE_FIRST_ROW_DISTANCE).second;
+        virtualPortTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.tor.vPortLabel"), virtualPort).second;
+        targetPortTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.tor.tPortLabel"), targetPort).second;
+        hiddenServiceHyperLink = addHyperlinkWithIcon(pane, ++gridRow, Resources.get("ops.network.tor.hiddenServiceTestLabel"), hiddenServiceURL);
         GridPane.setColumnSpan(hiddenServiceHyperLink, 2);
         hiddenServiceHyperLink.disableProperty().setValue(true);
 
@@ -90,7 +103,13 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.startSensor(TORSensor.class.getName());
+                            BusClient.startService(TORClientService.class);
+                        }
+                    });
+                    MVC.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            BusClient.startService(TORHiddenService.class);
                         }
                     });
                 } else {
@@ -98,7 +117,13 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
                     MVC.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Cmd.stopSensor(TORSensor.class.getName(), hardStop.isSelected());
+                            BusClient.shutdownService(TORClientService.class, hardStop.isSelected());
+                        }
+                    });
+                    MVC.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            BusClient.shutdownService(TORHiddenService.class, hardStop.isSelected());
                         }
                     });
                 }
@@ -118,13 +143,13 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
         if(object instanceof NetworkState) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
-            if(this.sensorStatus != networkState.sensorStatus) {
-                this.sensorStatus = networkState.sensorStatus;
+            if(this.networkStatus != networkState.networkStatus) {
+                this.networkStatus = networkState.networkStatus;
                 if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' ')));
+                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
-            if(sensorStatus==SensorStatus.NETWORK_CONNECTED) {
+            if(networkStatus == NetworkStatus.CONNECTED) {
                 if (networkState.localPeer != null) {
                     address = networkState.localPeer.getDid().getPublicKey().getAddress();
                     if (addressTextField != null)
@@ -155,18 +180,18 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
     }
 
     private void reset() {
-        address = Res.get("ops.network.notKnownYet");
+        address = Resources.get("ops.network.notKnownYet");
         if(addressTextField!=null)
             addressTextField.setText(address);
-        virtualPort = Res.get("ops.network.notKnownYet");
+        virtualPort = Resources.get("ops.network.notKnownYet");
         if(virtualPortTextField !=null) {
             virtualPortTextField.setText(virtualPort);
         }
-        targetPort = Res.get("ops.network.notKnownYet");
+        targetPort = Resources.get("ops.network.notKnownYet");
         if(targetPortTextField !=null) {
             targetPortTextField.setText(targetPort);
         }
-        hiddenServiceURL = Res.get("ops.network.notKnownYet");
+        hiddenServiceURL = Resources.get("ops.network.notKnownYet");
         if(hiddenServiceHyperLink!=null) {
             hiddenServiceHyperLink.setOnAction(null);
             hiddenServiceHyperLink.disableProperty().set(true);
@@ -174,31 +199,34 @@ public class TORSensorOpsView extends ActivatableView implements TopicListener {
     }
 
     private void updateComponents() {
-        if(sensorStatus==SensorStatus.NOT_INITIALIZED
-                || sensorStatus==SensorStatus.NETWORK_PORT_CONFLICT
-                || sensorStatus==SensorStatus.SHUTDOWN
-                || sensorStatus==SensorStatus.GRACEFULLY_SHUTDOWN) {
+        if(networkStatus ==NetworkStatus.NOT_INSTALLED
+                || networkStatus ==NetworkStatus.PORT_CONFLICT
+                || serviceStatus==ServiceStatus.SHUTDOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {
+            // Power is off and able to turn it on
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(false);
-        } else if(sensorStatus==SensorStatus.INITIALIZING
-                || sensorStatus==SensorStatus.WAITING
-                || sensorStatus==SensorStatus.STARTING) {
+        } else if(networkStatus ==NetworkStatus.WARMUP
+                || networkStatus ==NetworkStatus.WAITING) {
+            // Power is on, but not yet able to turn it off - starting up
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(false);
-        } else if(sensorStatus==SensorStatus.SHUTTING_DOWN
-                || sensorStatus==SensorStatus.GRACEFULLY_SHUTTING_DOWN
-                || sensorStatus==SensorStatus.UNREGISTERED
-                || sensorStatus==SensorStatus.NETWORK_UNAVAILABLE
-                || sensorStatus==SensorStatus.ERROR
-                || sensorStatus==SensorStatus.NETWORK_ERROR) {
+        } else if(serviceStatus==ServiceStatus.SHUTTING_DOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTTING_DOWN
+                || networkStatus ==NetworkStatus.ERROR) {
+            // Power is off and unable to turn it on as it is shutting down
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(true);
             hardStop.disableProperty().setValue(true);
-        } else if(sensorStatus==SensorStatus.NETWORK_CONNECTING
-                || sensorStatus==SensorStatus.NETWORK_CONNECTED) {
+        } else if(networkStatus ==NetworkStatus.CONNECTING
+                || networkStatus ==NetworkStatus.CONNECTED
+                || networkStatus ==NetworkStatus.VERIFIED
+                || networkStatus ==NetworkStatus.HANGING
+                || networkStatus ==NetworkStatus.DISCONNECTED) {
+            // Power is on and shutting it down is available
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(true);
