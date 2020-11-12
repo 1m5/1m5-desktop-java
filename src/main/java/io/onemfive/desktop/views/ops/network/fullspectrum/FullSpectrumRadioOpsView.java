@@ -14,12 +14,12 @@ import javafx.scene.layout.GridPane;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class FullSpectrumRadioSensorOpsView extends ActivatableView implements TopicListener {
+public class FullSpectrumRadioOpsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INITIALIZED;
+    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
     private String networkStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField networkStatusTextField;
 
@@ -28,7 +28,7 @@ public class FullSpectrumRadioSensorOpsView extends ActivatableView implements T
     private TextField fsRadioFingerprintTextField;
     private TextArea fsRadioAddressTextArea;
 
-    public FullSpectrumRadioSensorOpsView() {
+    public FullSpectrumRadioOpsView() {
         super();
     }
 
