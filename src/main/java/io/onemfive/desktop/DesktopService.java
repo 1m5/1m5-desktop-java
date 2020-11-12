@@ -2,14 +2,14 @@ package io.onemfive.desktop;
 
 import io.onemfive.desktop.views.TopicListener;
 import io.onemfive.desktop.views.home.HomeView;
-import io.onemfive.desktop.views.ops.network.bluetooth.BluetoothSensorOpsView;
-import io.onemfive.desktop.views.ops.network.fullspectrum.FullSpectrumRadioSensorOpsView;
-import io.onemfive.desktop.views.ops.network.i2p.I2PSensorOpsView;
-import io.onemfive.desktop.views.ops.network.ims.IMSOpsView;
-import io.onemfive.desktop.views.ops.network.lifi.LiFiSensorOpsView;
-import io.onemfive.desktop.views.ops.network.satellite.SatelliteSensorOpsView;
-import io.onemfive.desktop.views.ops.network.tor.TORSensorOpsView;
-import io.onemfive.desktop.views.ops.network.wifidirect.WifiDirectSensorOpsView;
+import io.onemfive.desktop.views.ops.network.bluetooth.BluetoothOpsView;
+import io.onemfive.desktop.views.ops.network.fullspectrum.FullSpectrumRadioOpsView;
+import io.onemfive.desktop.views.ops.network.i2p.I2POpsView;
+import io.onemfive.desktop.views.ops.network.idn.IDNView;
+import io.onemfive.desktop.views.ops.network.lifi.LiFiOpsView;
+import io.onemfive.desktop.views.ops.network.satellite.SatelliteOpsView;
+import io.onemfive.desktop.views.ops.network.tor.TOROpsView;
+import io.onemfive.desktop.views.ops.network.wifidirect.WifiDirectOpsView;
 import io.onemfive.desktop.views.personal.identities.IdentitiesView;
 import io.onemfive.desktop.views.settings.network.bluetooth.BluetoothSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.fullspectrum.FullSpectrumRadioSensorSettingsView;
@@ -136,7 +136,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with 1M5 Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(IMSOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(IDNView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(IMSSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -157,7 +157,7 @@ public class DesktopService extends BaseService {
                     LOG.info("Updating UI with TOR Network State...");
                     EventMessage em = (EventMessage)e.getMessage();
                     NetworkState state = (NetworkState)em.getMessage();
-                    TopicListener listener = (TopicListener)MVC.loadView(TORSensorOpsView.class, true);
+                    TopicListener listener = (TopicListener)MVC.loadView(TOROpsView.class, true);
                     listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                     listener = (TopicListener)MVC.loadView(TORSensorSettingsView.class, true);
                     listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -178,7 +178,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with I2P Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(I2PSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(I2POpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(I2PSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -199,7 +199,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with WiFi-Direct Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(WifiDirectSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(WifiDirectOpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(WifiDirectSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -220,7 +220,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with Bluetooth Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(BluetoothSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(BluetoothOpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(BluetoothSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -241,7 +241,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with Satellite Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(SatelliteSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(SatelliteOpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(SatelliteSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -262,7 +262,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with Full Spectrum Radio Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(FullSpectrumRadioSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(FullSpectrumRadioOpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(FullSpectrumRadioSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -283,7 +283,7 @@ public class DesktopService extends BaseService {
                             LOG.info("Updating UI with LiFi Network State...");
                             EventMessage em = (EventMessage)e.getMessage();
                             NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(LiFiSensorOpsView.class, true);
+                            TopicListener listener = (TopicListener)MVC.loadView(LiFiOpsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
                             listener = (TopicListener)MVC.loadView(LiFiSensorSettingsView.class, true);
                             listener.modelUpdated(NetworkState.class.getSimpleName(), state);
