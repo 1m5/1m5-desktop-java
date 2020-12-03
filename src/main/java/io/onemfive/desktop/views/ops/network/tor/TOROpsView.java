@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.ops.network.tor;
 
-import io.onemfive.desktop.BusClient;
+import io.onemfive.desktop.DesktopBusClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.HyperlinkWithIcon;
 import io.onemfive.desktop.components.TitledGroupBg;
@@ -100,32 +100,10 @@ public class TOROpsView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 LOG.info("powerButton=" + powerButton.isSelected());
                 if (powerButton.isSelected()) {
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BusClient.startService(TORClientService.class);
-                        }
-                    });
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BusClient.startService(TORHiddenService.class);
-                        }
-                    });
+                    DesktopBusClient.startService(TORClientService.class);
                 } else {
                     reset();
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BusClient.shutdownService(TORClientService.class, hardStop.isSelected());
-                        }
-                    });
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BusClient.shutdownService(TORHiddenService.class, hardStop.isSelected());
-                        }
-                    });
+                    DesktopBusClient.shutdownService(TORClientService.class, hardStop.isSelected());
                 }
                 powerButton.disableProperty().setValue(true);
                 hardStop.disableProperty().setValue(true);

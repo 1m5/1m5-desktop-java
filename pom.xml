@@ -5,7 +5,7 @@
 
 	<groupId>resolvingarchitecture</groupId>
 	<artifactId>desktop</artifactId>
-	<version>0.6.5-SNAPSHOT</version>
+	<version>0.6.5.127</version>
 
 	<packaging>jar</packaging>
 
@@ -17,7 +17,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.11</java.version>
-        <ra.version>1.0.0</ra.version>
 	</properties>
 
 	<developers>
@@ -76,31 +75,6 @@
             <groupId>onemfive</groupId>
             <artifactId>cr</artifactId>
             <version>0.6.5-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>resolvingarchitecture</groupId>
-            <artifactId>did</artifactId>
-            <version>${ra.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>resolvingarchitecture</groupId>
-            <artifactId>keyring</artifactId>
-            <version>${ra.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>resolvingarchitecture</groupId>
-            <artifactId>tor-client</artifactId>
-            <version>${ra.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>resolvingarchitecture</groupId>
-            <artifactId>tor-hiddenservice</artifactId>
-            <version>${ra.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>resolvingarchitecture</groupId>
-            <artifactId>i2p-client</artifactId>
-            <version>${ra.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>

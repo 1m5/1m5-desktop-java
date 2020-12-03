@@ -1,6 +1,5 @@
 package io.onemfive.desktop.views.ops.network.bluetooth;
 
-import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
@@ -66,19 +65,9 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 LOG.info("powerButton=" + discoverButton.isSelected());
                 if (discoverButton.isSelected()) {
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-//                            BusClient.startService(BluetoothService.class);
-                        }
-                    });
+//                            DesktopBusClient.startService(BluetoothService.class);
                 } else {
-                    MVC.execute(new Runnable() {
-                        @Override
-                        public void run() {
-//                            BusClient.shutdownService(BluetoothService.class, true);
-                        }
-                    });
+//                            DesktopBusClient.shutdownService(BluetoothService.class, true);
                 }
             }
         });

@@ -19,16 +19,17 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WifiDirectSensorSettingsView;
+import ra.common.Client;
 import ra.common.DLC;
 import ra.common.Envelope;
+import ra.common.client.TCPBusClient;
 import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
-import ra.common.messaging.MessageProducer;
+import ra.common.network.ControlCommand;
 import ra.common.network.NetworkState;
 import ra.common.notification.Subscription;
 import ra.common.route.Route;
-import ra.common.service.BaseService;
-import ra.common.service.ServiceStatusListener;
+import ra.i2p.I2PService;
 import ra.notification.NotificationService;
 import ra.notification.SubscriptionRequest;
 
@@ -36,53 +37,57 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class DesktopService extends BaseService {
+public class DesktopBusClient implements Client {
 
-    private static final Logger LOG = Logger.getLogger(DesktopService.class.getName());
+    private static final Logger LOG = Logger.getLogger(DesktopBusClient.class.getName());
 
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
 
     public static final String OPERATION_UPDATE_ACTIVE_IDENTITY = "UPDATE_ACTIVE_IDENTITY";
     public static final String OPERATION_UPDATE_IDENTITIES = "UPDATE_IDENTITIES";
 
-    private static DesktopService instance;
+    private static TCPBusClient busClient;
 
-    public DesktopService() {
-        instance = this;
+    public DesktopBusClient(TCPBusClient tcpBusClient) {
+        busClient = tcpBusClient;
     }
 
-    public DesktopService(MessageProducer producer, ServiceStatusListener listener) {
-        super(producer, listener);
-        instance = this;
+    public static void startService(Class serviceClass) {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.StartService.name());
+        e.addNVP("serviceClass", serviceClass.getName());
+        deliver(e);
+    }
+
+    public static void shutdownService(Class serviceClass, boolean hardStop) {
+        Envelope e = Envelope.documentFactory();
+        if(hardStop) {
+            e.setCommandPath(ControlCommand.StopService.name());
+        } else {
+            e.setCommandPath(ControlCommand.GracefullyStopService.name());
+        }
+        e.addNVP("serviceClass", serviceClass.getName());
+        deliver(e);
     }
 
     public static void deliver(Envelope e) {
-        instance.producer.send(e);
+        MVC.execute(new Runnable() {
+            @Override
+            public void run() {
+                busClient.sendMessage(e);
+            }
+        });
     }
 
     @Override
-    public void handleDocument(Envelope e) {
-        handleAll(e);
-    }
-
-    @Override
-    public void handleEvent(Envelope e) {
-        handleAll(e);
-    }
-
-    @Override
-    public void handleHeaders(Envelope e) {
-        handleAll(e);
-    }
-
-    private void handleAll(Envelope e) {
-        LOG.info("Received UI Service request...");
-        Route route = e.getRoute();
+    public void reply(Envelope envelope) {
+        LOG.info("Received message for UI...");
+        Route route = envelope.getRoute();
         String operation = route.getOperation();
         switch (operation) {
             case OPERATION_UPDATE_ACTIVE_IDENTITY: {
                 LOG.info("Update active identity request...");
-                final DID activeIdentity = (DID) DLC.getEntity(e);
+                final DID activeIdentity = (DID) DLC.getEntity(envelope);
                 if(activeIdentity!=null) {
                     javafx.application.Platform.runLater(() -> {
                         LOG.info("Updating IdentitiesView active DID...");
@@ -94,7 +99,7 @@ public class DesktopService extends BaseService {
             }
             case OPERATION_UPDATE_IDENTITIES: {
                 LOG.info("Update identities request...");
-                final List<DID> identities = (List<DID>)DLC.getValue("identities", e);
+                final List<DID> identities = (List<DID>)DLC.getValue("identities", envelope);
                 if(identities!=null) {
                     javafx.application.Platform.runLater(() -> {
                         LOG.info("Updating IdentitiesView identities...");
@@ -114,12 +119,8 @@ public class DesktopService extends BaseService {
         }
     }
 
-    @Override
     public boolean start(Properties p) {
-        if(!super.start(p)) {
-            LOG.warning("DesktopService's parent failed to start.");
-            return false;
-        }
+
         MVC.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
             LOG.info("Updating ManCon status...");
             HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
@@ -128,8 +129,7 @@ public class DesktopService extends BaseService {
 
         // 1M5 Network State Update
         Envelope e1M5Status = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequest1M5Status = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "1M5",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequest1M5Status = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "1M5", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -143,14 +143,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequest1M5Status, e1M5Status);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, e1M5Status);
-        BusClient.sendRequest(e1M5Status);
+        e1M5Status.addData(SubscriptionRequest.class, subscriptionRequest1M5Status);
+        e1M5Status.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(e1M5Status);
 
         // TOR Network State Update
         Envelope eTorStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestTorStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Tor",
-        new Subscription() {
+        SubscriptionRequest subscriptionRequestTorStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Tor", new Subscription() {
             @Override
             public void notifyOfEvent(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -164,14 +163,13 @@ public class DesktopService extends BaseService {
                 });
             }
         });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestTorStatus, eTorStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eTorStatus);
-        BusClient.sendRequest(eTorStatus);
+        eTorStatus.addData(SubscriptionRequest.class, subscriptionRequestTorStatus);
+        eTorStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eTorStatus);
 
         // I2P Network State Update
         Envelope eI2PStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestI2PStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "I2P",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestI2PStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "I2P", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -185,14 +183,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestI2PStatus, eI2PStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eI2PStatus);
-        BusClient.sendRequest(eI2PStatus);
+        eI2PStatus.addData(SubscriptionRequest.class, subscriptionRequestI2PStatus);
+        eI2PStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eI2PStatus);
 
         // WiFi Direct Network State Update
         Envelope eWFDStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestWFDStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "WiFi",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestWFDStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "WiFi", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -206,14 +203,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestWFDStatus, eWFDStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eWFDStatus);
-        BusClient.sendRequest(eWFDStatus);
+        eWFDStatus.addData(SubscriptionRequest.class, subscriptionRequestWFDStatus);
+        eWFDStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eWFDStatus);
 
         // Bluetooth Network State Update
         Envelope eBTStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestBTStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "BT",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestBTStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "BT", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -227,14 +223,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestBTStatus, eBTStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eBTStatus);
-        BusClient.sendRequest(eBTStatus);
+        eBTStatus.addData(SubscriptionRequest.class, subscriptionRequestBTStatus);
+        eBTStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eBTStatus);
 
         // Satellite Network State Update
         Envelope eSatStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestSatStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Sat",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestSatStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Sat", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -248,14 +243,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestSatStatus, eSatStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eSatStatus);
-        BusClient.sendRequest(eSatStatus);
+        eSatStatus.addData(SubscriptionRequest.class, subscriptionRequestSatStatus);
+        eSatStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eSatStatus);
 
         // Full Spectrum Radio Network State Update
         Envelope eFSRStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestFSRStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Rad",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestFSRStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Rad", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -269,14 +263,13 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestFSRStatus, eFSRStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eFSRStatus);
-        BusClient.sendRequest(eFSRStatus);
+        eFSRStatus.addData(SubscriptionRequest.class, subscriptionRequestFSRStatus);
+        eFSRStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eFSRStatus);
 
         // LiFi Network State Update
         Envelope eLFStatus = Envelope.documentFactory();
-        SubscriptionRequest subscriptionRequestLFStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "LiFi",
-                new Subscription() {
+        SubscriptionRequest subscriptionRequestLFStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "LiFi", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
                         javafx.application.Platform.runLater(() -> {
@@ -290,9 +283,9 @@ public class DesktopService extends BaseService {
                         });
                     }
                 });
-        DLC.addData(SubscriptionRequest.class, subscriptionRequestLFStatus, eLFStatus);
-        DLC.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE, eLFStatus);
-        BusClient.sendRequest(eLFStatus);
+        eLFStatus.addData(SubscriptionRequest.class, subscriptionRequestLFStatus);
+        eLFStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
+        busClient.sendMessage(eLFStatus);
 
         return true;
     }

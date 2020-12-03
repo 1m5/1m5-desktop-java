@@ -3,9 +3,8 @@ package io.onemfive.desktop.views.personal.identities;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
-import io.onemfive.desktop.BusClient;
 import io.onemfive.desktop.DesktopApp;
-import io.onemfive.desktop.DesktopService;
+import io.onemfive.desktop.DesktopBusClient;
 import io.onemfive.desktop.views.ActivatableView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -106,7 +105,7 @@ public class IdentitiesView extends ActivatableView {
                         && !identityPwd2Text.getText().isEmpty()) {
                     Envelope e = Envelope.documentFactory();
                     // 4. Update UI
-                    DLC.addRoute(DesktopService.class, DesktopService.OPERATION_UPDATE_IDENTITIES, e);
+                    DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITIES, e);
                     // 3. Load ordered Identities
                     DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES, e);
                     // 2. Authenticate/Save DID
@@ -131,7 +130,7 @@ public class IdentitiesView extends ActivatableView {
                     DLC.addData(AuthNRequest.class, ar, e);
                     DLC.addRoute(KeyRingService.class, KeyRingService.OPERATION_AUTHN, e);
                     // Send
-                    BusClient.sendRequest(e);
+                    DesktopBusClient.deliver(e);
                 } else {
                     // TODO: show in pop up
                     LOG.warning("Alias, pwd, pwd again required.");
@@ -165,15 +164,15 @@ public class IdentitiesView extends ActivatableView {
 
         // Get Identities
         Envelope e1 = Envelope.documentFactory();
-        DLC.addRoute(DesktopService.class, DesktopService.OPERATION_UPDATE_IDENTITIES, e1);
+        DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITIES, e1);
         DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES, e1);
-        BusClient.sendRequest(e1);
+        DesktopBusClient.deliver(e1);
 
         // Get Active Identity
         Envelope e3 = Envelope.documentFactory();
-        DLC.addRoute(DesktopService.class, DesktopService.OPERATION_UPDATE_ACTIVE_IDENTITY, e3);
+        DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_ACTIVE_IDENTITY, e3);
         DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY, e3);
-        BusClient.sendRequest(e3);
+        DesktopBusClient.deliver(e3);
 
         LOG.info("Initialized.");
     }

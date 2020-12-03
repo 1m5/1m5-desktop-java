@@ -10,6 +10,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import ra.common.DLC;
 import ra.common.Envelope;
+import ra.common.client.TCPBusClient;
+import ra.common.network.ControlCommand;
 import ra.common.service.ServiceNotAccessibleException;
 import ra.common.service.ServiceNotSupportedException;
 import ra.common.service.ServiceStatus;
@@ -20,6 +22,7 @@ import ra.util.LocaleUtil;
 import ra.util.Wait;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -50,7 +53,9 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
     private ServiceStatus uiServiceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private Properties properties;
+    private TCPBusClient tcpBusClient;
     private AppThread busThread;
+    private DesktopBusClient desktopBusClient;
 
     public DesktopApp() {
         shutDownHandler = this::stop;
@@ -68,21 +73,14 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
             LOG.severe(e.getLocalizedMessage());
         }
 
-        busThread = new AppThread(() -> BusClient.start(properties));
+        tcpBusClient = new TCPBusClient();
+        busThread = new AppThread(tcpBusClient);
+        busThread.setName("1M5-Bus-Client-Thread");
         busThread.setDaemon(true);
         busThread.start();
 
-        Wait.aSec(500); // Give some room for the bus to startup
-
-        // Register DesktopService
-        try {
-            Map<String, List<ServiceStatusObserver>> observers = new HashMap<>();
-            observers.put(DesktopService.class.getName(), Arrays.asList(serviceStatus -> uiServiceStatus = serviceStatus));
-            BusClient.registerService(DesktopService.class, properties, observers.get(DesktopService.class.getName()));
-        } catch (ServiceNotAccessibleException e) {
-            LOG.severe(e.getLocalizedMessage());
-        } catch (ServiceNotSupportedException e) {
-            LOG.severe(e.getLocalizedMessage());
+        while(!tcpBusClient.isInitiated()) {
+            Wait.aMs(500); // Wait for bus client to verify controller is responding
         }
 
         shutDownHandler = new Runnable() {
@@ -138,6 +136,9 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         stage.setMinHeight(MIN_WINDOW_HEIGHT);
         stage.getIcons().add(ImageUtil.getApplicationIconImage());
 
+        desktopBusClient = new DesktopBusClient(tcpBusClient);
+        desktopBusClient.start(properties);
+
         // make the UI visible
         if(!systemTrayInitialized)
             show();
@@ -157,7 +158,7 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
 //                });
 //            }, 200, TimeUnit.MILLISECONDS);
             shutDownRequested = true;
-            BusClient.shutdown(false);
+            tcpBusClient.shutdown();
             Platform.exit();
         }
     }
