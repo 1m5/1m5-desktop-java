@@ -50,6 +50,7 @@ public class DesktopBusClient implements Client {
 
     public DesktopBusClient(TCPBusClient tcpBusClient) {
         busClient = tcpBusClient;
+        busClient.setClient(this);
     }
 
     public static void startService(Class serviceClass) {
