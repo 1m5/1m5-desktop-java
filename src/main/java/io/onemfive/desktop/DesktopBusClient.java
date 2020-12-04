@@ -130,6 +130,7 @@ public class DesktopBusClient implements Client {
 
         // 1M5 Network State Update
         Envelope e1M5Status = Envelope.documentFactory();
+        e1M5Status.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequest1M5Status = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "1M5", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -150,6 +151,7 @@ public class DesktopBusClient implements Client {
 
         // TOR Network State Update
         Envelope eTorStatus = Envelope.documentFactory();
+        eTorStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestTorStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Tor", new Subscription() {
             @Override
             public void notifyOfEvent(Envelope e) {
@@ -170,6 +172,7 @@ public class DesktopBusClient implements Client {
 
         // I2P Network State Update
         Envelope eI2PStatus = Envelope.documentFactory();
+        eI2PStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestI2PStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "I2P", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -190,6 +193,7 @@ public class DesktopBusClient implements Client {
 
         // WiFi Direct Network State Update
         Envelope eWFDStatus = Envelope.documentFactory();
+        eWFDStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestWFDStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "WiFi", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -210,6 +214,7 @@ public class DesktopBusClient implements Client {
 
         // Bluetooth Network State Update
         Envelope eBTStatus = Envelope.documentFactory();
+        eBTStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestBTStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "BT", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -230,6 +235,7 @@ public class DesktopBusClient implements Client {
 
         // Satellite Network State Update
         Envelope eSatStatus = Envelope.documentFactory();
+        eSatStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestSatStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Sat", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -250,6 +256,7 @@ public class DesktopBusClient implements Client {
 
         // Full Spectrum Radio Network State Update
         Envelope eFSRStatus = Envelope.documentFactory();
+        eFSRStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestFSRStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Rad", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {
@@ -270,6 +277,7 @@ public class DesktopBusClient implements Client {
 
         // LiFi Network State Update
         Envelope eLFStatus = Envelope.documentFactory();
+        eLFStatus.setCommandPath(ControlCommand.Send.name());
         SubscriptionRequest subscriptionRequestLFStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "LiFi", new Subscription() {
                     @Override
                     public void notifyOfEvent(Envelope e) {

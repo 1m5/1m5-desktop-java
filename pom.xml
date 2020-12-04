@@ -73,7 +73,7 @@
 	<dependencies>
         <dependency>
             <groupId>onemfive</groupId>
-            <artifactId>cr</artifactId>
+            <artifactId>platform</artifactId>
             <version>0.6.5.251</version>
         </dependency>
         <dependency>
