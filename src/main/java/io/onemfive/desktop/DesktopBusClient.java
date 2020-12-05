@@ -121,7 +121,7 @@ public class DesktopBusClient implements Client {
     }
 
     public boolean start(Properties p) {
-
+        LOG.info("Starting Desktop Bus Client...");
         MVC.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
             LOG.info("Updating ManCon status...");
             HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
