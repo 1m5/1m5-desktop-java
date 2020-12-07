@@ -158,7 +158,7 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
 //                });
 //            }, 200, TimeUnit.MILLISECONDS);
             shutDownRequested = true;
-            tcpBusClient.shutdown();
+            tcpBusClient.shutdown(false);
             Platform.exit();
         }
     }

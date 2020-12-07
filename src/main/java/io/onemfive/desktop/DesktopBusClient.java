@@ -26,12 +26,13 @@ import ra.common.client.TCPBusClient;
 import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
 import ra.common.network.ControlCommand;
+import ra.common.network.Network;
 import ra.common.network.NetworkState;
+import ra.common.notification.ClientSubscription;
 import ra.common.notification.Subscription;
+import ra.common.notification.SubscriptionRequest;
 import ra.common.route.Route;
-import ra.i2p.I2PService;
 import ra.notification.NotificationService;
-import ra.notification.SubscriptionRequest;
 
 import java.util.List;
 import java.util.Properties;
@@ -128,174 +129,55 @@ public class DesktopBusClient implements Client {
             v.updateManConBox();
         }));
 
-        // 1M5 Network State Update
-        Envelope e1M5Status = Envelope.documentFactory();
-        e1M5Status.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequest1M5Status = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "1M5", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with 1M5 Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(IDNView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(IMSSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        e1M5Status.addData(SubscriptionRequest.class, subscriptionRequest1M5Status);
-        e1M5Status.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(e1M5Status);
-
-        // TOR Network State Update
-        Envelope eTorStatus = Envelope.documentFactory();
-        eTorStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestTorStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Tor", new Subscription() {
+        busClient.subscribe(new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, new ClientSubscription() {
             @Override
-            public void notifyOfEvent(Envelope e) {
+            public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
-                    LOG.info("Updating UI with TOR Network State...");
+                    LOG.info("Updating UI with Network State...");
                     EventMessage em = (EventMessage)e.getMessage();
                     NetworkState state = (NetworkState)em.getMessage();
-                    TopicListener listener = (TopicListener)MVC.loadView(TOROpsView.class, true);
-                    listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                    listener = (TopicListener)MVC.loadView(TORSensorSettingsView.class, true);
-                    listener.modelUpdated(NetworkState.class.getSimpleName(), state);
+                    switch(state.network) {
+                        case LiFi: {
+                            ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(LiFiSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case Tor: {
+                            ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(TORSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case I2P: {
+                            ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(I2PSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case Bluetooth: {
+                            ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(BluetoothSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case WiFi: {
+                            ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(WifiDirectSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case Satellite: {
+                            ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(SatelliteSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                        case FSRadio: {
+                            ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(FullSpectrumRadioSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            break;
+                        }
+                    }
                 });
             }
-        });
-        eTorStatus.addData(SubscriptionRequest.class, subscriptionRequestTorStatus);
-        eTorStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eTorStatus);
-
-        // I2P Network State Update
-        Envelope eI2PStatus = Envelope.documentFactory();
-        eI2PStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestI2PStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "I2P", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with I2P Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(I2POpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(I2PSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eI2PStatus.addData(SubscriptionRequest.class, subscriptionRequestI2PStatus);
-        eI2PStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eI2PStatus);
-
-        // WiFi Direct Network State Update
-        Envelope eWFDStatus = Envelope.documentFactory();
-        eWFDStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestWFDStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "WiFi", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with WiFi-Direct Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(WifiDirectOpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(WifiDirectSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eWFDStatus.addData(SubscriptionRequest.class, subscriptionRequestWFDStatus);
-        eWFDStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eWFDStatus);
-
-        // Bluetooth Network State Update
-        Envelope eBTStatus = Envelope.documentFactory();
-        eBTStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestBTStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "BT", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with Bluetooth Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(BluetoothOpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(BluetoothSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eBTStatus.addData(SubscriptionRequest.class, subscriptionRequestBTStatus);
-        eBTStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eBTStatus);
-
-        // Satellite Network State Update
-        Envelope eSatStatus = Envelope.documentFactory();
-        eSatStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestSatStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Sat", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with Satellite Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(SatelliteOpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(SatelliteSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eSatStatus.addData(SubscriptionRequest.class, subscriptionRequestSatStatus);
-        eSatStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eSatStatus);
-
-        // Full Spectrum Radio Network State Update
-        Envelope eFSRStatus = Envelope.documentFactory();
-        eFSRStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestFSRStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "Rad", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with Full Spectrum Radio Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(FullSpectrumRadioOpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(FullSpectrumRadioSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eFSRStatus.addData(SubscriptionRequest.class, subscriptionRequestFSRStatus);
-        eFSRStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eFSRStatus);
-
-        // LiFi Network State Update
-        Envelope eLFStatus = Envelope.documentFactory();
-        eLFStatus.setCommandPath(ControlCommand.Send.name());
-        SubscriptionRequest subscriptionRequestLFStatus = new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, "LiFi", new Subscription() {
-                    @Override
-                    public void notifyOfEvent(Envelope e) {
-                        javafx.application.Platform.runLater(() -> {
-                            LOG.info("Updating UI with LiFi Network State...");
-                            EventMessage em = (EventMessage)e.getMessage();
-                            NetworkState state = (NetworkState)em.getMessage();
-                            TopicListener listener = (TopicListener)MVC.loadView(LiFiOpsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                            listener = (TopicListener)MVC.loadView(LiFiSensorSettingsView.class, true);
-                            listener.modelUpdated(NetworkState.class.getSimpleName(), state);
-                        });
-                    }
-                });
-        eLFStatus.addData(SubscriptionRequest.class, subscriptionRequestLFStatus);
-        eLFStatus.addRoute(NotificationService.class, NotificationService.OPERATION_SUBSCRIBE);
-        busClient.sendMessage(eLFStatus);
+        }));
 
         return true;
     }
+
 }
