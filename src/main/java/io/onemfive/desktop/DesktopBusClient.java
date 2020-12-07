@@ -19,6 +19,7 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WifiDirectSensorSettingsView;
+import org.neo4j.cypher.internal.v3_4.functions.E;
 import ra.common.Client;
 import ra.common.DLC;
 import ra.common.Envelope;
@@ -33,6 +34,7 @@ import ra.common.notification.Subscription;
 import ra.common.notification.SubscriptionRequest;
 import ra.common.route.Route;
 import ra.notification.NotificationService;
+import ra.util.Wait;
 
 import java.util.List;
 import java.util.Properties;
@@ -52,6 +54,13 @@ public class DesktopBusClient implements Client {
     public DesktopBusClient(TCPBusClient tcpBusClient) {
         busClient = tcpBusClient;
         busClient.setClient(this);
+    }
+
+    public static void registerService(Class serviceClass) {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.RegisterService.name());
+        e.addNVP("serviceClass", serviceClass.getName());
+        deliver(e);
     }
 
     public static void startService(Class serviceClass) {
@@ -129,6 +138,13 @@ public class DesktopBusClient implements Client {
             v.updateManConBox();
         }));
 
+        // Register Desired Services with Service Bus
+        registerService(NotificationService.class);
+        Wait.aMs(100);
+        // Start Services
+        startService(NotificationService.class);
+        // Wait a bit to ensure services started
+        Wait.aSec(1);
         busClient.subscribe(new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, new ClientSubscription() {
             @Override
             public void reply(Envelope e) {

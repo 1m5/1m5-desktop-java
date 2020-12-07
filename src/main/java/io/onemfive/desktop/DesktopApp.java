@@ -95,6 +95,10 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         Preferences.useAnimations = true;
         Preferences.cssTheme = CSS_THEME_LIGHT;
         Preferences.locale = Locale.US;
+
+        // Initialize Desktop Bus Client
+        desktopBusClient = new DesktopBusClient(tcpBusClient);
+        desktopBusClient.start(properties);
     }
 
     @Override
@@ -135,9 +139,6 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         stage.setMinWidth(MIN_WINDOW_WIDTH);
         stage.setMinHeight(MIN_WINDOW_HEIGHT);
         stage.getIcons().add(ImageUtil.getApplicationIconImage());
-
-        desktopBusClient = new DesktopBusClient(tcpBusClient);
-        desktopBusClient.start(properties);
 
         // make the UI visible
         if(!systemTrayInitialized)
