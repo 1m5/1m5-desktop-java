@@ -48,6 +48,7 @@ public class DesktopBusClient implements Client {
 
     public static final String OPERATION_UPDATE_ACTIVE_IDENTITY = "UPDATE_ACTIVE_IDENTITY";
     public static final String OPERATION_UPDATE_IDENTITIES = "UPDATE_IDENTITIES";
+    public static final String OPERATION_UPDATE_SERVICE_STATE = "UPDATE_SERVICE_STATE";
 
     private static TCPBusClient busClient;
 
@@ -120,6 +121,10 @@ public class DesktopBusClient implements Client {
                 }
                 break;
             }
+            case OPERATION_UPDATE_SERVICE_STATE: {
+                LOG.warning("Update service state handling not yet supported in UI.");
+                break;
+            }
             case OPERATION_NOTIFY_UI: {
                 LOG.warning("UI Notifications not yet implemented.");
                 break;
@@ -138,13 +143,6 @@ public class DesktopBusClient implements Client {
             v.updateManConBox();
         }));
 
-        // Register Desired Services with Service Bus
-        registerService(NotificationService.class);
-        Wait.aMs(100);
-        // Start Services
-        startService(NotificationService.class);
-        // Wait a bit to ensure services started
-        Wait.aSec(1);
         busClient.subscribe(new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, new ClientSubscription() {
             @Override
             public void reply(Envelope e) {
