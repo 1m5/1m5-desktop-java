@@ -27,7 +27,7 @@ public class I2POpsView extends ActivatableView implements TopicListener {
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
@@ -156,7 +156,7 @@ public class I2POpsView extends ActivatableView implements TopicListener {
     }
 
     private void updateComponents() {
-        if(networkStatus ==NetworkStatus.NOT_INSTALLED
+        if(networkStatus ==NetworkStatus.CLOSED
                 || networkStatus ==NetworkStatus.PORT_CONFLICT
                 || serviceStatus==ServiceStatus.SHUTDOWN
                 || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {

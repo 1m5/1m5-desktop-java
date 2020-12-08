@@ -1,4 +1,4 @@
-package io.onemfive.desktop.views.ops.network.idn;
+package io.onemfive.desktop.views.ops.network.ims;
 
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
@@ -15,12 +15,12 @@ import ra.util.StringUtil;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class IDNView extends ActivatableView implements TopicListener {
+public class IMSView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private String serviceStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
@@ -32,7 +32,7 @@ public class IDNView extends ActivatableView implements TopicListener {
     private TextField imsFingerprintTextField;
     private TextArea imsAddressTextField;
 
-    public IDNView() {
+    public IMSView() {
         super();
     }
 

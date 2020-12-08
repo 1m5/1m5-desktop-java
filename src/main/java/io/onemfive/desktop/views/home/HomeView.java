@@ -487,13 +487,12 @@ public class HomeView extends InitializableView {
 //        setBottomAnchor(blockchainSyncBox, 7d);
 
         // version
-        String version = System.getProperty("1m5.version");
         versionLabel = new AutoTooltipLabel();
         versionLabel.setId("footer-pane");
         versionLabel.setTextAlignment(TextAlignment.CENTER);
         versionLabel.setAlignment(Pos.BASELINE_RIGHT);
         versionLabel.setPadding(new Insets(0,0,0,10));
-        versionLabel.setText("v" + version);
+        versionLabel.setText("0.6.5");
 //        rootContainer.widthProperty().addListener((ov, oldValue, newValue) -> {
 //            versionLabel.setLayoutX(((double) newValue - versionLabel.getWidth()) / 2);
 //        });

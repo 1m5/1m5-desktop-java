@@ -20,7 +20,7 @@ public class WifiDirectOpsView extends ActivatableView implements TopicListener 
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus sensorStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus sensorStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private String sensorStatusField = StringUtil.capitalize(sensorStatus.name().toLowerCase().replace('_', ' '));

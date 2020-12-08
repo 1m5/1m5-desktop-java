@@ -19,7 +19,7 @@ public class FullSpectrumRadioOpsView extends ActivatableView implements TopicLi
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private String networkStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField networkStatusTextField;
 

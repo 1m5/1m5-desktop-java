@@ -22,7 +22,7 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
     private GridPane pane;
     private int gridRow = 0;
 
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField sensorStatusTextField;
 

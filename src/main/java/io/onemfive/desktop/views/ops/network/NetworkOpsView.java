@@ -9,7 +9,7 @@ import io.onemfive.desktop.views.ops.OpsView;
 import io.onemfive.desktop.views.ops.network.bluetooth.BluetoothOpsView;
 import io.onemfive.desktop.views.ops.network.fullspectrum.FullSpectrumRadioOpsView;
 import io.onemfive.desktop.views.ops.network.i2p.I2POpsView;
-import io.onemfive.desktop.views.ops.network.idn.IDNView;
+import io.onemfive.desktop.views.ops.network.ims.IMSView;
 import io.onemfive.desktop.views.ops.network.lifi.LiFiOpsView;
 import io.onemfive.desktop.views.ops.network.satellite.SatelliteOpsView;
 import io.onemfive.desktop.views.ops.network.tor.TOROpsView;
@@ -50,7 +50,7 @@ public class NetworkOpsView extends ActivatableView {
 
         tabChangeListener = (ov, oldValue, newValue) -> {
             if (newValue == imsTab)
-                MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, IDNView.class);
+                MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, IMSView.class);
             else if (newValue == torTab)
                 MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, TOROpsView.class);
             else if (newValue == i2pTab)
@@ -77,7 +77,7 @@ public class NetworkOpsView extends ActivatableView {
 
         Tab selectedItem = pane.getSelectionModel().getSelectedItem();
         if (selectedItem == imsTab)
-            MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, IDNView.class);
+            MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, IMSView.class);
         else if (selectedItem == torTab)
             MVC.navigation.navigateTo(HomeView.class, OpsView.class, NetworkOpsView.class, TOROpsView.class);
         else if (selectedItem == i2pTab)
@@ -104,7 +104,7 @@ public class NetworkOpsView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof IDNView) tab = imsTab;
+        if (view instanceof IMSView) tab = imsTab;
         else if (view instanceof TOROpsView) tab = torTab;
         else if (view instanceof I2POpsView) tab = i2pTab;
         else if (view instanceof WifiDirectOpsView) tab = wifiDirectTab;

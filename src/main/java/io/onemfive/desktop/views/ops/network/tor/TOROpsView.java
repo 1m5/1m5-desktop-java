@@ -35,14 +35,8 @@ public class TOROpsView extends ActivatableView implements TopicListener {
     // Considering TOR Ops is watching both a client and server service,
     // both client and hidden service status' are taken into account
     // to determine overall status
-    private NetworkStatus networkStatus = NetworkStatus.NOT_INSTALLED;
+    private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
-
-    private NetworkStatus clientNetworkStatus = NetworkStatus.NOT_INSTALLED;
-    private ServiceStatus clientServiceStatus = ServiceStatus.NOT_INITIALIZED;
-
-    private NetworkStatus hsNetworkStatus = NetworkStatus.NOT_INSTALLED;
-    private ServiceStatus hsServiceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
     private TextField sensorStatusTextField;
@@ -177,7 +171,7 @@ public class TOROpsView extends ActivatableView implements TopicListener {
     }
 
     private void updateComponents() {
-        if(networkStatus ==NetworkStatus.NOT_INSTALLED
+        if(networkStatus ==NetworkStatus.CLOSED
                 || networkStatus ==NetworkStatus.PORT_CONFLICT
                 || serviceStatus==ServiceStatus.SHUTDOWN
                 || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {
