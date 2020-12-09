@@ -25,8 +25,7 @@ import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
 import ra.common.network.ControlCommand;
 import ra.common.network.NetworkState;
-import ra.common.notification.ClientSubscription;
-import ra.common.notification.SubscriptionRequest;
+import ra.common.notification.Subscription;
 import ra.common.route.Route;
 
 import java.util.List;
@@ -136,12 +135,13 @@ public class DesktopBusClient implements Client {
             v.updateManConBox();
         }));
 
-        busClient.subscribe(new SubscriptionRequest(EventMessage.Type.NETWORK_STATE_UPDATE, new ClientSubscription() {
+        busClient.subscribe(new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
                     LOG.info("Updating UI with Network State...");
                     EventMessage em = (EventMessage)e.getMessage();
+                    // TODO: NetworkState is not serializing
                     NetworkState state = (NetworkState)em.getMessage();
                     switch(state.network) {
                         case LiFi: {
