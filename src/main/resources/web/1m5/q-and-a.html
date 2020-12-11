@@ -65,8 +65,7 @@
 
           <nav class="nav nav-navbar">
             <a class="nav-link" href="./#mission">Mission</a>
-            <a class="nav-link" href="./#features">OS</a>
-            <a class="nav-link" href="./#implementations">Solutions</a>
+            <a class="nav-link" href="./#features">Features</a>
             <a class="nav-link" href="./#roadmap">Progress</a>
             <a class="nav-link" href="collaborate.html">Collaborate</a>
             <a class="nav-link" href="q-and-a.html">Q&A</a>
@@ -103,17 +102,21 @@
               <h5 class="mt-4" style="color: #8072ba">Is this application decentralized?</h5>
               <p>Yes, it is fully decentralized in that it relies on no servers - all communications are peer-to-peer, is not backed by any organization, is not registered under any state, and is fully in the public domain of all sentient beings. It is developed by a small group of developers and will never be a DAO (Decentralized Autonomous Organization) as voting is considered in violation of the NAP and large organizations largely require voting or hierarchies, yet the codebase is fully open and therefore can be easily forked and thus still decentralized.</p>
               <h5 class="mt-4" style="color: #8072ba">How does it maintain my privacy?</h5>
-              <p>It uses TOR and I2P when communicating over the internet to ensure the destination IP addresses for requests are not associated with your IP address and encrypts all data with keys you generate and control maintained on your drives, never sent out. All code is fully open-sourced so that you or someone you trust can verify no back-doors were added. You have full control over the sensors and can shut them down at any time if you believe they shouldn't be in use. If you're in a known jurisdiction not recognizing freedom of speech, I2P will not publish your IP address to its shared database (netDb - shared among many peers) thus keeping your use of I2P private - can be overridden manually either way.</p>
+              <p>It uses TOR and I2P when communicating over the internet to ensure the destination IP addresses for requests are not associated with your IP address and encrypts all data with keys you generate and control maintained on your drives, never sent out. All code is fully open-sourced so that you or someone you trust can verify no back-doors were added. You have full control over the services (including network services) and can shut them down at any time if you believe they shouldn't be in use. If you're in a known jurisdiction not recognizing freedom of speech, I2P will not publish your IP address to its shared database (netDb - shared among many peers) thus keeping your use of I2P private - can be overridden manually either way.</p>
               <h5 class="mt-4" style="color: #8072ba">How does it help me resist being censored?</h5>
               <p>When using the app, if during its use of TOR it gets blocked, it will use I2P to route around the block. Same for I2P, it will use TOR. If both are blocked, it will try to use Bluetooth to route around the blocks. With no userbase, Bluetooth is not yet a viable alternative unless the people within range of your bluetooth are using 1M5 and allow you to connect. Work is progressing on supporting LiFi (Light Fidelity) and the full radio spectrum to communciate over light and long distances with radio to get around internet censorship.</p>
               <h5 class="mt-4" style="color: #8072ba">How can I use this app?</h5>
-              <p>Currently there are no installers so you must download the project from GitHub, build, and follow the directions on how to start it. It currently is an alpha version in constant flux so in no way ready for real-world usage. It's best started up in an IDE like IntelliJ and ran as a demo for input into development. It is expected to be ready for real-world testing by version 0.7.0 which is expected to be released mid-2020. Eventually it is expected to be embedded in an operating system when implemented with Rust.</p>
+              <p>Currently there are no installers so you must download the project from GitHub, build, and follow the directions on how to start it. It currently is an alpha version in constant flux so in no way ready for real-world usage. It's best started up in an IDE like IntelliJ and ran as a demo for input into development. It is expected to be ready for real-world testing by version 0.7.0. Eventually it is expected to be embedded in an operating system when implemented with Rust.</p>
               <h5 class="mt-4" style="color: #8072ba">Who are the primary users targeted?</h5>
               <p>All whom take their privacy seriously - this should be everyone.</p>
               <h5 class="mt-4" style="color: #8072ba">Will people be able to use this for unethical purposes?</h5>
               <p>This is a tool like any tool and can be used ethically or unethically like any tool.</p>
               <h5 class="mt-4" style="color: #8072ba">How much overhead comes with using many networks simultaneously?</h5>
-              <p>This can depend on how many of the sensors are available and activated. Early versions are just using TOR, I2P, and Bluetooth. In these versions, TOR is primarily used for browsing and I2P for messaging. When TOR is blocked, I2P is used for relaying and vice-versa. When both are blocked, Bluetooth is attempted for relay. This requires very little overhead. Later versions with LiFi will see similar little overhead comparable to Bluetooth. It's not until we reach using a Full-Spectrum radio where overhead can go up, especially on battery usage for transmitting over longer distances. In these uses, additional power will likely be needed and will be addressed through recommended practices and additional hardware. If all sensors are running while integrating with Bitcoin, Monero, and Lightning local nodes, then we can expect a fair amount of overhead although this setup would be more likely on a desktop or powerful Raspberry Pi or Pi Farm. Hardware recommendations for each configuration will be provided.</p>
+              <p>This will depend on what and how many services are activated. Early versions are just using TOR, I2P, and Bluetooth Network Services in support of more application-based services. In these versions, TOR is primarily used for browsing and I2P for messaging. When TOR is blocked, I2P is used for relaying and vice-versa. When both are blocked, Bluetooth is attempted for relay. This requires very little overhead. Later versions with LiFi will see similar little overhead comparable to Bluetooth. It's not until we reach using a Full-Spectrum radio where overhead can go up, especially on battery usage for transmitting over longer distances. In these uses, additional power will likely be needed and will be addressed through recommended practices and additional hardware. If all sensors are running while integrating with Bitcoin, Monero, and Lightning local nodes, then we can expect a fair amount of overhead although this setup would be more likely on a desktop or powerful Raspberry Pi or Pi Farm. Hardware recommendations for each configuration will be provided.</p>
+              <h5 class="mt-4" style="color: #8072ba">In the beginning 1M5 will be a small network. Does this make it more vulnerable starting out?</h5>
+              <p>1M5 relies on other privacy networks for routing so it will be as private as those networks from day one. Those networks are TOR and I2P primarily which are the leading networks to maintain your privacy.</p>
+              <h5 class="mt-4" style="color: #8072ba">Can the developers of 1M5 censor the flow of information?</h5>
+              <p>1M5 developers just put code out in the public. Other developers can embed 1M5 in their products. 1M5 is not operated in any means by the developers creating the 1M5 software so no, it's not possible. Even if they did, the software is purely peer-to-peer meaning that any attempt to monitor the flow of information and/or attempt to divert or block information in the codebase would be obvious as it is 100% open source and visible to all.</p>
             </div>
           </div>
           <h4 id="gifters">Gifters</h4>
@@ -122,7 +125,7 @@
               <h5 class="mt-4" style="color: #8072ba">How will the gift money be used?</h5>
               <p>Primarily to fund development and support of the platform but also includes web site hosting fees and other fees associated with supporting the mission. The mission's <a href="public-roadmap.html">roadmap</a> lays out the work to be accomplished.</p>
               <h5 class="mt-4" style="color: #8072ba">What form of money do you accept?</h5>
-              <p>Bitcoin (BTC) and Monero (XMR). If interested, send a request to <a href="mailto:info@1m5.io">info@1m5.io</a> with GIFT in subject line and whether you wish to give BTC or XMR and an address will be generated and returned. Use the fingerprint below to verify the public key is valid if possible. It's recommended to use <a href="https://bisq.network" target="_blank">Bisq.network</a> or <a href="https://samouraiwallet.com/" target="_blank">Samourai</a> wallet as they both use TOR. In the future, it is planned to support gifting directly in the 1M5 dapp.</p>
+              <p>Bitcoin (BTC). If interested, send a request to <a href="mailto:info@1m5.io">info@1m5.io</a> with GIFT in subject line. An address will be generated and returned. Use the fingerprint below to verify the public key is valid if possible. It's recommended to use <a href="https://bisq.network" target="_blank">Bisq.network</a> or <a href="https://samouraiwallet.com/" target="_blank">Samourai</a> wallet as they both use TOR. In the future, it is planned to support gifting directly in the 1M5 dapp.</p>
             </div>
           </div>
           <h4 id="developers">Developers</h4>
@@ -156,12 +159,13 @@
                 <li>Open source language from the beginning</li>
                 <li>Don't expect to need a large number of Rust developers ever</li>
                 <li>Can integrate with I2P via SOCKS, no need to use Java</li>
-                <li>Consider Rust the replacement of C, C++, C#, Go, Java, and Python (when coupled with WebAssembly)</li>
+                <li>Rust version of I2P was started</li>
+                <li>Consider Rust the replacement of C, C++, C#, Go, Java, and Python</li>
               </ul>
               <h5 class="mt-4" style="color: #8072ba">Why a custom SOA/EDA foundation?</h5>
               <p>Enterprise Service Buses (ESB) with affiliated Message-Oriented Middleware (MOM) are quite heavy in implementation and it's desired to keep the codebase as small as possible as it is desired to support DoT (Decentralization of Things) devices. Spring's module + integration support does not fully satisfy the requirements and brings much more than desired. The move to Rust solidified the need for a custom platform as none exist.</p>
               <h5 class="mt-4" style="color: #8072ba">Where are the Spring and Google libraries in the Java version?</h5>
-              <p>To keep the codebase small, Spring, Google, and Apache libraries were avoided.</p>
+              <p>To keep the codebase small with less attack surface, Spring, Google, and Apache libraries were avoided; minimal 3rd party libraries used.</p>
               <h5 class="mt-4" style="color: #8072ba">Why is routing so confusing?</h5>
               <p>Services are completely decoupled so that they can be orchestrated dynamically during real-time operations. This is accomplished using a dynamic routing stack contained in the envelope that is passed around. This is more complex than just calling a method of an object yet allows great flexibility in execution while virtually eliminating interface breakage down to data payload breaks - each service is responsible for handling what data comes in and versioning. When making a request for a service, the operation name, the payload expected by the service, and the results expected from the service need to be known prior to making the call. This will come with a future API to simplify many common calls.</p>
               <h5 class="mt-4" style="color: #8072ba">Codebase doesn't use advanced techniques. Is this old code?</h5>
@@ -230,7 +234,6 @@
 
           <div class="col-md-6 col-xl-4">
             <img src="assets/img/logo-dark.png" alt="logo" class="footerlogo">
-            <p>© Unlicensed: All software is placed in the global public domain under the <a rel="license" class="license" target="_blank" href="https://unlicense.org/">Unlicense</a> opensource license.</p>
             <!--              <form class="input-round justify-content-center justify-content-lg-end" action="https://1m5.us20.list-manage.com/subscribe/post?u=9dfa17398d627590f884d3652&amp;id=5f35884878" method="post" target="_blank">-->
             <!--                <div class="input-group">-->
             <!--                  <div class="input-group-prepend">-->

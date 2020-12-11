@@ -65,8 +65,7 @@
 
           <nav class="nav nav-navbar">
             <a class="nav-link" href="./#mission">Mission</a>
-            <a class="nav-link" href="./#features">OS</a>
-            <a class="nav-link" href="./#implementations">Solutions</a>
+            <a class="nav-link" href="./#features">Features</a>
             <a class="nav-link" href="./#roadmap">Progress</a>
             <a class="nav-link" href="collaborate.html">Collaborate</a>
             <a class="nav-link" href="q-and-a.html">Q&A</a>
@@ -118,13 +117,24 @@
                 <li>Two PCs each with TOR installed.</li>
                 <li>Raspberry Pi can not be used with the desktop version (only headless versions - which doesn't satisfy the requirements for this demo).</li>
               </ul>
-              <p>Installation</p>
+              <p>Installation (Ubuntu)</p>
               <ol>
-                <li>**Ensure you do not have I2P running on your machine**</li>
                 <li>Both machines follow these directions</li>
                 <li>Make sure you have internet access - cellular or WiFi</li>
-                <li>Install and start TOR</li>
-                <li>Install and start 1M5 Desktop</li>
+                <li>Install and start TOR:<br/>
+                  <code>
+                    $ sudo apt-get update<br/>
+                    $ sudo apt-get install tor<br/>
+                    $ tor
+                  </code>
+                </li>
+                <li>Install and start 1M5 Desktop (Not yet available)<br/>
+                  <code>
+                    $ sudo add-apt-repository ppa:objectorange/1m5<br/>
+                    $ sudo apt-get install 1m5-desktop<br/>
+                    $ 1m5
+                  </code>
+                </li>
                 <li>Give it about 10-20 minutes the first time started for I2P to build up its network. After that, fresh starts need not wait.</li>
               </ol>
               <p>Setup</p>
