@@ -59,11 +59,11 @@ public class I2POpsView extends ActivatableView implements TopicListener {
 
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
-        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.networkControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
-        powerButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.sensorPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        powerButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.networkPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
         hardStop = addCheckBox(pane, ++gridRow, Resources.get("ops.network.hardStop"));
 
         TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);

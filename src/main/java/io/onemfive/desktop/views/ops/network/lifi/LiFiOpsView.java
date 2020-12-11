@@ -40,7 +40,7 @@ public class LiFiOpsView extends ActivatableView implements TopicListener {
 
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        networkStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), networkStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        networkStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), networkStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
         TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);

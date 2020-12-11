@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.ops.network.bluetooth;
 
-import io.onemfive.desktop.MVC;
+import io.onemfive.desktop.DesktopBusClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -10,8 +10,10 @@ import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
+import ra.bluetooth.BluetoothService;
 import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
+import ra.common.service.ServiceStatus;
 import ra.util.Resources;
 import ra.util.StringUtil;
 
@@ -22,11 +24,13 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
     private GridPane pane;
     private int gridRow = 0;
 
+    private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
     private NetworkStatus networkStatus = NetworkStatus.CLOSED;
-    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
-    private TextField sensorStatusTextField;
+    private String networkStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
+    private TextField networkStatusTextField;
 
-    private ToggleButton discoverButton;
+    private ToggleButton powerButton;
+//    private ToggleButton discoverButton;
 
     private String friendlyName = Resources.get("ops.network.notKnownYet");
     private String address = Resources.get("ops.network.notKnownYet");
@@ -44,11 +48,12 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
 
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        networkStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), networkStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
-        TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.sensorControls"),Layout.FIRST_ROW_DISTANCE);
-        GridPane.setColumnSpan(sensorPower, 1);
-        discoverButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.bluetooth.discoverButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        TitledGroupBg networkControls = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.networkControls"),Layout.FIRST_ROW_DISTANCE);
+        GridPane.setColumnSpan(networkControls, 1);
+        powerButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.networkPowerButton"), Layout.TWICE_FIRST_ROW_DISTANCE);
+//        discoverButton = addSlideToggleButton(pane, ++gridRow, Resources.get("ops.network.networkDiscoverButton"));
 
         TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.localNode"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);
@@ -60,23 +65,24 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
 
     @Override
     protected void activate() {
-        discoverButton.setOnAction(new EventHandler<ActionEvent>() {
+        updateComponents();
+        powerButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                LOG.info("powerButton=" + discoverButton.isSelected());
-                if (discoverButton.isSelected()) {
-//                            DesktopBusClient.startService(BluetoothService.class);
+                LOG.info("powerButton=" + powerButton.isSelected());
+                if (powerButton.isSelected()) {
+                    DesktopBusClient.startService(BluetoothService.class);
                 } else {
-//                            DesktopBusClient.shutdownService(BluetoothService.class, true);
+                    DesktopBusClient.shutdownService(BluetoothService.class, true);
                 }
             }
         });
-        discoverButton.disableProperty().setValue(true);
+        powerButton.disableProperty().setValue(true);
     }
 
     @Override
     protected void deactivate() {
-        discoverButton.setOnAction(null);
+        powerButton.setOnAction(null);
     }
 
     @Override
@@ -86,8 +92,8 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
             NetworkState networkState = (NetworkState)object;
             if(this.networkStatus != networkState.networkStatus) {
                 this.networkStatus = networkState.networkStatus;
-                if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
+                if(networkStatusField != null) {
+                    networkStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
             if(networkStatus == NetworkStatus.CONNECTING
@@ -102,15 +108,45 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
                         addressTextField.setText(address);
                     }
                 }
-                discoverButton.disableProperty().setValue(false);
+                powerButton.disableProperty().setValue(false);
             } else if(networkStatus == NetworkStatus.WARMUP
                     || networkStatus == NetworkStatus.WAITING) {
-                discoverButton.disableProperty().setValue(false);
+                powerButton.disableProperty().setValue(false);
             } else {
-                discoverButton.disableProperty().setValue(true);
+                powerButton.disableProperty().setValue(true);
             }
+            updateComponents();
         } else {
             LOG.warning("Received unknown model update with name: "+name);
+        }
+    }
+
+    private void updateComponents() {
+        if(networkStatus ==NetworkStatus.CLOSED
+                || serviceStatus== ServiceStatus.SHUTDOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {
+            // Power is off and able to turn it on
+            powerButton.setSelected(false);
+            powerButton.disableProperty().setValue(false);
+        } else if(networkStatus ==NetworkStatus.WARMUP
+                || networkStatus ==NetworkStatus.WAITING) {
+            // Power is on, but not yet able to turn it off - starting up
+            powerButton.setSelected(true);
+            powerButton.disableProperty().setValue(true);
+        } else if(serviceStatus==ServiceStatus.SHUTTING_DOWN
+                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTTING_DOWN
+                || networkStatus ==NetworkStatus.ERROR) {
+            // Power is off and unable to turn it on as it is shutting down
+            powerButton.setSelected(false);
+            powerButton.disableProperty().setValue(true);
+        } else if(networkStatus ==NetworkStatus.CONNECTING
+                || networkStatus ==NetworkStatus.CONNECTED
+                || networkStatus ==NetworkStatus.VERIFIED
+                || networkStatus ==NetworkStatus.HANGING
+                || networkStatus ==NetworkStatus.DISCONNECTED) {
+            // Power is on and shutting it down is available
+            powerButton.setSelected(true);
+            powerButton.disableProperty().setValue(false);
         }
     }
 

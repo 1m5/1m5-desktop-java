@@ -5,6 +5,7 @@ import io.onemfive.desktop.util.Timer;
 import io.onemfive.desktop.views.BaseView;
 import io.onemfive.desktop.views.View;
 import javafx.fxml.FXMLLoader;
+import onemfive.ManConStatus;
 import onemfive.ManConStatusListener;
 
 import java.io.IOException;
@@ -44,6 +45,12 @@ public class MVC {
 
     public static void registerManConStatusListener(ManConStatusListener listener) {
         listeners.add(listener);
+    }
+
+    public static void manConStatusUpdated() {
+        for(ManConStatusListener l : listeners) {
+            execute(l);
+        }
     }
 
     public static View loadView(Class<? extends View> viewClass) {

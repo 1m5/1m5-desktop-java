@@ -215,8 +215,10 @@ public class DesktopBusClient implements Client {
                     else if(privateInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.MEDIUM;
                     else ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NONE;
 
-                    HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
-                    v.updateManConBox();
+//                    HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
+//                    v.updateManConBox();
+
+                    MVC.manConStatusUpdated();
 
                 });
             }

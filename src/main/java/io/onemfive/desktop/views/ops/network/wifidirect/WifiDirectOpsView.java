@@ -43,7 +43,7 @@ public class WifiDirectOpsView extends ActivatableView implements TopicListener 
 
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.sensor"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
 
         TitledGroupBg localNodeGroup = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.localNode"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(localNodeGroup, 1);
