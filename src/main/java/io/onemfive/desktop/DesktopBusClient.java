@@ -210,8 +210,8 @@ public class DesktopBusClient implements Client {
                     boolean privateInternetAvailable = torNS!=null && torNS.networkStatus == NetworkStatus.CONNECTED
                             || i2pNS!=null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
 
-                    if(outernetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.EXTREME;
-                    else if(privateReroutedInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.HIGH;
+                    if(outernetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NEO;
+                    else if(privateReroutedInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.VERYHIGH;
                     else if(privateInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.MEDIUM;
                     else ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NONE;
 
