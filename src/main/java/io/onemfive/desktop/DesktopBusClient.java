@@ -17,6 +17,8 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORSensorSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WifiDirectSensorSettingsView;
+import onemfive.ManCon;
+import onemfive.ManConStatus;
 import ra.common.Client;
 import ra.common.DLC;
 import ra.common.Envelope;
@@ -24,11 +26,15 @@ import ra.common.client.TCPBusClient;
 import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
 import ra.common.network.ControlCommand;
+import ra.common.network.Network;
 import ra.common.network.NetworkState;
+import ra.common.network.NetworkStatus;
 import ra.common.notification.Subscription;
 import ra.common.route.Route;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -41,6 +47,8 @@ public class DesktopBusClient implements Client {
     public static final String OPERATION_UPDATE_ACTIVE_IDENTITY = "UPDATE_ACTIVE_IDENTITY";
     public static final String OPERATION_UPDATE_IDENTITIES = "UPDATE_IDENTITIES";
     public static final String OPERATION_UPDATE_SERVICE_STATE = "UPDATE_SERVICE_STATE";
+
+    private final Map<String,NetworkState> networkStates = new HashMap<>();
 
     private static TCPBusClient busClient;
 
@@ -143,6 +151,7 @@ public class DesktopBusClient implements Client {
                     EventMessage em = (EventMessage)e.getMessage();
                     // TODO: NetworkState is not serializing
                     NetworkState state = (NetworkState)em.getMessage();
+                    networkStates.put(state.network.name(), state);
                     switch(state.network) {
                         case LiFi: {
                             ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
@@ -180,6 +189,35 @@ public class DesktopBusClient implements Client {
                             break;
                         }
                     }
+
+                    NetworkState torNS = networkStates.get(Network.Tor.name());
+                    NetworkState i2pNS = networkStates.get(Network.I2P.name());
+                    NetworkState btNS = networkStates.get(Network.Bluetooth.name());
+                    NetworkState wifiNS = networkStates.get(Network.WiFi.name());
+                    NetworkState satNS = networkStates.get(Network.Satellite.name());
+                    NetworkState fsRadNS = networkStates.get(Network.FSRadio.name());
+                    NetworkState lifiNS = networkStates.get(Network.LiFi.name());
+
+                    boolean outernetAvailable = btNS!=null && btNS.networkStatus == NetworkStatus.CONNECTED
+                            || wifiNS!=null && wifiNS.networkStatus == NetworkStatus.CONNECTED
+                            || satNS!=null && satNS.networkStatus == NetworkStatus.CONNECTED
+                            || fsRadNS!=null && fsRadNS.networkStatus == NetworkStatus.CONNECTED
+                            || lifiNS!=null && lifiNS.networkStatus == NetworkStatus.CONNECTED;
+
+                    boolean privateReroutedInternetAvailable = torNS!=null && torNS.networkStatus == NetworkStatus.CONNECTED
+                            && i2pNS!=null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
+
+                    boolean privateInternetAvailable = torNS!=null && torNS.networkStatus == NetworkStatus.CONNECTED
+                            || i2pNS!=null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
+
+                    if(outernetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.EXTREME;
+                    else if(privateReroutedInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.HIGH;
+                    else if(privateInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.MEDIUM;
+                    else ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NONE;
+
+                    HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
+                    v.updateManConBox();
+
                 });
             }
         }));
