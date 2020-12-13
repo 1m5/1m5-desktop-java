@@ -1,6 +1,8 @@
 .root {
     -ims-black: #191919;
     -ims-white: #f4f1ec;
+    -ims-gray-light: #aaaaaa;
+    -ims-gray-dark: #666666;
     -ims-purple-gray-light: #8072ba;
     -ims-purple-gray-dark: #7361bd;
 
@@ -13,9 +15,9 @@
     -ims-icon-red: #df1515;
     -ims-icon-gray: #708090;
 
-    -bs-color-primary: -ims-purple-gray-light;
-    -bs-color-primary-dark: -ims-purple-gray-dark;
-    -bs-text-color: -ims-black;
+    -bs-color-primary: -ims-gray-light;
+    -bs-color-primary-dark: -ims-gray-dark;
+    -bs-text-color: -ims-gray-dark;
     -bs-background-color: -ims-white;
     -bs-background-gray: #dddddd;
     -bs-content-background-gray: #f4f4f4;
@@ -58,11 +60,11 @@
     -bs-rd-green: #25B135;
     -bs-rd-green-dark: #3EA34A;
 
-    -bs-rd-nav-selected: -ims-purple-gray-dark;
+    -bs-rd-nav-selected: -ims-gray-dark;
     -bs-rd-nav-deselected: rgba(255, 255, 255, 0.59);
-    -bs-rd-nav-background: -ims-purple-gray-dark;
-    -bs-rd-nav-primary-background: -ims-purple-gray-light;
-    -bs-rd-nav-primary-border: -ims-purple-gray-light;
+    -bs-rd-nav-background: -ims-gray-dark;
+    -bs-rd-nav-primary-background: -ims-gray-light;
+    -bs-rd-nav-primary-border: -ims-gray-light;
     -bs-rd-nav-border: #535353;
     -bs-rd-nav-border-color: rgba(255, 255, 255, 0.31);
     -bs-rd-tab-border: #e2e0e0;
