@@ -1,14 +1,14 @@
-package io.onemfive.desktop.views.settings.services.monetary.komodo;
+package io.onemfive.desktop.views.settings.services.monetary.lightning;
 
 import io.onemfive.desktop.views.ActivatableView;
 import javafx.scene.layout.GridPane;
 
-public class KomodoSettingsView extends ActivatableView {
+public class LightningSettingsView extends ActivatableView {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public KomodoSettingsView() {
+    public LightningSettingsView() {
         super();
     }
 

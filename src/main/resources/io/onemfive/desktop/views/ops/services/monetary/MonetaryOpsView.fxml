@@ -7,13 +7,7 @@
             AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
             AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"
             xmlns:fx="http://javafx.com/fxml">
-
-    <Tab fx:id="komodoTab" closable="false">
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
-                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-    </Tab>
-    <Tab fx:id="moneroTab" closable="false">
+    <Tab fx:id="bisqTab" closable="false">
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
@@ -23,7 +17,12 @@
                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
     </Tab>
-    <Tab fx:id="dexTab" closable="false">
+    <Tab fx:id="lightningTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+    <Tab fx:id="moneroTab" closable="false">
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>

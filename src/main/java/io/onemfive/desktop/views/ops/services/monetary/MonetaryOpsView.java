@@ -7,9 +7,9 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.ops.OpsView;
 import io.onemfive.desktop.views.ops.services.ServicesOpsView;
-import io.onemfive.desktop.views.ops.services.monetary.dex.DEXOpsView;
+import io.onemfive.desktop.views.ops.services.monetary.bisq.BisqOpsView;
 import io.onemfive.desktop.views.ops.services.monetary.bitcoin.BitcoinOpsView;
-import io.onemfive.desktop.views.ops.services.monetary.komodo.KomodoOpsView;
+import io.onemfive.desktop.views.ops.services.monetary.lightning.LightningOpsView;
 import io.onemfive.desktop.views.ops.services.monetary.monero.MoneroOpsView;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -22,7 +22,7 @@ public class MonetaryOpsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab komodoTab, moneroTab, bitcoinTab, dexTab;
+    private Tab bitcoinTab, bisqTab, lightningTab, moneroTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -31,10 +31,10 @@ public class MonetaryOpsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        komodoTab.setText(Resources.get("ops.services.monetary.tab.komodo").toUpperCase());
-        moneroTab.setText(Resources.get("ops.services.monetary.tab.monero").toUpperCase());
         bitcoinTab.setText(Resources.get("ops.services.monetary.tab.bitcoin").toUpperCase());
-        dexTab.setText(Resources.get("ops.services.monetary.tab.dex").toUpperCase());
+        bisqTab.setText(Resources.get("ops.services.monetary.tab.bisq").toUpperCase());
+        lightningTab.setText(Resources.get("ops.services.monetary.tab.lightning").toUpperCase());
+        moneroTab.setText(Resources.get("ops.services.monetary.tab.monero").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 5 && viewPath.indexOf(MonetaryOpsView.class) == 3)
@@ -42,14 +42,14 @@ public class MonetaryOpsView extends ActivatableView {
         };
 
         tabChangeListener = (ov, oldValue, newValue) -> {
-            if (newValue == komodoTab)
-                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, KomodoOpsView.class);
+            if (newValue == bitcoinTab)
+                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BitcoinOpsView.class);
+            else if (newValue == bisqTab)
+                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BisqOpsView.class);
+            else if (newValue == lightningTab)
+                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, LightningOpsView.class);
             else if (newValue == moneroTab)
                 MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, MoneroOpsView.class);
-            else if (newValue == bitcoinTab)
-                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BitcoinOpsView.class);
-            else if (newValue == dexTab)
-                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, DEXOpsView.class);
         };
 
         LOG.info("Initialized.");
@@ -61,14 +61,14 @@ public class MonetaryOpsView extends ActivatableView {
         MVC.navigation.addListener(navigationListener);
 
         Tab selectedItem = pane.getSelectionModel().getSelectedItem();
-        if (selectedItem == komodoTab)
-            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, KomodoOpsView.class);
+        if (selectedItem == bitcoinTab)
+            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BitcoinOpsView.class);
+        else if (selectedItem == bisqTab)
+            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BisqOpsView.class);
+        else if (selectedItem == lightningTab)
+            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, LightningOpsView.class);
         else if (selectedItem == moneroTab)
             MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, MoneroOpsView.class);
-        else if (selectedItem == bitcoinTab)
-            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, BitcoinOpsView.class);
-        else if (selectedItem == dexTab)
-            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class, DEXOpsView.class);
     }
 
     @Override
@@ -81,10 +81,10 @@ public class MonetaryOpsView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof KomodoOpsView) tab = komodoTab;
+        if (view instanceof LightningOpsView) tab = lightningTab;
         else if (view instanceof MoneroOpsView) tab = moneroTab;
         else if (view instanceof BitcoinOpsView) tab = bitcoinTab;
-        else if (view instanceof DEXOpsView) tab = dexTab;
+        else if (view instanceof BisqOpsView) tab = bisqTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

@@ -1,14 +1,14 @@
-package io.onemfive.desktop.views.ops.services.monetary.dex;
+package io.onemfive.desktop.views.ops.services.monetary.bisq;
 
 import io.onemfive.desktop.views.ActivatableView;
 import javafx.scene.layout.GridPane;
 
-public class DEXOpsView extends ActivatableView {
+public class BisqOpsView extends ActivatableView {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public DEXOpsView() {
+    public BisqOpsView() {
         super();
     }
 

@@ -1,15 +1,14 @@
-package io.onemfive.desktop.views.settings.services.monetary.dex;
+package io.onemfive.desktop.views.ops.services.monetary.lightning;
 
 import io.onemfive.desktop.views.ActivatableView;
 import javafx.scene.layout.GridPane;
 
-
-public class DEXSettingsView extends ActivatableView {
+public class LightningOpsView extends ActivatableView {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public DEXSettingsView() {
+    public LightningOpsView() {
         super();
     }
 

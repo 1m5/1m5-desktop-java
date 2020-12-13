@@ -7,9 +7,9 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.settings.SettingsView;
 import io.onemfive.desktop.views.settings.services.ServicesSettingsView;
-import io.onemfive.desktop.views.settings.services.monetary.dex.DEXSettingsView;
+import io.onemfive.desktop.views.settings.services.monetary.bisq.BisqSettingsView;
 import io.onemfive.desktop.views.settings.services.monetary.bitcoin.BitcoinSettingsView;
-import io.onemfive.desktop.views.settings.services.monetary.komodo.KomodoSettingsView;
+import io.onemfive.desktop.views.settings.services.monetary.lightning.LightningSettingsView;
 import io.onemfive.desktop.views.settings.services.monetary.monero.MoneroSettingsView;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -22,7 +22,7 @@ public class MonetarySettingsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab komodoTab, moneroTab, bitcoinTab, dexTab;
+    private Tab lightningTab, moneroTab, bitcoinTab, bisqTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -31,10 +31,10 @@ public class MonetarySettingsView extends ActivatableView {
     public void initialize() {
         LOG.info("Initializing...");
         pane = (TabPane)root;
-        komodoTab.setText(Resources.get("settings.services.monetary.tab.komodo").toUpperCase());
+        lightningTab.setText(Resources.get("settings.services.monetary.tab.lightning").toUpperCase());
         moneroTab.setText(Resources.get("settings.services.monetary.tab.monero").toUpperCase());
         bitcoinTab.setText(Resources.get("settings.services.monetary.tab.bitcoin").toUpperCase());
-        dexTab.setText(Resources.get("settings.services.monetary.tab.dex").toUpperCase());
+        bisqTab.setText(Resources.get("settings.services.monetary.tab.bisq").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 5 && viewPath.indexOf(SettingsView.class) == 1)
@@ -42,14 +42,14 @@ public class MonetarySettingsView extends ActivatableView {
         };
 
         tabChangeListener = (ov, oldValue, newValue) -> {
-            if (newValue == komodoTab)
-                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, KomodoSettingsView.class);
+            if (newValue == lightningTab)
+                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, LightningSettingsView.class);
             else if (newValue == moneroTab)
                 MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, MoneroSettingsView.class);
             else if (newValue == bitcoinTab)
                 MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, BitcoinSettingsView.class);
-            else if (newValue == dexTab)
-                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, DEXSettingsView.class);
+            else if (newValue == bisqTab)
+                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, BisqSettingsView.class);
         };
 
         LOG.info("Initialized.");
@@ -61,14 +61,14 @@ public class MonetarySettingsView extends ActivatableView {
         MVC.navigation.addListener(navigationListener);
 
         Tab selectedItem = pane.getSelectionModel().getSelectedItem();
-        if (selectedItem == komodoTab)
-            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, KomodoSettingsView.class);
+        if (selectedItem == lightningTab)
+            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, LightningSettingsView.class);
         else if (selectedItem == moneroTab)
             MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, MoneroSettingsView.class);
         else if (selectedItem == bitcoinTab)
             MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, BitcoinSettingsView.class);
-        else if (selectedItem == dexTab)
-            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, DEXSettingsView.class);
+        else if (selectedItem == bisqTab)
+            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class, BisqSettingsView.class);
     }
 
     @Override
@@ -81,10 +81,10 @@ public class MonetarySettingsView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof KomodoSettingsView) tab = komodoTab;
+        if (view instanceof LightningSettingsView) tab = lightningTab;
         else if (view instanceof MoneroSettingsView) tab = moneroTab;
         else if (view instanceof BitcoinSettingsView) tab = bitcoinTab;
-        else if (view instanceof DEXSettingsView) tab = dexTab;
+        else if (view instanceof BisqSettingsView) tab = bisqTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

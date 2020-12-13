@@ -1,14 +1,15 @@
-package io.onemfive.desktop.views.ops.services.monetary.komodo;
+package io.onemfive.desktop.views.settings.services.monetary.bisq;
 
 import io.onemfive.desktop.views.ActivatableView;
 import javafx.scene.layout.GridPane;
 
-public class KomodoOpsView extends ActivatableView {
+
+public class BisqSettingsView extends ActivatableView {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public KomodoOpsView() {
+    public BisqSettingsView() {
         super();
     }
 
