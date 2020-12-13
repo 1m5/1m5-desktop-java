@@ -49,6 +49,8 @@ public class DesktopBusClient implements Client {
     public static final String OPERATION_UPDATE_SERVICE_STATE = "UPDATE_SERVICE_STATE";
 
     private final Map<String,NetworkState> networkStates = new HashMap<>();
+    private final Map<String,DID> localIdentities = new HashMap<>();
+    private DID activeIdentity;
 
     private static TCPBusClient busClient;
 
@@ -82,6 +84,10 @@ public class DesktopBusClient implements Client {
         deliver(e);
     }
 
+    /**
+     * Deliver Envelope to Bus as-is.
+     * @param e
+     */
     public static void deliver(Envelope e) {
         MVC.execute(new Runnable() {
             @Override

@@ -24,6 +24,8 @@ import java.util.Map;
 /**
  * Communities hard-capped to 150 people based on Dunbar's Number.
  * https://en.wikipedia.org/wiki/Dunbar%27s_number
+ * Multiple communities can be joined though and communities
+ * can organize into larger networks.
  */
 public class CommunityView extends ActivatableView {
 

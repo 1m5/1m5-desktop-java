@@ -59,6 +59,7 @@
     -bs-bg-green: #99ba9c;
     -bs-rd-green: #25B135;
     -bs-rd-green-dark: #3EA34A;
+    -bs-rd-white: -ims-white;
 
     -bs-rd-nav-selected: -ims-gray-dark;
     -bs-rd-nav-deselected: rgba(255, 255, 255, 0.59);
@@ -91,9 +92,9 @@
     -bs-text-color-transparent-dark: rgba(0, 0, 0, 0.54);
     -bs-text-color-transparent: rgba(0, 0, 0, 0.2);
     -bs-color-gray-line: #979797;
-    -bs-rd-separator:-ims-purple-gray-light;
+    -bs-rd-separator:-ims-gray-light;
 /*    -bs-rd-separator-dark: #d5e0d6; */
-    -bs-rd-separator-dark: -ims-purple-gray-dark;
+    -bs-rd-separator-dark: -ims-gray-dark;
     -bs-rd-error-red: #dd0000;
     -bs-rd-message-bubble: #0086c6;
     -bs-toggle-selected: #7b7b7b;
