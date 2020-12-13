@@ -15,13 +15,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.common.Envelope;
 import ra.common.identity.DID;
-import ra.i2p.I2PService;
 import ra.util.Resources;
 
 import java.util.List;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
-import static io.onemfive.desktop.util.FormBuilder.addCompactTopLabelTextField;
 
 public class SocialView extends ActivatableView implements TopicListener {
 
@@ -29,7 +27,6 @@ public class SocialView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
-
 
     private String contactAddress = Resources.get("communityView.social.contactAddress");
     private TextField addressTextField;
@@ -57,7 +54,7 @@ public class SocialView extends ActivatableView implements TopicListener {
 
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("communityView.social.messaging"));
         GridPane.setColumnSpan(statusGroup, 1);
-//        ++gridRow;
+
         addressTextField = addInputTextField(pane, ++gridRow, Resources.get("communityView.social.contactAddress"), Layout.TWICE_FIRST_ROW_DISTANCE);
         // TODO: Load past messages for last selected conversation
         messagesTextArea = addCompactTopLabelTextAreaWithText(pane, "", ++gridRow, Resources.get("communityView.social.messages"), true).second;
