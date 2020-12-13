@@ -75,9 +75,9 @@ public class BluetoothOpsView extends ActivatableView implements TopicListener {
                 } else {
                     DesktopBusClient.shutdownService(BluetoothService.class, true);
                 }
+                powerButton.disableProperty().setValue(true);
             }
         });
-        powerButton.disableProperty().setValue(true);
     }
 
     @Override
