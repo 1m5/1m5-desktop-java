@@ -122,7 +122,7 @@
 
 .jfx-button, .action-button {
     -fx-background-color: -bs-color-primary;
-    -fx-text-fill: -bs-text-color;
+    -fx-text-fill: -bs-rd-white;
     -fx-font-size: 0.923em;
     -fx-font-weight: normal;
     -fx-background-radius: 2px;

@@ -240,6 +240,24 @@ public class FormBuilder {
 
     public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
                                                                       int rowIndex,
+                                                                      int columnIndex,
+                                                                      String title,
+                                                                      String value,
+                                                                      double top) {
+        TextField textField = new JFXTextField(value);
+        textField.setEditable(false);
+        textField.setFocusTraversable(false);
+
+        final Tuple2<Label, VBox> topLabelWithVBox = addTopLabelWithVBox(gridPane, rowIndex, title, textField, top);
+
+        // TOD not 100% sure if that is a good idea....
+        //topLabelWithVBox.first.getStyleClass().add("jfx-text-field-top-label");
+
+        return new Tuple3<>(topLabelWithVBox.first, textField, topLabelWithVBox.second);
+    }
+
+    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
+                                                                      int rowIndex,
                                                                       String title,
                                                                       String value,
                                                                       double top) {
@@ -522,12 +540,15 @@ public class FormBuilder {
     }
 
     public static InputTextField addInputTextField(GridPane gridPane, int rowIndex, String title, double top) {
+        return addInputTextField(gridPane, rowIndex, 0, title, top);
+    }
 
+    public static InputTextField addInputTextField(GridPane gridPane, int rowIndex, int columnIndex, String title, double top) {
         InputTextField inputTextField = new InputTextField();
         inputTextField.setLabelFloat(true);
         inputTextField.setPromptText(title);
         GridPane.setRowIndex(inputTextField, rowIndex);
-        GridPane.setColumnIndex(inputTextField, 0);
+        GridPane.setColumnIndex(inputTextField, columnIndex);
         GridPane.setMargin(inputTextField, new Insets(top + Layout.FLOATING_LABEL_DISTANCE, 0, 0, 0));
         gridPane.getChildren().add(inputTextField);
 
@@ -839,11 +860,26 @@ public class FormBuilder {
         return addSlideToggleButton(gridPane, rowIndex, title, 0);
     }
 
+    public static ToggleButton addSlideToggleButton(GridPane gridPane, int rowIndex, int columnIndex, String title) {
+        return addSlideToggleButton(gridPane, rowIndex, columnIndex, title, 0);
+    }
+
     public static ToggleButton addSlideToggleButton(GridPane gridPane, int rowIndex, String title, double top) {
         ToggleButton toggleButton = new AutoTooltipSlideToggleButton();
         toggleButton.setText(title);
         GridPane.setRowIndex(toggleButton, rowIndex);
         GridPane.setColumnIndex(toggleButton, 0);
+        GridPane.setMargin(toggleButton, new Insets(top, 0, 0, 0));
+        gridPane.getChildren().add(toggleButton);
+
+        return toggleButton;
+    }
+
+    public static ToggleButton addSlideToggleButton(GridPane gridPane, int rowIndex, int columnIndex, String title, double top) {
+        ToggleButton toggleButton = new AutoTooltipSlideToggleButton();
+        toggleButton.setText(title);
+        GridPane.setRowIndex(toggleButton, rowIndex);
+        GridPane.setColumnIndex(toggleButton, columnIndex);
         GridPane.setMargin(toggleButton, new Insets(top, 0, 0, 0));
         gridPane.getChildren().add(toggleButton);
 
@@ -1400,11 +1436,23 @@ public class FormBuilder {
         return addPrimaryActionButton(gridPane, rowIndex, title, 15);
     }
 
+    public static Button addButton(GridPane gridPane, int rowIndex, int columnIndex, String title) {
+        return addButton(gridPane, rowIndex, columnIndex, title, 0, false);
+    }
+
     public static Button addButton(GridPane gridPane, int rowIndex, String title, double top) {
         return addButton(gridPane, rowIndex, title, top, false);
     }
 
+    public static Button addButton(GridPane gridPane, int rowIndex, int columnIndex, String title, double top) {
+        return addButton(gridPane, rowIndex, columnIndex, title, top, false);
+    }
+
     public static Button addButton(GridPane gridPane, int rowIndex, String title, double top, boolean isPrimaryAction) {
+        return addButton(gridPane, rowIndex, 0, title, top, isPrimaryAction);
+    }
+
+    public static Button addButton(GridPane gridPane, int rowIndex, int columnIndex, String title, double top, boolean isPrimaryAction) {
         Button button = new AutoTooltipButton(title);
         if (isPrimaryAction) {
             button.setDefaultButton(true);
@@ -1412,7 +1460,7 @@ public class FormBuilder {
         }
 
         GridPane.setRowIndex(button, rowIndex);
-        GridPane.setColumnIndex(button, 0);
+        GridPane.setColumnIndex(button, columnIndex);
         gridPane.getChildren().add(button);
         GridPane.setMargin(button, new Insets(top, 0, 0, 0));
         return button;
@@ -1591,6 +1639,24 @@ public class FormBuilder {
         ListView<T> listView = new ListView<>();
 
         final Tuple2<Label, VBox> topLabelWithVBox = addTopLabelWithVBox(gridPane, rowIndex, title, listView, top);
+        return new Tuple3<>(topLabelWithVBox.first, listView, topLabelWithVBox.second);
+    }
+
+    public static <T> Tuple3<Label, ListView<T>, VBox> addTopLabelListView(GridPane gridPane,
+                                                                           int rowIndex,
+                                                                           int columnIndex,
+                                                                           String title) {
+        return addTopLabelListView(gridPane, rowIndex, columnIndex, title, 0);
+    }
+
+    public static <T> Tuple3<Label, ListView<T>, VBox> addTopLabelListView(GridPane gridPane,
+                                                                           int rowIndex,
+                                                                           int columnIndex,
+                                                                           String title,
+                                                                           double top) {
+        ListView<T> listView = new ListView<>();
+
+        final Tuple2<Label, VBox> topLabelWithVBox = addTopLabelWithVBox(gridPane, rowIndex, columnIndex, title, listView, top);
         return new Tuple3<>(topLabelWithVBox.first, listView, topLabelWithVBox.second);
     }
 
