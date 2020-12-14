@@ -50,14 +50,17 @@ public class I2PNetworkSettingsView extends ActivatableView implements TopicList
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg seedsGroup = addTitledGroupBg(pane, gridRow, 3, Resources.get("settings.network.seedsManagement"));
-        GridPane.setColumnSpan(seedsGroup, 2);
+//        TitledGroupBg seedsGroup = addTitledGroupBg(pane, gridRow, 3, Resources.get("settings.network.seedsManagement"));
+//        GridPane.setColumnSpan(seedsGroup, 2);
+        TitledGroupBg seedsGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("settings.network.seedsManagement"));
+        GridPane.setColumnSpan(seedsGroup, 1);
+
         GridPane.setHalignment(seedsGroup, HPos.LEFT);
-        fingerprintTextField = addInputTextField(pane, ++gridRow, Resources.get("settings.network.i2p.fingerprint"), Layout.FIRST_ROW_DISTANCE);
-        addressTextField = addInputTextField(pane, ++gridRow, Resources.get("settings.network.i2p.address"));
-        addButton = addButton(pane, gridRow, 1, Resources.get("shared.add"));
+//        fingerprintTextField = addInputTextField(pane, ++gridRow, Resources.get("settings.network.i2p.fingerprint"), Layout.FIRST_ROW_DISTANCE);
+//        addressTextField = addInputTextField(pane, ++gridRow, Resources.get("settings.network.i2p.address"));
+//        addButton = addButton(pane, gridRow, 1, Resources.get("shared.add"));
         seedsListView = addTopLabelListView(pane, ++gridRow, Resources.get("settings.network.seeds")).second;
-        removeButton = addButton(pane, gridRow, 1, Resources.get("shared.remove"));
+//        removeButton = addButton(pane, gridRow, 1, Resources.get("shared.remove"));
 
 //        TitledGroupBg configGroup = addTitledGroupBg(pane, gridRow, 3, Resources.get("settings.network.config"), Layout.FIRST_ROW_AND_GROUP_DISTANCE);
 //        GridPane.setColumnSpan(configGroup, 2);
