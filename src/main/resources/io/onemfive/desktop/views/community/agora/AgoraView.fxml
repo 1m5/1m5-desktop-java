@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:id="root"
+          fx:controller="io.onemfive.desktop.views.community.agora.AgoraView">
 
-<?import javafx.scene.text.Text?>
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:id="root"
-           fx:controller="io.onemfive.desktop.views.community.agora.AgoraView">
+    <padding>
+        <Insets bottom="10.0" left="15.0" top="15.0" right="15"/>
+    </padding>
 
-</StackPane>
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+</GridPane>

@@ -14,7 +14,7 @@ import ra.util.Resources;
 import static io.onemfive.desktop.util.FormBuilder.addSlideToggleButton;
 import static io.onemfive.desktop.util.FormBuilder.addTopLabelListView;
 
-public class TORSensorSettingsView extends ActivatableView implements TopicListener {
+public class TORNetworkSettingsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -24,7 +24,7 @@ public class TORSensorSettingsView extends ActivatableView implements TopicListe
     private ObservableList<String> seeds = FXCollections.observableArrayList();
     private ListView seedsListView;
 
-    public TORSensorSettingsView() {
+    public TORNetworkSettingsView() {
         super();
     }
 

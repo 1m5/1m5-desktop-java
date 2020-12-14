@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -40,6 +41,8 @@ public class SocialView extends ActivatableView implements TopicListener {
     private String sendText = Resources.get("shared.send");
     private Button sendTextButton = new Button(sendText);
 
+    private Label notes;
+
     public void updateContacts(List<DID> contacts) {
         contactAddresses.clear();
         for(DID c : contacts) {
@@ -55,11 +58,16 @@ public class SocialView extends ActivatableView implements TopicListener {
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("communityView.social.messaging"));
         GridPane.setColumnSpan(statusGroup, 1);
 
-        addressTextField = addInputTextField(pane, ++gridRow, Resources.get("communityView.social.contactAddress"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        addressTextField = addInputTextField(pane, ++gridRow, Resources.get("communityView.social.contactAddress"), Layout.FIRST_ROW_DISTANCE);
         // TODO: Load past messages for last selected conversation
         messagesTextArea = addCompactTopLabelTextAreaWithText(pane, "", ++gridRow, Resources.get("communityView.social.messages"), true).second;
         textTextField = addInputTextField(pane, ++gridRow, Resources.get("communityView.social.enterText"));
         sendTextButton = addPrimaryActionButton(pane, ++gridRow, Resources.get("shared.send"), Layout.FIRST_ROW_DISTANCE);
+
+        TitledGroupBg notesGroup = addTitledGroupBg(pane, ++gridRow, 1, Resources.get("shared.notes"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        GridPane.setColumnSpan(notesGroup, 1);
+        String note = "Currently, only simple messaging is supported and only a remote peer I2P fingerprint for the address field. Future releases will move towards selecting DIDs from the local active DID's contact list using active DID as the originator.";
+        notes = addMultilineLabel(pane, ++gridRow, note, Layout.FIRST_ROW_DISTANCE);
 
         LOG.info("Initialized.");
     }

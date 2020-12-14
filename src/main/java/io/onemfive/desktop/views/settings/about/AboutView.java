@@ -26,7 +26,7 @@ public class AboutView extends ActivatableView {
         LOG.info("Initializing...");
         GridPane pane = (GridPane)root;
 
-        addTitledGroupBg(pane, gridRow, 5, Resources.get("setting.about.about1M5"));
+        addTitledGroupBg(pane, gridRow, 4, Resources.get("setting.about.about1M5"));
         Label label = addLabel(pane, ++gridRow, Resources.get("setting.about.about"), Layout.FIRST_ROW_DISTANCE);
         label.setWrapText(true);
         GridPane.setColumnSpan(label, 2);
@@ -34,8 +34,6 @@ public class AboutView extends ActivatableView {
         HyperlinkWithIcon hyperlinkWithIcon = addHyperlinkWithIcon(pane, ++gridRow, Resources.get("setting.about.web"), "https://1m5.io");
         GridPane.setColumnSpan(hyperlinkWithIcon, 2);
         hyperlinkWithIcon = addHyperlinkWithIcon(pane, ++gridRow, Resources.get("setting.about.code"), "https://github.com/1m5");
-        GridPane.setColumnSpan(hyperlinkWithIcon, 2);
-        hyperlinkWithIcon = addHyperlinkWithIcon(pane, ++gridRow, Resources.get("setting.about.license"), "https://github.com/1m5/1m5/blob/master/LICENSE");
         GridPane.setColumnSpan(hyperlinkWithIcon, 2);
 
         addTitledGroupBg(pane, gridRow, 3, Resources.get("setting.about.support"), Layout.GROUP_DISTANCE);
@@ -47,9 +45,9 @@ public class AboutView extends ActivatableView {
         GridPane.setColumnSpan(hyperlinkWithIcon, 2);
 
         addTitledGroupBg(pane, gridRow, 8, Resources.get("setting.about.versions"), Layout.GROUP_DISTANCE);
-        addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.version1M5"), System.getProperty("1m5.version"), Layout.TWICE_FIRST_ROW_DISTANCE);
+        addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.version1M5"), "0.6.5", Layout.TWICE_FIRST_ROW_DISTANCE);
         addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionTOR"), "0.3.2.10");
-        addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionI2P"), "0.9.44");
+        addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionI2P"), "0.9.47");
         addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionBT"), "Bluecove 2.1.0");
         addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionWiFiDirect"), "Not Registered");
         addCompactTopLabelTextField(pane, ++gridRow, Resources.get("setting.about.versionSDR"), "GNU Radio - Not Registered");

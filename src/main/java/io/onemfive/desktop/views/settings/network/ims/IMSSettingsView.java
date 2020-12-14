@@ -1,24 +1,36 @@
 package io.onemfive.desktop.views.settings.network.ims;
 
+import io.onemfive.desktop.components.TitledGroupBg;
+import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkState;
+import ra.util.Resources;
+
+import static io.onemfive.desktop.util.FormBuilder.addMultilineLabel;
+import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;
 
 public class IMSSettingsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public IMSSettingsView() {
-        super();
-    }
+    private Label notes;
 
-    public void initialize() {
+    @Override
+    protected void initialize() {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        LOG.info("Initialized");
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("shared.notes"));
+        GridPane.setColumnSpan(statusGroup, 1);
+
+        String note = "1M5 Network Service Settings is on the roadmap. Settings will enable changes for configuring the 1M5 composite network.";
+        notes = addMultilineLabel(pane, ++gridRow, note, Layout.FIRST_ROW_DISTANCE);
+
+        LOG.info("Initialized.");
     }
 
     @Override

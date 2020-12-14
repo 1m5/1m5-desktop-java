@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="root" fx:controller="io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView"
+<GridPane fx:id="root" fx:controller="io.onemfive.desktop.views.settings.network.lifi.LiFiNetworkSettingsView"
           hgap="5.0" vgap="5.0"
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"

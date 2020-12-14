@@ -7,6 +7,7 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.community.agora.AgoraView;
 import io.onemfive.desktop.views.community.calendar.CalendarView;
 import io.onemfive.desktop.views.community.dashboard.DashboardView;
+import io.onemfive.desktop.views.community.search.SearchView;
 import io.onemfive.desktop.views.community.social.SocialView;
 import io.onemfive.desktop.views.community.wallet.WalletView;
 import io.onemfive.desktop.views.home.HomeView;
@@ -66,6 +67,8 @@ public class CommunityView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, CommunityView.class, DashboardView.class);
             else if (newValue == socialTab)
                 MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SocialView.class);
+            else if (newValue == searchTab)
+                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
             else if (newValue == walletTab)
                 MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
         };
@@ -87,6 +90,8 @@ public class CommunityView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, CommunityView.class, CalendarView.class);
         else if (pane.getSelectionModel().getSelectedItem() == socialTab)
             MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SocialView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == searchTab)
+            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
         else if (pane.getSelectionModel().getSelectedItem() == walletTab)
             MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
         else
@@ -116,6 +121,7 @@ public class CommunityView extends ActivatableView {
         else if (view instanceof CalendarView) tab = calendarTab;
         else if (view instanceof DashboardView) tab = dashboardTab;
         else if (view instanceof SocialView) tab = socialTab;
+        else if (view instanceof SearchView) tab = searchTab;
         else if (view instanceof WalletView) tab = walletTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 

@@ -10,13 +10,13 @@ import io.onemfive.desktop.views.ops.network.satellite.SatelliteOpsView;
 import io.onemfive.desktop.views.ops.network.tor.TOROpsView;
 import io.onemfive.desktop.views.ops.network.wifidirect.WifiDirectOpsView;
 import io.onemfive.desktop.views.personal.identities.IdentitiesView;
-import io.onemfive.desktop.views.settings.network.bluetooth.BluetoothSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.fullspectrum.FullSpectrumRadioSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.i2p.I2PSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.lifi.LiFiSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.satellite.SatelliteSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.tor.TORSensorSettingsView;
-import io.onemfive.desktop.views.settings.network.wifidirect.WifiDirectSensorSettingsView;
+import io.onemfive.desktop.views.settings.network.bluetooth.BluetoothNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.fullspectrum.FullSpectrumRadioNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.i2p.I2PNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.lifi.LiFiNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.satellite.SatelliteNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
+import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import ra.common.Client;
@@ -161,37 +161,37 @@ public class DesktopBusClient implements Client {
                     switch(state.network) {
                         case LiFi: {
                             ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(LiFiSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(LiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case Tor: {
                             ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(TORSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(TORNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case I2P: {
                             ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(I2PSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(I2PNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case Bluetooth: {
                             ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(BluetoothSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(BluetoothNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case WiFi: {
                             ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(WifiDirectSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(WiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case Satellite: {
                             ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(SatelliteSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(SatelliteNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                         case FSRadio: {
                             ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(FullSpectrumRadioSensorSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                            ((TopicListener) MVC.loadView(FullSpectrumRadioNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
                             break;
                         }
                     }

@@ -17,12 +17,12 @@ import ra.util.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class I2PSensorSettingsView extends ActivatableView implements TopicListener {
+public class I2PNetworkSettingsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    public I2PSensorSettingsView() {
+    public I2PNetworkSettingsView() {
         super();
     }
 
