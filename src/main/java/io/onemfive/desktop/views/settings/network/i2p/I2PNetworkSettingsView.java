@@ -75,27 +75,27 @@ public class I2PNetworkSettingsView extends ActivatableView implements TopicList
 
     @Override
     protected void activate() {
-        addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(fingerprintTextField.getText()==null
-                        || fingerprintTextField.getText().isEmpty()
-                        || addressTextField.getText()==null
-                        || addressTextField.getText().isEmpty())
-                    return;
-                seeds.add(fingerprintTextField.getText()+" : "+addressTextField.getText());
-                fingerprintTextField.setText(null);
-                addressTextField.setText(null);
-            }
-        });
-        removeButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(seedsListView.getSelectionModel().getSelectedIndex()>=0) {
-                    seeds.remove(seedsListView.getSelectionModel().getSelectedIndex());
-                }
-            }
-        });
+//        addButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                if(fingerprintTextField.getText()==null
+//                        || fingerprintTextField.getText().isEmpty()
+//                        || addressTextField.getText()==null
+//                        || addressTextField.getText().isEmpty())
+//                    return;
+//                seeds.add(fingerprintTextField.getText()+" : "+addressTextField.getText());
+//                fingerprintTextField.setText(null);
+//                addressTextField.setText(null);
+//            }
+//        });
+//        removeButton.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                if(seedsListView.getSelectionModel().getSelectedIndex()>=0) {
+//                    seeds.remove(seedsListView.getSelectionModel().getSelectedIndex());
+//                }
+//            }
+//        });
 
 //        hiddenMode.setSelected(false);
 //        hiddenMode.setOnAction(e -> {
