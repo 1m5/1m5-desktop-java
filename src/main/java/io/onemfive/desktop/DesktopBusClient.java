@@ -31,6 +31,8 @@ import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
 import ra.common.notification.Subscription;
 import ra.common.route.Route;
+import ra.common.service.ServiceReport;
+import ra.util.Wait;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,11 +46,13 @@ public class DesktopBusClient implements Client {
 
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
 
+    public static final String OPERATION_SUBSCRIBE_REPLY = "SUBSCRIBE";
     public static final String OPERATION_UPDATE_ACTIVE_IDENTITY = "UPDATE_ACTIVE_IDENTITY";
     public static final String OPERATION_UPDATE_IDENTITIES = "UPDATE_IDENTITIES";
-    public static final String OPERATION_UPDATE_SERVICE_STATE = "UPDATE_SERVICE_STATE";
 
+    private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
+
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
@@ -103,6 +107,10 @@ public class DesktopBusClient implements Client {
         Route route = envelope.getRoute();
         String operation = route.getOperation();
         switch (operation) {
+            case OPERATION_SUBSCRIBE_REPLY: {
+                LOG.info("Ack of Subscribe received: "+envelope.toJSON());
+                break;
+            }
             case OPERATION_UPDATE_ACTIVE_IDENTITY: {
                 LOG.info("Update active identity request...");
                 final DID activeIdentity = (DID) DLC.getEntity(envelope);
@@ -125,10 +133,6 @@ public class DesktopBusClient implements Client {
                         v.updateIdentities(identities);
                     });
                 }
-                break;
-            }
-            case OPERATION_UPDATE_SERVICE_STATE: {
-                LOG.warning("Update service state handling not yet supported in UI.");
                 break;
             }
             case OPERATION_NOTIFY_UI: {
@@ -155,7 +159,6 @@ public class DesktopBusClient implements Client {
                 javafx.application.Platform.runLater(() -> {
                     LOG.info("Updating UI with Network State...");
                     EventMessage em = (EventMessage)e.getMessage();
-                    // TODO: NetworkState is not serializing
                     NetworkState state = (NetworkState)em.getMessage();
                     networkStates.put(state.network.name(), state);
                     switch(state.network) {
@@ -226,6 +229,55 @@ public class DesktopBusClient implements Client {
 
                     MVC.manConStatusUpdated();
 
+                });
+            }
+        }));
+
+        Wait.aSec(1);
+
+        busClient.subscribe(new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
+            @Override
+            public void reply(Envelope e) {
+                javafx.application.Platform.runLater(() -> {
+                    LOG.info("Updating UI with Service Report...");
+                    EventMessage em = (EventMessage)e.getMessage();
+                    ServiceReport report = (ServiceReport)em.getMessage();
+                    LOG.info("ServiceReport received: \n\t"+report.toJSON());
+                    if(report.serviceClassName==null) {
+                        LOG.warning("No serviceClassName in Service Report! BUG");
+                        return;
+                    }
+                    serviceReports.put(report.serviceClassName, report);
+                    switch(report.serviceClassName) {
+                        case "ra.lifi.LiFiService": {
+                            ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.tor.TORClientService": {
+                            ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.i2p.I2PService": {
+                            ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.bluetooth.BluetoothService": {
+                            ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.wifidirect.WiFiDirectNetwork": {
+                            ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.satellite.SatelliteService": {
+                            ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                        case "ra.gnuradio.GNURadioService": {
+                            ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                            break;
+                        }
+                    }
                 });
             }
         }));

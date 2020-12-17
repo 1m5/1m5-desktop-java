@@ -19,9 +19,9 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
+import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
 import ra.tor.TORClientService;
-import ra.tor.TORHiddenService;
 import ra.util.Resources;
 import ra.util.StringUtil;
 
@@ -38,8 +38,11 @@ public class TOROpsView extends ActivatableView implements TopicListener {
     private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
 
-    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
-    private TextField sensorStatusTextField;
+    private String serviceStatusField = StringUtil.capitalize(serviceStatus.name().toLowerCase().replace('_', ' '));
+    private TextField serviceStatusTextField;
+
+    private String networkStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
+    private TextField networkStatusTextField;
 
     private ToggleButton powerButton;
     private CheckBox hardStop;
@@ -65,9 +68,10 @@ public class TOROpsView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 3, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        serviceStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.service"), serviceStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        networkStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), networkStatusField).second;
 
         TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.networkControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
@@ -112,13 +116,17 @@ public class TOROpsView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String name, Object object) {
-        if(object instanceof NetworkState) {
+        if(ServiceReport.class.getSimpleName().equals(name)) {
+            ServiceReport report = (ServiceReport) object;
+            LOG.info("ServiceReport received to update model: status="+report.serviceStatus.name());
+            serviceStatus = report.serviceStatus;
+        } else if(NetworkState.class.getSimpleName().equals(name)) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
             if(this.networkStatus != networkState.networkStatus) {
                 this.networkStatus = networkState.networkStatus;
-                if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
+                if(networkStatusField != null) {
+                    networkStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
             if(networkStatus == NetworkStatus.CONNECTED) {
@@ -171,39 +179,43 @@ public class TOROpsView extends ActivatableView implements TopicListener {
     }
 
     private void updateComponents() {
-        if(networkStatus ==NetworkStatus.CLOSED
-                || networkStatus ==NetworkStatus.PORT_CONFLICT
-                || serviceStatus==ServiceStatus.SHUTDOWN
-                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTDOWN) {
+        if(networkStatus == NetworkStatus.CLOSED
+                || networkStatus == NetworkStatus.PORT_CONFLICT
+                || serviceStatus == ServiceStatus.SHUTDOWN
+                || serviceStatus == ServiceStatus.GRACEFULLY_SHUTDOWN) {
             // Power is off and able to turn it on
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(false);
-        } else if(networkStatus ==NetworkStatus.WARMUP
-                || networkStatus ==NetworkStatus.WAITING) {
+        } else if(serviceStatus == ServiceStatus.INITIALIZING
+                || networkStatus == NetworkStatus.WARMUP
+                || networkStatus == NetworkStatus.WAITING) {
             // Power is on, but not yet able to turn it off - starting up
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(false);
-        } else if(serviceStatus==ServiceStatus.SHUTTING_DOWN
-                || serviceStatus==ServiceStatus.GRACEFULLY_SHUTTING_DOWN
-                || networkStatus ==NetworkStatus.ERROR) {
+        } else if(serviceStatus == ServiceStatus.SHUTTING_DOWN
+                || serviceStatus == ServiceStatus.GRACEFULLY_SHUTTING_DOWN
+                || networkStatus == NetworkStatus.ERROR) {
             // Power is off and unable to turn it on as it is shutting down
             powerButton.setSelected(false);
             powerButton.disableProperty().setValue(true);
             hardStop.setVisible(true);
             hardStop.disableProperty().setValue(true);
-        } else if(networkStatus ==NetworkStatus.CONNECTING
-                || networkStatus ==NetworkStatus.CONNECTED
-                || networkStatus ==NetworkStatus.VERIFIED
-                || networkStatus ==NetworkStatus.HANGING
-                || networkStatus ==NetworkStatus.DISCONNECTED) {
+        } else if(serviceStatus == ServiceStatus.RUNNING
+                || networkStatus == NetworkStatus.CONNECTING
+                || networkStatus == NetworkStatus.CONNECTED
+                || networkStatus == NetworkStatus.VERIFIED
+                || networkStatus == NetworkStatus.HANGING
+                || networkStatus == NetworkStatus.DISCONNECTED) {
             // Power is on and shutting it down is available
             powerButton.setSelected(true);
             powerButton.disableProperty().setValue(false);
             hardStop.setVisible(true);
             hardStop.disableProperty().setValue(false);
         }
+        serviceStatusTextField.setText(serviceStatus.name());
+        networkStatusTextField.setText(networkStatus.name());
     }
 
 }

@@ -18,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import net.i2p.router.Router;
 import ra.common.network.NetworkPeer;
 import ra.common.network.NetworkState;
+import ra.common.service.ServiceReport;
 import ra.util.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -126,7 +127,7 @@ public class I2PNetworkSettingsView extends ActivatableView implements TopicList
 
     @Override
     public void modelUpdated(String name, Object object) {
-        if(object instanceof NetworkState) {
+        if(NetworkState.class.getSimpleName().equals(name)) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
 //            if(hiddenMode!=null) {

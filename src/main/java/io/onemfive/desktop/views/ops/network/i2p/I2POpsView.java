@@ -1,7 +1,6 @@
 package io.onemfive.desktop.views.ops.network.i2p;
 
 import io.onemfive.desktop.DesktopBusClient;
-import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -15,6 +14,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
+import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
 import ra.i2p.I2PService;
 import ra.util.Resources;
@@ -30,8 +30,11 @@ public class I2POpsView extends ActivatableView implements TopicListener {
     private NetworkStatus networkStatus = NetworkStatus.CLOSED;
     private ServiceStatus serviceStatus = ServiceStatus.NOT_INITIALIZED;
 
-    private String sensorStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
-    private TextField sensorStatusTextField;
+    private String serviceStatusField = StringUtil.capitalize(serviceStatus.name().toLowerCase().replace('_', ' '));
+    private TextField serviceStatusTextField;
+
+    private String networkStatusField = StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' '));
+    private TextField networkStatusTextField;
 
     private ToggleButton powerButton;
     private CheckBox hardStop;
@@ -57,9 +60,10 @@ public class I2POpsView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("ops.network.status"));
+        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 3, Resources.get("ops.network.status"));
         GridPane.setColumnSpan(statusGroup, 1);
-        sensorStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), sensorStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        serviceStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.service"), serviceStatusField, Layout.FIRST_ROW_DISTANCE).second;
+        networkStatusTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.status.network"), networkStatusField).second;
 
         TitledGroupBg sensorPower = addTitledGroupBg(pane, ++gridRow, 3, Resources.get("ops.network.networkControls"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(sensorPower, 1);
@@ -70,6 +74,7 @@ public class I2POpsView extends ActivatableView implements TopicListener {
         GridPane.setColumnSpan(localNodeGroup, 1);
         i2PFingerprintTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.fingerprintLabel"), i2PFingerprint, Layout.TWICE_FIRST_ROW_DISTANCE).second;
         i2PAddressTextArea = addCompactTopLabelTextAreaWithText(pane, i2PAddress, ++gridRow, Resources.get("ops.network.i2p.addressLabel"), true).second;
+        i2PAddressTextArea.setMaxHeight(80d);
         i2PIPv6AddressTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.ipv6Label"), i2PIPv6Address).second;
         portTextField = addCompactTopLabelTextField(pane, ++gridRow, Resources.get("ops.network.i2p.portLabel"), port).second;
 
@@ -103,16 +108,21 @@ public class I2POpsView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String name, Object object) {
-        if(object instanceof NetworkState) {
+        if(ServiceReport.class.getSimpleName().equals(name)) {
+            ServiceReport report = (ServiceReport) object;
+            LOG.info("ServiceReport received to update model: status="+report.serviceStatus.name());
+            serviceStatus = report.serviceStatus;
+        }
+        else if(NetworkState.class.getSimpleName().equals(name)) {
             LOG.info("NetworkState received to update model.");
             NetworkState networkState = (NetworkState)object;
             if(this.networkStatus != networkState.networkStatus) {
                 this.networkStatus = networkState.networkStatus;
-                if(sensorStatusField != null) {
-                    sensorStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
+                if(networkStatusField != null) {
+                    networkStatusTextField.setText(StringUtil.capitalize(networkStatus.name().toLowerCase().replace('_', ' ')));
                 }
             }
-            if(networkStatus ==NetworkStatus.CONNECTED) {
+            if(networkStatus == NetworkStatus.CONNECTED) {
                 if (networkState.localPeer != null) {
                     i2PAddress = networkState.localPeer.getDid().getPublicKey().getAddress();
                     i2PFingerprint = networkState.localPeer.getDid().getPublicKey().getFingerprint();
@@ -189,6 +199,8 @@ public class I2POpsView extends ActivatableView implements TopicListener {
             hardStop.setVisible(true);
             hardStop.disableProperty().setValue(false);
         }
+        serviceStatusTextField.setText(serviceStatus.name());
+        networkStatusTextField.setText(networkStatus.name());
     }
 
 }
