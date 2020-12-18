@@ -302,7 +302,7 @@ public class HomeView extends InitializableView {
 //                navigation.navigateToPreviousVisitedView();
 //
 //                transitionUtil.fadeOutAndRemove(splashScreen, 1500, actionEvent -> disposeSplashScreen());
-                transitions.fadeOutAndRemove(splashScreen, 3500, new EventHandler<ActionEvent>() {
+                transitions.fadeOutAndRemove(splashScreen, 2000, new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
 //                        navPane.setVisible(true);
