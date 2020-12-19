@@ -242,7 +242,6 @@ public class DesktopBusClient implements Client {
                     LOG.info("Updating UI with Service Report...");
                     EventMessage em = (EventMessage)e.getMessage();
                     ServiceReport report = (ServiceReport)em.getMessage();
-                    LOG.info("ServiceReport received: \n\t"+report.toJSON());
                     if(report.serviceClassName==null) {
                         LOG.warning("No serviceClassName in Service Report! BUG");
                         return;
