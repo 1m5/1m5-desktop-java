@@ -47,8 +47,7 @@ public class DesktopBusClient implements Client {
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
 
     public static final String OPERATION_SUBSCRIBE_REPLY = "SUBSCRIBE";
-    public static final String OPERATION_UPDATE_ACTIVE_IDENTITY = "UPDATE_ACTIVE_IDENTITY";
-    public static final String OPERATION_UPDATE_IDENTITIES = "UPDATE_IDENTITIES";
+    public static final String OPERATION_UPDATE_IDENTITY_VIEW = "UPDATE_IDENTITY_VIEW";
 
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
@@ -102,37 +101,21 @@ public class DesktopBusClient implements Client {
     }
 
     @Override
-    public void reply(Envelope envelope) {
+    public void reply(Envelope e) {
         LOG.info("Received message for UI...");
-        Route route = envelope.getRoute();
+        Route route = e.getRoute();
         String operation = route.getOperation();
         switch (operation) {
             case OPERATION_SUBSCRIBE_REPLY: {
-                LOG.info("Ack of Subscribe received: "+envelope.toJSON());
+                LOG.info("Ack of Subscribe received: "+e.toJSON());
                 break;
             }
-            case OPERATION_UPDATE_ACTIVE_IDENTITY: {
-                LOG.info("Update active identity request...");
-                final DID activeIdentity = (DID) DLC.getEntity(envelope);
-                if(activeIdentity!=null) {
-                    javafx.application.Platform.runLater(() -> {
-                        LOG.info("Updating IdentitiesView active DID...");
-                        IdentitiesView v = (IdentitiesView)MVC.loadView(IdentitiesView.class, true);
-                        v.updateActiveDID(activeIdentity);
-                    });
-                }
-                break;
-            }
-            case OPERATION_UPDATE_IDENTITIES: {
-                LOG.info("Update identities request...");
-                final List<DID> identities = (List<DID>)DLC.getValue("identities", envelope);
-                if(identities!=null) {
-                    javafx.application.Platform.runLater(() -> {
-                        LOG.info("Updating IdentitiesView identities...");
-                        IdentitiesView v = (IdentitiesView)MVC.loadView(IdentitiesView.class, true);
-                        v.updateIdentities(identities);
-                    });
-                }
+            case OPERATION_UPDATE_IDENTITY_VIEW: {
+                javafx.application.Platform.runLater(() -> {
+                    LOG.info("Updating IdentitiesView active DID...");
+                    IdentitiesView v = (IdentitiesView)MVC.loadView(IdentitiesView.class, true);
+                    v.modelUpdated("update", e);
+                });
                 break;
             }
             case OPERATION_NOTIFY_UI: {

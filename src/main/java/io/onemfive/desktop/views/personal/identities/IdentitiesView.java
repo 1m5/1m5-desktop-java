@@ -1,180 +1,260 @@
 package io.onemfive.desktop.views.personal.identities;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
-import io.onemfive.desktop.DesktopApp;
 import io.onemfive.desktop.DesktopBusClient;
+import io.onemfive.desktop.components.TitledGroupBg;
+import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
+import io.onemfive.desktop.views.TopicListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import ra.common.DLC;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import ra.common.Envelope;
 import ra.common.identity.DID;
-import ra.did.AuthenticateDIDRequest;
 import ra.did.DIDService;
 import ra.keyring.AuthNRequest;
 import ra.keyring.KeyRingService;
 import ra.util.Resources;
 
-import java.util.List;
+import static io.onemfive.desktop.util.FormBuilder.*;
 
 
-public class IdentitiesView extends ActivatableView {
+public class IdentitiesView extends ActivatableView implements TopicListener {
 
-    private ObservableList<String> identityAddresses = FXCollections.observableArrayList();
+    private GridPane pane;
+    private int gridRow = 0;
 
     private DID activeDID;
 
-    public void updateActiveDID(DID activeDID) {
-        this.activeDID = activeDID;
-    }
+    private ObservableList<Object> identityAddresses = FXCollections.observableArrayList();
+    private ObservableList<Object> contactAddresses = FXCollections.observableArrayList();
 
-    public void updateIdentities(List<DID> identities) {
-        identityAddresses.clear();
-        for(DID i : identities) {
-            identityAddresses.add(i.getUsername() + ": "+i.getPublicKey().getFingerprint());
-        }
-    }
+    private ListView<Object> identitiesList;
+    private ListView<Object> contactsList;
+
+    private final String currentIdentityText = Resources.get("personalIdentitiesView.current");
+    private final String authNText = Resources.get("personalIdentitiesView.authn");
+    private final String aliasPrompt = Resources.get("shared.alias");
+    private final String pwdPrompt = Resources.get("shared.passphrase");
+    private final String pwd2Prompt = Resources.get("shared.passphraseAgain");
+    private final String fingerprintPrompt = Resources.get("shared.fingerprint");
+    private final String addressPrompt = Resources.get("shared.address");
+    private final String descriptionPrompt = Resources.get("shared.description");
+    private final String generateText = Resources.get("shared.generate");
+    private final String deleteText = Resources.get("shared.delete");
+    private final String addText = Resources.get("shared.add");
+    private final String identitiesText = Resources.get("personalIdentitiesView.identities");
+    private final String contactsText = Resources.get("personalIdentitiesView.contacts");
+
+    private TextField currentIdentity;
+    private TextField authNAliasTxt;
+    private TextField authNPwdText;
+    private TextField identityAliasTxt;
+    private TextField identityPwdText;
+    private TextField identityPwd2Text;
+    private TextField identityDescription;
+    private TextField contactAliasText;
+    private TextField contactFingerprintText;
+    private TextField contactAddressText;
+    private TextField contactDescription;
+
+    private Button authN;
+    private Button addIdentity;
+    private Button deleteIdentity;
+    private Button addContact;
+    private Button deleteContact;
 
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
-        StackPane pane = (StackPane)root;
+        pane = (GridPane)root;
 
-        HBox basePlane = new HBox();
-        basePlane.setPadding(new Insets(5));
-        basePlane.setSpacing(5);
-        pane.getChildren().add(basePlane);
+        // Current Identity
+        TitledGroupBg currentIdentityGroup = addTitledGroupBg(pane, gridRow, 2, currentIdentityText);
+        GridPane.setColumnSpan(currentIdentityGroup, 1);
+        currentIdentity = addCompactTopLabelTextField(pane, ++gridRow, currentIdentityText, aliasPrompt, Layout.FIRST_ROW_DISTANCE).second;
+
+        // Authenticate
+        TitledGroupBg authNGroup = addTitledGroupBg(pane, ++gridRow, 2, authNText);
+        GridPane.setColumnSpan(authNGroup, 3);
+        authNAliasTxt = addInputTextField(pane, ++gridRow, aliasPrompt, Layout.TWICE_FIRST_ROW_DISTANCE);
+        authNPwdText = addInputTextField(pane, gridRow, pwdPrompt, Layout.TWICE_FIRST_ROW_DISTANCE);
+        authN = addButton(pane, gridRow, authNText, Layout.TWICE_FIRST_ROW_DISTANCE);
 
         // Identities
-        VBox identitiesPane = new VBox();
-        identitiesPane.setPadding(new Insets(5));
-        identitiesPane.setSpacing(5);
-        identitiesPane.setPrefWidth(DesktopApp.WIDTH-10);
-        basePlane.getChildren().add(identitiesPane);
+        TitledGroupBg identitiesGroup = addTitledGroupBg(pane, ++gridRow, 8, identitiesText, Layout.FIRST_ROW_DISTANCE);
+        GridPane.setColumnSpan(identitiesGroup, 1);
 
-        Text currentIdentity = new Text(Resources.get("personalIdentitiesView.current"));
-        if(activeDID!=null)
-            currentIdentity.setText(activeDID.getUsername()+": "+activeDID.getPublicKey().getFingerprint());
-        identitiesPane.getChildren().add(currentIdentity);
+        // Contacts
+        TitledGroupBg contactsGroup = addTitledGroupBg(pane, gridRow, 8, contactsText ,Layout.FIRST_ROW_DISTANCE);
+        GridPane.setColumnSpan(contactsGroup, 1);
 
-        HBox addIdentityBox = new HBox();
-        addIdentityBox.setPadding(new Insets(5));
-        addIdentityBox.setSpacing(5);
-        identitiesPane.getChildren().add(addIdentityBox);
+        // Add Identity / Contact
+        identityAliasTxt = addInputTextField(pane, ++gridRow, aliasPrompt);
+        contactAliasText = addInputTextField(pane, gridRow, aliasPrompt);
 
-        JFXTextField identityAliasTxt = new JFXTextField();
-        identityAliasTxt.setLabelFloat(true);
-        identityAliasTxt.setPromptText(Resources.get("shared.alias"));
-        identityAliasTxt.setPrefWidth(200);
-        addIdentityBox.getChildren().add(identityAliasTxt);
+        identityPwdText = addInputTextField(pane, ++gridRow, pwdPrompt);
+        contactFingerprintText = addInputTextField(pane, gridRow, fingerprintPrompt);
 
-        JFXTextField identityPwdText = new JFXTextField();
-        identityPwdText.setLabelFloat(true);
-        identityPwdText.setPromptText(Resources.get("shared.passphrase"));
-        identityPwdText.setPrefWidth(200);
-        addIdentityBox.getChildren().add(identityPwdText);
+        identityPwd2Text = addInputTextField(pane, ++gridRow, pwd2Prompt);
+        contactAddressText = addInputTextField(pane, gridRow, addressPrompt);
 
-        JFXTextField identityPwd2Text = new JFXTextField();
-        identityPwd2Text.setLabelFloat(true);
-        identityPwd2Text.setPromptText(Resources.get("shared.passphraseAgain"));
-        identityPwd2Text.setPrefWidth(200);
-        addIdentityBox.getChildren().add(identityPwd2Text);
+        identityDescription = addInputTextField(pane, ++gridRow, descriptionPrompt);
+        contactDescription = addInputTextField(pane, gridRow, descriptionPrompt);
 
-        JFXTextField identityDescription = new JFXTextField();
-        identityDescription.setLabelFloat(true);
-        identityDescription.setPromptText(Resources.get("shared.description"));
-        identityDescription.setPrefWidth(400);
-        addIdentityBox.getChildren().add(identityDescription);
-
-        JFXButton addIdentity = new JFXButton(Resources.get("shared.generate"));
+        addIdentity = addButton(pane, ++gridRow, addText);
         addIdentity.getStyleClass().add("button-raised");
-        addIdentity.setOnAction(new EventHandler<ActionEvent>() {
+        addContact = addButton(pane, gridRow, addText);
+        addContact.getStyleClass().add("button-raised");
+
+        deleteIdentity = addButton(pane, ++gridRow, deleteText);
+        deleteIdentity.getStyleClass().add("button-raised");
+        deleteContact = addButton(pane, gridRow, deleteText);
+        deleteContact.getStyleClass().add("button-raised");
+
+        // List Identities
+        identitiesList = addTopLabelListView(pane, ++gridRow, identitiesText).second;
+        identitiesList.setPrefSize(800, 250);
+        identitiesList.setItems(identityAddresses);
+        identitiesList.setEditable(false);
+        identitiesList.getStyleClass().add("listView");
+
+
+        // List Contacts
+        contactsList = addTopLabelListView(pane, gridRow, contactsText).second;
+        contactsList.setPrefSize(800, 250);
+        contactsList.setItems(contactAddresses);
+        contactsList.setEditable(false);
+        contactsList.getStyleClass().add("listView");
+
+        LOG.info("Initialized.");
+    }
+
+    @Override
+    protected void activate() {
+        if(activeDID!=null)
+            currentIdentity.setText(activeDID.getUsername()+" : "+activeDID.getPublicKey().getFingerprint());
+
+        authN.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!identityAliasTxt.getText().isEmpty()
-                        && !identityPwdText.getText().isEmpty()
-                        && !identityPwd2Text.getText().isEmpty()) {
+                if(!authNAliasTxt.getText().isEmpty() && !authNPwdText.getText().isEmpty()) {
                     Envelope e = Envelope.documentFactory();
-                    // 4. Update UI
-                    DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITIES, e);
-                    // 3. Load ordered Identities
-                    DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES, e);
-                    // 2. Authenticate/Save DID
+                    // 3. Update UI
+                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
+                    // 2. Load ordered Contacts
+                    e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
+                    // 1. Authenticate
                     DID did = new DID();
-                    did.setUsername(identityAliasTxt.getText());
-                    did.setPassphrase(identityPwdText.getText());
-                    did.setPassphrase2(identityPwd2Text.getText());
-                    if(!identityDescription.getText().isEmpty())
-                        did.setDescription(identityDescription.getText());
-                    AuthenticateDIDRequest adr = new AuthenticateDIDRequest();
-                    adr.did = did;
-                    adr.autogenerate = true;
-                    DLC.addData(AuthenticateDIDRequest.class, adr, e);
-                    DLC.addRoute(DIDService.class, DIDService.OPERATION_AUTHENTICATE,e);
-                    // 1. Load Public Key addresses for short and full addresses
+                    did.setUsername(authNAliasTxt.getText());
+                    did.setPassphrase(authNPwdText.getText());
+                    did.setPassphrase2(authNPwdText.getText());
                     AuthNRequest ar = new AuthNRequest();
                     ar.keyRingUsername = did.getUsername();
                     ar.keyRingPassphrase = did.getPassphrase();
                     ar.alias = did.getUsername(); // use username as default alias
                     ar.aliasPassphrase = did.getPassphrase(); // just use same passphrase
                     ar.autoGenerate = true;
-                    DLC.addData(AuthNRequest.class, ar, e);
-                    DLC.addRoute(KeyRingService.class, KeyRingService.OPERATION_AUTHN, e);
+                    e.setDID(did);
+                    e.addData(AuthNRequest.class, ar);
+                    e.addRoute(KeyRingService.class, KeyRingService.OPERATION_AUTHN);
                     // Send
                     DesktopBusClient.deliver(e);
+                }
+            }
+        });
+
+        addIdentity.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(!identityAliasTxt.getText().isEmpty()
+                        && !identityPwdText.getText().isEmpty()
+                        && !identityPwd2Text.getText().isEmpty()) {
+
                 } else {
                     // TODO: show in pop up
                     LOG.warning("Alias, pwd, pwd again required.");
                 }
             }
         });
-        addIdentityBox.getChildren().add(addIdentity);
 
-        JFXListView<String> identitiesList = new JFXListView<>();
-        identitiesList.setPrefSize(800, 500);
-        identitiesList.setItems(identityAddresses);
-        identitiesList.setEditable(true);
-        identitiesList.getStyleClass().add("listView");
-        identitiesPane.getChildren().add(identitiesList);
-
-        JFXButton deleteIdentity = new JFXButton(Resources.get("shared.delete"));
-        deleteIdentity.getStyleClass().add("button-raised");
         deleteIdentity.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 int index = identitiesList.getSelectionModel().getSelectedIndex();
                 if(index >= 0) {
-                    String itemStr = identityAddresses.get(index);
+                    String itemStr = (String)identityAddresses.get(index);
                     LOG.info(itemStr);
 //                    String[] item = itemStr.split(":");
 
                 }
             }
         });
-        identitiesPane.getChildren().add(deleteIdentity);
+
+        addContact.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(!contactAliasText.getText().isEmpty()
+                        && !contactFingerprintText.getText().isEmpty()
+                        && !contactAddressText.getText().isEmpty()) {
+
+                } else {
+                    // TODO: show in pop up
+                    LOG.warning("Alias, fingerprint, and address are required.");
+                }
+            }
+        });
+
+        deleteContact.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int index = contactsList.getSelectionModel().getSelectedIndex();
+                if(index >= 0) {
+                    String itemStr = (String)contactAddresses.get(index);
+                    LOG.info(itemStr);
+//                    String[] item = itemStr.split(":");
+
+                }
+            }
+        });
 
         // Get Identities
-        Envelope e1 = Envelope.documentFactory();
-        DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITIES, e1);
-        DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES, e1);
-        DesktopBusClient.deliver(e1);
+//        Envelope e1 = Envelope.documentFactory();
+//        e1.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
+//        e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
+//        DesktopBusClient.deliver(e1);
 
         // Get Active Identity
-        Envelope e3 = Envelope.documentFactory();
-        DLC.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_ACTIVE_IDENTITY, e3);
-        DLC.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY, e3);
-        DesktopBusClient.deliver(e3);
+//        Envelope e2 = Envelope.documentFactory();
+//        e2.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
+//        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
+//        DesktopBusClient.deliver(e2);
 
-        LOG.info("Initialized.");
+        // Get Contacts
+//        Envelope e3 = Envelope.documentFactory();
+//        e3.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
+//        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
+//        DesktopBusClient.deliver(e3);
+
     }
 
+    @Override
+    protected void deactivate() {
+        currentIdentity.setText("");
+        authN.setOnAction(null);
+        addIdentity.setOnAction(null);
+        deleteIdentity.setOnAction(null);
+        addContact.setOnAction(null);
+        deleteContact.setOnAction(null);
+    }
+
+    @Override
+    public void modelUpdated(String topic, Object object) {
+        Envelope e = (Envelope) object;
+
+    }
 }
