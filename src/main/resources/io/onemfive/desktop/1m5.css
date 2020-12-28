@@ -376,7 +376,7 @@
 .jfx-toggle-button:focused,
 .jfx-toggle-button:selected,
 .jfx-toggle-button:focused:selected {
-    -jfx-toggle-color: -bs-color-primary-dark;
+    -jfx-toggle-color: -bs-color-green-5;
     -jfx-size: 8;
 }
 
