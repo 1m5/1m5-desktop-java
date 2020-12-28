@@ -7,6 +7,7 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.commons.agora.AgoraView;
 import io.onemfive.desktop.views.commons.browser.BrowserView;
 import io.onemfive.desktop.views.commons.dashboard.DashboardView;
+import io.onemfive.desktop.views.commons.exchange.ExchangeView;
 import io.onemfive.desktop.views.commons.topics.TopicsView;
 import io.onemfive.desktop.views.home.HomeView;
 import javafx.beans.value.ChangeListener;
@@ -19,10 +20,9 @@ import ra.util.Resources;
 
 public class CommonsView extends ActivatableView {
 
-    private Scene scene;
     private TabPane pane;
     @FXML
-    private Tab agoraTab, browserTab, dashboardTab, topicsTab;
+    private Tab agoraTab, browserTab, dashboardTab, topicsTab, exchangeTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -36,6 +36,7 @@ public class CommonsView extends ActivatableView {
         agoraTab.setText(Resources.get("commonsView.tabs.agora").toUpperCase());
         browserTab.setText(Resources.get("commonsView.tabs.browser").toUpperCase());
         dashboardTab.setText(Resources.get("commonsView.tabs.dashboard").toUpperCase());
+        exchangeTab.setText(Resources.get("commonsView.tabs.exchange").toUpperCase());
         topicsTab.setText(Resources.get("commonsView.tabs.topics").toUpperCase());
 
         navigationListener = viewPath -> {
@@ -50,6 +51,8 @@ public class CommonsView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, BrowserView.class);
             else if (newValue == dashboardTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DashboardView.class);
+            else if (newValue == exchangeTab)
+                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class);
             else if (newValue == topicsTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
         };
@@ -66,6 +69,8 @@ public class CommonsView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, AgoraView.class);
         else if (pane.getSelectionModel().getSelectedItem() == browserTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, BrowserView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == exchangeTab)
+            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class);
         else if (pane.getSelectionModel().getSelectedItem() == topicsTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
         else
@@ -94,6 +99,7 @@ public class CommonsView extends ActivatableView {
         if (view instanceof AgoraView) tab = agoraTab;
         else if (view instanceof BrowserView) tab = browserTab;
         else if (view instanceof DashboardView) tab = dashboardTab;
+        else if (view instanceof ExchangeView) tab = exchangeTab;
         else if (view instanceof TopicsView) tab = topicsTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
