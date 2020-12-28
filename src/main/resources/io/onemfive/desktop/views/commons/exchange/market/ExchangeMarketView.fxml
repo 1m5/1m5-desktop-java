@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<VBox fx:id="root" fx:controller="io.onemfive.desktop.views.commons.exchange.market.ExchangeMarketView"
+      spacing="10.0" fillWidth="true"
+      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+      xmlns:fx="http://javafx.com/fxml">
+<padding>
+    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+</padding>
+
+</VBox>

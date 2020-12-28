@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<GridPane xmlns="http://javafx.com/javafx"
-          xmlns:fx="http://javafx.com/fxml"
-          fx:id="root"
-          fx:controller="io.onemfive.desktop.views.commons.exchange.ExchangeView">
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<JFXTabPane fx:id="root" fx:controller="io.onemfive.desktop.views.commons.exchange.ExchangeView"
+            AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"
+            xmlns:fx="http://javafx.com/fxml">
 
-    <padding>
-        <Insets bottom="10.0" left="15.0" top="15.0" right="15"/>
-    </padding>
-
-    <columnConstraints>
-        <ColumnConstraints hgrow="ALWAYS"/>
-    </columnConstraints>
-
-</GridPane>
+    <Tab fx:id="marketTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+    <Tab fx:id="buyTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+    <Tab fx:id="sellTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+    <Tab fx:id="accountsTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+    <Tab fx:id="qaTab" closable="false">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </Tab>
+</JFXTabPane>
