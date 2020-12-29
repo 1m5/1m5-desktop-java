@@ -21,7 +21,7 @@ public class ExchangeSellView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg marketGroup = addTitledGroupBg(pane, gridRow, 1, sellLabelText);
+        TitledGroupBg marketGroup = addTitledGroupBg(pane, gridRow, 2, sellLabelText);
         GridPane.setColumnSpan(marketGroup, 1);
 
         LOG.info("Initialized.");

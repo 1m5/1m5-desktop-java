@@ -19,7 +19,7 @@ public class ExchangeBuyView extends ActivatableView implements TopicListener {
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
-        pane = (GridPane)root;
+        pane = (GridPane) root;
 
         TitledGroupBg marketGroup = addTitledGroupBg(pane, gridRow, 1, buyLabelText);
         GridPane.setColumnSpan(marketGroup, 1);

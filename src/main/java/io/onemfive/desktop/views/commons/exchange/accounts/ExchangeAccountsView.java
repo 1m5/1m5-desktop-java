@@ -18,10 +18,9 @@ public class ExchangeAccountsView extends ActivatableView implements TopicListen
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
-        pane = (GridPane)root;
+        pane = (GridPane) root;
 
-        TitledGroupBg marketGroup = addTitledGroupBg(pane, gridRow, 1, accountsLabelText);
-        GridPane.setColumnSpan(marketGroup, 1);
+
 
         LOG.info("Initialized.");
     }

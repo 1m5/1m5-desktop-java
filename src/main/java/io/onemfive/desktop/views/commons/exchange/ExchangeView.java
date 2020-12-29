@@ -10,6 +10,7 @@ import io.onemfive.desktop.views.commons.exchange.buy.ExchangeBuyView;
 import io.onemfive.desktop.views.commons.exchange.market.ExchangeMarketView;
 import io.onemfive.desktop.views.commons.exchange.qa.ExchangeQAView;
 import io.onemfive.desktop.views.commons.exchange.sell.ExchangeSellView;
+import io.onemfive.desktop.views.commons.exchange.settings.ExchangeSettingsView;
 import io.onemfive.desktop.views.home.HomeView;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
@@ -22,7 +23,7 @@ public class ExchangeView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab accountsTab, buyTab, marketTab, qaTab, sellTab;
+    private Tab accountsTab, buyTab, marketTab, qaTab, sellTab, settingsTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -36,6 +37,7 @@ public class ExchangeView extends ActivatableView {
         marketTab.setText(Resources.get("commonsView.exchange.tab.market").toUpperCase());
         qaTab.setText(Resources.get("commonsView.exchange.tab.qa").toUpperCase());
         sellTab.setText(Resources.get("commonsView.exchange.tab.sell").toUpperCase());
+        settingsTab.setText(Resources.get("commonsView.exchange.tab.settings").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 4 && viewPath.indexOf(ExchangeView.class) == 2)
@@ -53,6 +55,8 @@ public class ExchangeView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeQAView.class);
             else if (newValue == sellTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeSellView.class);
+            else if (newValue == settingsTab)
+                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeSettingsView.class);
         };
 
         LOG.info("Initialized.");
@@ -74,6 +78,8 @@ public class ExchangeView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeQAView.class);
         else if (selectedItem == sellTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeSellView.class);
+        else if (selectedItem == settingsTab)
+            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, ExchangeView.class, ExchangeSettingsView.class);
     }
 
     @Override
@@ -91,6 +97,7 @@ public class ExchangeView extends ActivatableView {
         else if (view instanceof ExchangeMarketView) tab = marketTab;
         else if (view instanceof ExchangeQAView) tab = qaTab;
         else if (view instanceof ExchangeSellView) tab = sellTab;
+        else if (view instanceof ExchangeSettingsView) tab = settingsTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

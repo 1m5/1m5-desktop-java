@@ -5,9 +5,6 @@ import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import ra.util.Resources;
 
@@ -25,8 +22,11 @@ public class ExchangeQAView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
+        TitledGroupBg marketGroup = addTitledGroupBg(pane, gridRow, 1, title);
+        GridPane.setColumnSpan(marketGroup, 1);
+
         Label a, q;
-        int numberOfQAs = 6;
+        int numberOfQAs = 8;
         for(int i=0; i<numberOfQAs; i++) {
             q = addLabel(pane, ++gridRow, Resources.get("commonsView.exchange.qa."+(i+1)+".question"), Layout.FIRST_ROW_DISTANCE);
             q.setStyle("-fx-font-weight: bold");

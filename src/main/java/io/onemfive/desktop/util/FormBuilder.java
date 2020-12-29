@@ -76,8 +76,26 @@ public class FormBuilder {
         return addLabel(gridPane, rowIndex, title, 0);
     }
 
+    public static Label addLabel(GridPane gridPane, int colIndex, int rowIndex, String title) {
+        Label label = new AutoTooltipLabel(title);
+        GridPane.setColumnIndex(label, colIndex);
+        GridPane.setRowIndex(label, rowIndex);
+        GridPane.setMargin(label, new Insets(0, 0, 0, 0));
+        gridPane.getChildren().add(label);
+        return label;
+    }
+
     public static Label addLabel(GridPane gridPane, int rowIndex, String title, double top) {
         Label label = new AutoTooltipLabel(title);
+        GridPane.setRowIndex(label, rowIndex);
+        GridPane.setMargin(label, new Insets(top, 0, 0, 0));
+        gridPane.getChildren().add(label);
+        return label;
+    }
+
+    public static Label addLabel(GridPane gridPane, int colIndex, int rowIndex, String title, double top) {
+        Label label = new AutoTooltipLabel(title);
+        GridPane.setColumnIndex(label, colIndex);
         GridPane.setRowIndex(label, rowIndex);
         GridPane.setMargin(label, new Insets(top, 0, 0, 0));
         gridPane.getChildren().add(label);
@@ -207,6 +225,15 @@ public class FormBuilder {
     }
 
     public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
+                                                                             int colIndex,
+                                                                             int rowIndex,
+                                                                             String title,
+                                                                             String value,
+                                                                             double top) {
+        return addTopLabelTextField(gridPane, colIndex, rowIndex, title, value, top);
+    }
+
+    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
                                                                              int rowIndex,
                                                                              int colIndex,
                                                                              String title,
@@ -248,7 +275,7 @@ public class FormBuilder {
         textField.setEditable(false);
         textField.setFocusTraversable(false);
 
-        final Tuple2<Label, VBox> topLabelWithVBox = addTopLabelWithVBox(gridPane, rowIndex, title, textField, top);
+        final Tuple2<Label, VBox> topLabelWithVBox = addTopLabelWithVBox(gridPane, columnIndex, rowIndex, title, textField, top);
 
         // TOD not 100% sure if that is a good idea....
         //topLabelWithVBox.first.getStyleClass().add("jfx-text-field-top-label");
