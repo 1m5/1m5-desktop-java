@@ -8,26 +8,23 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import ra.util.Resources;
 
-import static io.onemfive.desktop.util.FormBuilder.addMultilineLabel;
-import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;
+import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class WalletView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private Label notes;
+    private String overview = Resources.get("personalView.wallet.overview");
+    private Label overviewLabel;
 
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("shared.notes"));
-        GridPane.setColumnSpan(statusGroup, 1);
-
-        String note = "Personal Wallet is on the roadmap. It will provide multiple wallets of each supported monetary wallet (e.g. Bitcoin, Monero) providing a default wallet for each with each local identity.";
-        notes = addMultilineLabel(pane, ++gridRow, note, Layout.FIRST_ROW_DISTANCE);
+        overviewLabel = addLabel(pane, ++gridRow, overview);
+        overviewLabel.setWrapText(true);
 
         LOG.info("Initialized.");
     }
