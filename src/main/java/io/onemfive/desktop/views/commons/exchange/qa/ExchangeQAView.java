@@ -26,11 +26,11 @@ public class ExchangeQAView extends ActivatableView implements TopicListener {
         GridPane.setColumnSpan(marketGroup, 1);
 
         Label a, q;
-        int numberOfQAs = 8;
+        int numberOfQAs = 10;
         for(int i=0; i<numberOfQAs; i++) {
             q = addLabel(pane, ++gridRow, Resources.get("commonsView.exchange.qa."+(i+1)+".question"), Layout.FIRST_ROW_DISTANCE);
             q.setStyle("-fx-font-weight: bold");
-            a = addMultilineLabel(pane, ++gridRow, Resources.get(Resources.get("commonsView.exchange.qa."+(i+1)+".answer")));
+            a = addMultilineLabel(pane, ++gridRow, Resources.get("commonsView.exchange.qa."+(i+1)+".answer"));
             a.setMaxWidth(Layout.INITIAL_WINDOW_WIDTH);
         }
 
