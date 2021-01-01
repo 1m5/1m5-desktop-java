@@ -45,6 +45,7 @@ public class SocialView extends ActivatableView implements TopicListener {
         pane = (GridPane)root;
 
         contactAddressList = addComboBox(pane, ++gridRow, Resources.get("communityView.social.contactAddress"));
+        contactAddressList.setItems(contactAddresses);
         contactAddressList.maxWidth(250d);
         // TODO: Load past messages for last selected conversation
         // TODO: Change from text area to three columns
@@ -65,7 +66,6 @@ public class SocialView extends ActivatableView implements TopicListener {
 
     @Override
     protected void activate() {
-        contactAddressList.setItems(contactAddresses);
         sendTextButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
