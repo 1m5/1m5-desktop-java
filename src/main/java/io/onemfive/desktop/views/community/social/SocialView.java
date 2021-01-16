@@ -1,5 +1,6 @@
 package io.onemfive.desktop.views.community.social;
 
+import io.onemfive.desktop.DesktopBusClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -10,7 +11,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import ra.common.Envelope;
 import ra.common.identity.DID;
+import ra.i2p.I2PService;
+import ra.networkmanager.NetworkManagerService;
 import ra.util.Resources;
 
 import java.util.List;
@@ -73,13 +77,12 @@ public class SocialView extends ActivatableView implements TopicListener {
                 String txtToSend = textTextField.getText();
                 LOG.info("Sending text: "+txtToSend);
                 msgCount++;
-                if(msgCount%2>0)
-                    modelUpdated("newLocalMessage", txtToSend);
-                else
-                    modelUpdated("newRemoteMessage", txtToSend);
-//                Envelope e = Envelope.documentFactory();
-//
-//                DesktopBusClient.deliver(e);
+                Envelope e = Envelope.documentFactory();
+                e.addRoute(I2PService.class.getName(), I2PService.OPERATION_SEND);
+                e.addRoute(NetworkManagerService.class.getName(), NetworkManagerService.OPERATION_SEND);
+                e.addContent(txtToSend);
+                e.ratchet();
+                DesktopBusClient.deliver(e);
                 textTextField.setText(null);
             };
         });
@@ -87,7 +90,6 @@ public class SocialView extends ActivatableView implements TopicListener {
 
     @Override
     protected void deactivate() {
-        contactAddresses.clear();
         sendTextButton.setOnAction(null);
     }
 
