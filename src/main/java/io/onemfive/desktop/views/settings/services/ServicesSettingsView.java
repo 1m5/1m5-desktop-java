@@ -10,7 +10,7 @@ import io.onemfive.desktop.views.settings.services.dcdn.DCDNSettingsView;
 import io.onemfive.desktop.views.settings.services.identity.IdentitySettingsView;
 import io.onemfive.desktop.views.settings.services.infovault.InfovaultSettingsView;
 import io.onemfive.desktop.views.settings.services.keyring.KeyringSettingsView;
-import io.onemfive.desktop.views.settings.services.monetary.MonetarySettingsView;
+import io.onemfive.desktop.views.settings.services.bitcoin.BitcoinSettingsView;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
@@ -22,7 +22,7 @@ public class ServicesSettingsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab identityTab, infovaultTab, keyringTab, monetaryTab, dcdnTab;
+    private Tab identityTab, infovaultTab, keyringTab, bitcoinTab, dcdnTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -34,7 +34,7 @@ public class ServicesSettingsView extends ActivatableView {
         identityTab.setText(Resources.get("settings.services.tab.identity").toUpperCase());
         infovaultTab.setText(Resources.get("settings.services.tab.infovault").toUpperCase());
         keyringTab.setText(Resources.get("settings.services.tab.keyring").toUpperCase());
-        monetaryTab.setText(Resources.get("settings.services.tab.monetary").toUpperCase());
+        bitcoinTab.setText(Resources.get("settings.services.tab.bitcoin").toUpperCase());
         dcdnTab.setText(Resources.get("settings.services.tab.dcdn").toUpperCase());
 
         navigationListener = viewPath -> {
@@ -49,8 +49,8 @@ public class ServicesSettingsView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, InfovaultSettingsView.class);
             else if (newValue == keyringTab)
                 MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, KeyringSettingsView.class);
-            else if (newValue == monetaryTab)
-                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class);
+            else if (newValue == bitcoinTab)
+                MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, BitcoinSettingsView.class);
             else if (newValue == dcdnTab)
                 MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, DCDNSettingsView.class);
         };
@@ -70,8 +70,8 @@ public class ServicesSettingsView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, InfovaultSettingsView.class);
         else if (selectedItem == keyringTab)
             MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, KeyringSettingsView.class);
-        else if (selectedItem == monetaryTab)
-            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, MonetarySettingsView.class);
+        else if (selectedItem == bitcoinTab)
+            MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, BitcoinSettingsView.class);
         else if (selectedItem == dcdnTab)
             MVC.navigation.navigateTo(HomeView.class, SettingsView.class, ServicesSettingsView.class, DCDNSettingsView.class);
     }
@@ -89,7 +89,7 @@ public class ServicesSettingsView extends ActivatableView {
         if (view instanceof IdentitySettingsView) tab = identityTab;
         else if (view instanceof InfovaultSettingsView) tab = infovaultTab;
         else if (view instanceof KeyringSettingsView) tab = keyringTab;
-        else if (view instanceof MonetarySettingsView) tab = monetaryTab;
+        else if (view instanceof BitcoinSettingsView) tab = bitcoinTab;
         else if (view instanceof DCDNSettingsView) tab = dcdnTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 

@@ -1,4 +1,4 @@
-package io.onemfive.desktop.views.settings.services.monetary.bitcoin;
+package io.onemfive.desktop.views.ops.services.bitcoin;
 
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
@@ -11,7 +11,7 @@ import ra.util.Resources;
 import static io.onemfive.desktop.util.FormBuilder.addMultilineLabel;
 import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;
 
-public class BitcoinSettingsView extends ActivatableView implements TopicListener {
+public class BitcoinOpsView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -26,7 +26,7 @@ public class BitcoinSettingsView extends ActivatableView implements TopicListene
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("shared.notes"));
         GridPane.setColumnSpan(statusGroup, 1);
 
-        String note = "Bitcoin Service Settings is on the roadmap. Settings will enable changes for configuring integration with Bitcoin.";
+        String note = "Bitcoin Ops view is on the roadmap. It will provide operational information on the Bitcoin monetary network.";
         notes = addMultilineLabel(pane, ++gridRow, note, Layout.FIRST_ROW_DISTANCE);
 
         LOG.info("Initialized.");

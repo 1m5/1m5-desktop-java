@@ -10,7 +10,7 @@ import io.onemfive.desktop.views.ops.services.dcdn.DCDNOpsView;
 import io.onemfive.desktop.views.ops.services.identity.IdentityOpsView;
 import io.onemfive.desktop.views.ops.services.infovault.InfovaultOpsView;
 import io.onemfive.desktop.views.ops.services.keyring.KeyringOpsView;
-import io.onemfive.desktop.views.ops.services.monetary.MonetaryOpsView;
+import io.onemfive.desktop.views.ops.services.bitcoin.BitcoinOpsView;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
@@ -22,7 +22,7 @@ public class ServicesOpsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab identityTab, infovaultTab, keyringTab, monetaryTab, dcdnTab;
+    private Tab identityTab, infovaultTab, keyringTab, bitcoinTab, dcdnTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -34,7 +34,7 @@ public class ServicesOpsView extends ActivatableView {
         identityTab.setText(Resources.get("ops.services.tab.identity").toUpperCase());
         infovaultTab.setText(Resources.get("ops.services.tab.infovault").toUpperCase());
         keyringTab.setText(Resources.get("ops.services.tab.keyring").toUpperCase());
-        monetaryTab.setText(Resources.get("ops.services.tab.monetary").toUpperCase());
+        bitcoinTab.setText(Resources.get("ops.services.tab.bitcoin").toUpperCase());
         dcdnTab.setText(Resources.get("ops.services.tab.dcdn").toUpperCase());
 
         navigationListener = viewPath -> {
@@ -49,8 +49,8 @@ public class ServicesOpsView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, InfovaultOpsView.class);
             else if (newValue == keyringTab)
                 MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, KeyringOpsView.class);
-            else if (newValue == monetaryTab)
-                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class);
+            else if (newValue == bitcoinTab)
+                MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, BitcoinOpsView.class);
             else if (newValue == dcdnTab)
                 MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, DCDNOpsView.class);
         };
@@ -70,8 +70,8 @@ public class ServicesOpsView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, InfovaultOpsView.class);
         else if (selectedItem == keyringTab)
             MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, KeyringOpsView.class);
-        else if (selectedItem == monetaryTab)
-            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, MonetaryOpsView.class);
+        else if (selectedItem == bitcoinTab)
+            MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, BitcoinOpsView.class);
         else if (selectedItem == dcdnTab)
             MVC.navigation.navigateTo(HomeView.class, OpsView.class, ServicesOpsView.class, DCDNOpsView.class);
     }
@@ -89,7 +89,7 @@ public class ServicesOpsView extends ActivatableView {
         if (view instanceof IdentityOpsView) tab = identityTab;
         else if (view instanceof InfovaultOpsView) tab = infovaultTab;
         else if (view instanceof KeyringOpsView) tab = keyringTab;
-        else if (view instanceof MonetaryOpsView) tab = monetaryTab;
+        else if (view instanceof BitcoinOpsView) tab = bitcoinTab;
         else if (view instanceof DCDNOpsView) tab = dcdnTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
