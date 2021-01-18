@@ -160,3 +160,142 @@
 #image-lifi-icon {
     -fx-image: url("images/network/lifi-black.png");
 }
+
+/* list view */
+.list-view .list-cell {
+    -fx-background-color: -bs-background-color;
+}
+.list-view .list-cell:odd {
+    -fx-background-color: derive(-bs-background-color, -5%);
+}
+.list-view .list-cell:even {
+    -fx-background-color: derive(-bs-background-color, 5%);
+}
+.list-view .list-cell:selected,
+.table-view .table-cell:selected {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-border-color: -fx-selection-bar;
+}
+
+.number-column.table-cell {
+    -fx-background-color: -bs-background-color;
+}
+
+/* table view */
+.table-view, .table-cell:focused, .table-row-cell {
+    -fx-background: transparent;
+}
+.table-view .table-row-cell:even .table-cell {
+    -fx-background-color: derive(-bs-background-color, 5%);
+    -fx-border-color: derive(-bs-background-color,5%);
+}
+.table-view .table-row-cell:odd .table-cell {
+    -fx-background-color: derive(-bs-background-color,-5%);
+    -fx-border-color: derive(-bs-background-color,-5%);
+}
+.table-view .table-row-cell:selected .table-cell {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-selection-bar;
+    -fx-border-color: -fx-selection-bar;
+}
+.table-row-cell {
+    -fx-border-color: -bs-background-color;
+}
+.table-row-cell:empty, .table-row-cell:empty:even, .table-row-cell:empty:odd {
+    -fx-background-color: -bs-background-color;
+    -fx-min-height: 36;
+}
+.offer-table .table-row-cell {
+    -fx-background: -fx-accent;
+    -fx-background-color: -bs-color-gray-6;
+}
+
+/* tab pane */
+.jfx-tab-pane .tab-content-area {
+    -fx-background-color: -bs-tab-content-area;
+}
+
+.jfx-tab-pane .viewport {
+    -fx-background-color: -bs-viewport-background;
+}
+
+/* text field */
+.jfx-text-field, .jfx-text-area,
+.jfx-combo-box, .jfx-combo-box > .list-cell {
+    -fx-background-color: -bs-background-color;
+    -fx-prompt-text-fill: -bs-color-gray-3;
+    -fx-text-fill: -bs-text-color;
+}
+.jfx-text-area:readonly, .jfx-text-field:readonly,
+.hyperlink-with-icon {
+    -fx-background: -bs-background-color;
+    -fx-background-color: -bs-background-color;
+    -fx-prompt-text-fill: -bs-color-gray-2;
+    -fx-text-fill: -bs-color-gray-3;
+}
+.jfx-combo-box > .text,
+.jfx-text-field-top-label, .jfx-text-area-top-label {
+    -fx-text-fill: -bs-text-color;
+}
+
+.input-with-border {
+    -fx-border-color: -bs-color-gray-2;
+}
+
+#sell-button, #sell-button-big {
+    -fx-background-color: #660000 !important;
+}
+#buy-button, #buy-button-big {
+    -fx-background-color: #006600 !important;
+}
+
+.wallet-seed-words {
+    -fx-text-fill: -bs-color-gray-6;
+}
+
+.action-button {
+    -fx-background-color: -bs-color-primary-dark;
+    -fx-text-fill: -bs-text-color-light;
+}
+
+.chart-pane, .chart-plot-background,
+#charts .chart-plot-background,
+#charts-dao .chart-plot-background {
+    -fx-background-color: transparent;
+}
+.axis:top, .axis:right, .axis:bottom, .axis:left {
+    -fx-border-color: transparent transparent transparent transparent;
+}
+#charts .axis, #price-chart .axis, #volume-chart .axis, #charts-dao .axis {
+    -fx-tick-label-fill: rgba(255,255,255,0.7);
+}
+.chart-horizontal-grid-lines,
+.chart-horizontal-zero-line, .chart-vertical-zero-line,
+.axis-tick-mark, .axis-minor-tick-mark {
+    -fx-stroke: rgba(0,0,0,0.3);
+}
+
+/* scrollbars */
+.scroll-pane {
+    -fx-background-color: -bs-scroll-pane-background;
+}
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: -bs-color-gray-5;
+}
+.scroll-bar:horizontal .thumb:pressed,
+.scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: -bs-color-gray-4;
+}
+.scroll-bar:vertical:focused,
+.scroll-bar:horizontal:focused {
+    -fx-background-color: transparent, -bs-color-gray-4, -bs-color-gray-4;
+}
+
+#image-splash-logo {
+    -fx-image: url("images/1m5_50_white.png");
+}

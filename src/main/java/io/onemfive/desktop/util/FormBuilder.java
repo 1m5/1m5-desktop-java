@@ -36,32 +36,19 @@ public class FormBuilder {
         return addTitledGroupBg(gridPane, rowIndex, rowSpan, title, 0);
     }
 
-    public static TitledGroupBg addTitledGroupBg(GridPane gridPane,
-                                                 int rowIndex,
-                                                 int columnIndex,
-                                                 int rowSpan,
-                                                 String title) {
+    public static TitledGroupBg addTitledGroupBg(GridPane gridPane, int rowIndex, int columnIndex, int rowSpan, String title) {
         TitledGroupBg titledGroupBg = addTitledGroupBg(gridPane, rowIndex, rowSpan, title, 0);
         GridPane.setColumnIndex(titledGroupBg, columnIndex);
         return titledGroupBg;
     }
 
-    public static TitledGroupBg addTitledGroupBg(GridPane gridPane,
-                                                 int rowIndex,
-                                                 int columnIndex,
-                                                 int rowSpan,
-                                                 String title,
-                                                 double top) {
+    public static TitledGroupBg addTitledGroupBg(GridPane gridPane, int rowIndex, int columnIndex, int rowSpan, String title, double top) {
         TitledGroupBg titledGroupBg = addTitledGroupBg(gridPane, rowIndex, rowSpan, title, top);
         GridPane.setColumnIndex(titledGroupBg, columnIndex);
         return titledGroupBg;
     }
 
-    public static TitledGroupBg addTitledGroupBg(GridPane gridPane,
-                                                 int rowIndex,
-                                                 int rowSpan,
-                                                 String title,
-                                                 double top) {
+    public static TitledGroupBg addTitledGroupBg(GridPane gridPane, int rowIndex, int rowSpan, String title, double top) {
         TitledGroupBg titledGroupBg = new TitledGroupBg();
         titledGroupBg.setText(title);
         titledGroupBg.prefWidthProperty().bind(gridPane.widthProperty());
@@ -102,18 +89,11 @@ public class FormBuilder {
         return label;
     }
 
-    public static Tuple3<Label, Label, VBox> addLabelWithSubText(GridPane gridPane,
-                                                                 int rowIndex,
-                                                                 String title,
-                                                                 String description) {
+    public static Tuple3<Label, Label, VBox> addLabelWithSubText(GridPane gridPane, int rowIndex, String title, String description) {
         return addLabelWithSubText(gridPane, rowIndex, title, description, 0);
     }
 
-    public static Tuple3<Label, Label, VBox> addLabelWithSubText(GridPane gridPane,
-                                                                 int rowIndex,
-                                                                 String title,
-                                                                 String description,
-                                                                 double top) {
+    public static Tuple3<Label, Label, VBox> addLabelWithSubText(GridPane gridPane, int rowIndex, String title, String description, double top) {
         Label label = new AutoTooltipLabel(title);
         Label subText = new AutoTooltipLabel(description);
 
@@ -155,61 +135,37 @@ public class FormBuilder {
         return label;
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              String title) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, String title) {
         return addTopLabelTextField(gridPane, rowIndex, title, "", -15);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              int columnIndex,
-                                                                              String title) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, int columnIndex, String title) {
         Tuple3<Label, TextField, VBox> tuple = addTopLabelTextField(gridPane, rowIndex, title, "", -15);
         GridPane.setColumnIndex(tuple.third, columnIndex);
         return tuple;
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              String title,
-                                                                              double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, String title, double top) {
         return addTopLabelTextField(gridPane, rowIndex, title, "", top - 15);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              String title,
-                                                                              String value) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, String title, String value) {
         return addTopLabelReadOnlyTextField(gridPane, rowIndex, title, value, 0);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              int columnIndex,
-                                                                              String title,
-                                                                              String value,
-                                                                              double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, int columnIndex, String title, String value, double top) {
         Tuple3<Label, TextField, VBox> tuple = addTopLabelTextField(gridPane, rowIndex, title, value, top - 15);
         GridPane.setColumnIndex(tuple.third, columnIndex);
         return tuple;
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              int columnIndex,
-                                                                              String title,
-                                                                              double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, int columnIndex, String title, double top) {
         Tuple3<Label, TextField, VBox> tuple = addTopLabelTextField(gridPane, rowIndex, title, "", top - 15);
         GridPane.setColumnIndex(tuple.third, columnIndex);
         return tuple;
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane,
-                                                                              int rowIndex,
-                                                                              String title,
-                                                                              String value,
-                                                                              double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelReadOnlyTextField(GridPane gridPane, int rowIndex, String title, String value, double top) {
         return addTopLabelTextField(gridPane, rowIndex, title, value, top - 15);
     }
 
@@ -217,60 +173,33 @@ public class FormBuilder {
         return addTopLabelTextField(gridPane, rowIndex, title, "", 0);
     }
 
-    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
-                                                                             int rowIndex,
-                                                                             String title,
-                                                                             String value) {
+    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane, int rowIndex, String title, String value) {
         return addTopLabelTextField(gridPane, rowIndex, title, value, -Layout.FLOATING_LABEL_DISTANCE);
     }
 
-    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
-                                                                             int colIndex,
-                                                                             int rowIndex,
-                                                                             String title,
-                                                                             String value,
-                                                                             double top) {
+    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane, int colIndex, int rowIndex, String title, String value, double top) {
         return addTopLabelTextField(gridPane, colIndex, rowIndex, title, value, top);
     }
 
-    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
-                                                                             int rowIndex,
-                                                                             int colIndex,
-                                                                             String title,
-                                                                             String value) {
+    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane, int rowIndex, int colIndex, String title, String value) {
         final Tuple3<Label, TextField, VBox> labelTextFieldVBoxTuple3 = addTopLabelTextField(gridPane, rowIndex, title, value, -Layout.FLOATING_LABEL_DISTANCE);
         GridPane.setColumnIndex(labelTextFieldVBoxTuple3.third, colIndex);
         return labelTextFieldVBoxTuple3;
     }
 
-    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane,
-                                                                             int rowIndex,
-                                                                             String title,
-                                                                             String value,
-                                                                             double top) {
+    public static Tuple3<Label, TextField, VBox> addCompactTopLabelTextField(GridPane gridPane, int rowIndex, String title, String value, double top) {
         return addTopLabelTextField(gridPane, rowIndex, title, value, top - Layout.FLOATING_LABEL_DISTANCE);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
-                                                                      int rowIndex,
-                                                                      String title,
-                                                                      String value) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane, int rowIndex, String title, String value) {
         return addTopLabelTextField(gridPane, rowIndex, title, value, 0);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
-                                                                      int rowIndex,
-                                                                      String title,
-                                                                      double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane, int rowIndex, String title, double top) {
         return addTopLabelTextField(gridPane, rowIndex, title, "", top);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
-                                                                      int rowIndex,
-                                                                      int columnIndex,
-                                                                      String title,
-                                                                      String value,
-                                                                      double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane, int rowIndex, int columnIndex, String title, String value, double top) {
         TextField textField = new JFXTextField(value);
         textField.setEditable(false);
         textField.setFocusTraversable(false);
@@ -283,11 +212,7 @@ public class FormBuilder {
         return new Tuple3<>(topLabelWithVBox.first, textField, topLabelWithVBox.second);
     }
 
-    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane,
-                                                                      int rowIndex,
-                                                                      String title,
-                                                                      String value,
-                                                                      double top) {
+    public static Tuple3<Label, TextField, VBox> addTopLabelTextField(GridPane gridPane, int rowIndex, String title, String value, double top) {
         TextField textField = new JFXTextField(value);
         textField.setEditable(false);
         textField.setFocusTraversable(false);
@@ -300,18 +225,11 @@ public class FormBuilder {
         return new Tuple3<>(topLabelWithVBox.first, textField, topLabelWithVBox.second);
     }
 
-    public static Tuple2<Label, Label> addConfirmationLabelLabel(GridPane gridPane,
-                                                                 int rowIndex,
-                                                                 String title1,
-                                                                 String title2) {
+    public static Tuple2<Label, Label> addConfirmationLabelLabel(GridPane gridPane, int rowIndex, String title1, String title2) {
         return addConfirmationLabelLabel(gridPane, rowIndex, title1, title2, 0);
     }
 
-    public static Tuple2<Label, Label> addConfirmationLabelLabel(GridPane gridPane,
-                                                                 int rowIndex,
-                                                                 String title1,
-                                                                 String title2,
-                                                                 double top) {
+    public static Tuple2<Label, Label> addConfirmationLabelLabel(GridPane gridPane, int rowIndex, String title1, String title2, double top) {
         Label label1 = addLabel(gridPane, rowIndex, title1);
         label1.getStyleClass().add("confirmation-label");
         Label label2 = addLabel(gridPane, rowIndex, title2);
@@ -324,11 +242,7 @@ public class FormBuilder {
         return new Tuple2<>(label1, label2);
     }
 
-    public static Tuple2<Label, TextArea> addConfirmationLabelTextArea(GridPane gridPane,
-                                                                       int rowIndex,
-                                                                       String title1,
-                                                                       String title2,
-                                                                       double top) {
+    public static Tuple2<Label, TextArea> addConfirmationLabelTextArea(GridPane gridPane, int rowIndex, String title1, String title2, double top) {
         Label label = addLabel(gridPane, rowIndex, title1);
         label.getStyleClass().add("confirmation-label");
 
@@ -343,18 +257,11 @@ public class FormBuilder {
         return new Tuple2<>(label, textArea);
     }
 
-    public static Tuple2<Label, TextFieldWithIcon> addTopLabelTextFieldWithIcon(GridPane gridPane,
-                                                                                int rowIndex,
-                                                                                String title,
-                                                                                double top) {
+    public static Tuple2<Label, TextFieldWithIcon> addTopLabelTextFieldWithIcon(GridPane gridPane, int rowIndex, String title, double top) {
         return addTopLabelTextFieldWithIcon(gridPane, rowIndex, 0, title, top);
     }
 
-    public static Tuple2<Label, TextFieldWithIcon> addTopLabelTextFieldWithIcon(GridPane gridPane,
-                                                                                int rowIndex,
-                                                                                int columnIndex,
-                                                                                String title,
-                                                                                double top) {
+    public static Tuple2<Label, TextFieldWithIcon> addTopLabelTextFieldWithIcon(GridPane gridPane, int rowIndex, int columnIndex, String title, double top) {
 
         TextFieldWithIcon textFieldWithIcon = new TextFieldWithIcon();
         textFieldWithIcon.setMouseTransparent(true);
@@ -367,11 +274,7 @@ public class FormBuilder {
         return addHyperlinkWithIcon(gridPane, rowIndex, title, url, 0);
     }
 
-    public static HyperlinkWithIcon addHyperlinkWithIcon(GridPane gridPane,
-                                                         int rowIndex,
-                                                         String title,
-                                                         String url,
-                                                         double top) {
+    public static HyperlinkWithIcon addHyperlinkWithIcon(GridPane gridPane, int rowIndex, String title, String url, double top) {
         HyperlinkWithIcon hyperlinkWithIcon = new ExternalHyperlink(title);
         hyperlinkWithIcon.setOnAction(e -> MVC.navigation.navigateTo(ViewPath.to(HomeView.class, CommonsView.class, BrowserView.class), url));
         GridPane.setRowIndex(hyperlinkWithIcon, rowIndex);
@@ -382,20 +285,11 @@ public class FormBuilder {
         return hyperlinkWithIcon;
     }
 
-    public static Tuple2<Label, HyperlinkWithIcon> addLabelHyperlinkWithIcon(GridPane gridPane,
-                                                                             int rowIndex,
-                                                                             String labelTitle,
-                                                                             String title,
-                                                                             String url) {
+    public static Tuple2<Label, HyperlinkWithIcon> addLabelHyperlinkWithIcon(GridPane gridPane, int rowIndex, String labelTitle, String title, String url) {
         return addLabelHyperlinkWithIcon(gridPane, rowIndex, labelTitle, title, url, 0);
     }
 
-    public static Tuple2<Label, HyperlinkWithIcon> addLabelHyperlinkWithIcon(GridPane gridPane,
-                                                                             int rowIndex,
-                                                                             String labelTitle,
-                                                                             String title,
-                                                                             String url,
-                                                                             double top) {
+    public static Tuple2<Label, HyperlinkWithIcon> addLabelHyperlinkWithIcon(GridPane gridPane, int rowIndex, String labelTitle, String title, String url, double top) {
         Label label = addLabel(gridPane, rowIndex, labelTitle, top);
 
         HyperlinkWithIcon hyperlinkWithIcon = new ExternalHyperlink(title);
@@ -406,13 +300,7 @@ public class FormBuilder {
         return new Tuple2<>(label, hyperlinkWithIcon);
     }
 
-    public static Tuple3<Label, HyperlinkWithIcon, VBox> addTopLabelHyperlinkWithIcon(GridPane gridPane,
-                                                                                      int rowIndex,
-                                                                                      int columnIndex,
-                                                                                      String title,
-                                                                                      String value,
-                                                                                      String url,
-                                                                                      double top) {
+    public static Tuple3<Label, HyperlinkWithIcon, VBox> addTopLabelHyperlinkWithIcon(GridPane gridPane, int rowIndex, int columnIndex, String title, String value, String url, double top) {
         Tuple3<Label, HyperlinkWithIcon, VBox> tuple = addTopLabelHyperlinkWithIcon(gridPane,
                 rowIndex,
                 title,
@@ -423,12 +311,7 @@ public class FormBuilder {
         return tuple;
     }
 
-    public static Tuple3<Label, HyperlinkWithIcon, VBox> addTopLabelHyperlinkWithIcon(GridPane gridPane,
-                                                                                      int rowIndex,
-                                                                                      String title,
-                                                                                      String value,
-                                                                                      String url,
-                                                                                      double top) {
+    public static Tuple3<Label, HyperlinkWithIcon, VBox> addTopLabelHyperlinkWithIcon(GridPane gridPane, int rowIndex, String title, String value, String url, double top) {
         HyperlinkWithIcon hyperlinkWithIcon = new ExternalHyperlink(value);
         hyperlinkWithIcon.setOnAction(e -> MVC.navigation.navigateTo(ViewPath.to(HomeView.class, CommonsView.class, BrowserView.class), url));
         hyperlinkWithIcon.getStyleClass().add("hyperlink-with-icon");
@@ -456,58 +339,31 @@ public class FormBuilder {
         return textArea;
     }
 
-    public static Tuple2<Label, TextArea> addCompactTopLabelTextArea(GridPane gridPane,
-                                                                     int rowIndex,
-                                                                     String title,
-                                                                     String prompt) {
+    public static Tuple2<Label, TextArea> addCompactTopLabelTextArea(GridPane gridPane, int rowIndex, String title, String prompt) {
         return addTopLabelTextArea(gridPane, rowIndex, title, prompt, -Layout.FLOATING_LABEL_DISTANCE);
     }
 
-    public static Tuple2<Label, TextArea> addCompactTopLabelTextArea(GridPane gridPane,
-                                                                     int rowIndex,
-                                                                     int colIndex,
-                                                                     String title,
-                                                                     String prompt) {
+    public static Tuple2<Label, TextArea> addCompactTopLabelTextArea(GridPane gridPane, int rowIndex, int colIndex, String title, String prompt) {
         return addTopLabelTextArea(gridPane, rowIndex, colIndex, title, prompt, -Layout.FLOATING_LABEL_DISTANCE);
     }
 
-    public static Tuple2<Label, TextArea> addCompactTopLabelTextAreaWithText(GridPane gridPane,
-                                                                     String text,
-                                                                     int rowIndex,
-                                                                     String title,
-                                                                     boolean readOnly) {
+    public static Tuple2<Label, TextArea> addCompactTopLabelTextAreaWithText(GridPane gridPane, String text, int rowIndex, String title, boolean readOnly) {
         return addTopLabelTextAreaWithText(gridPane, rowIndex, title, -Layout.FLOATING_LABEL_DISTANCE, text, readOnly);
     }
 
-    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane,
-                                                              int rowIndex,
-                                                              String title,
-                                                              String prompt) {
+    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane, int rowIndex, String title, String prompt) {
         return addTopLabelTextArea(gridPane, rowIndex, title, prompt, 0);
     }
 
-    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane,
-                                                              int rowIndex,
-                                                              int colIndex,
-                                                              String title,
-                                                              String prompt) {
+    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane, int rowIndex, int colIndex, String title, String prompt) {
         return addTopLabelTextArea(gridPane, rowIndex, colIndex, title, prompt, 0);
     }
 
-    public static Tuple2<Label, TextArea> addTopLabelTextAreaWithText(GridPane gridPane,
-                                                              String text,
-                                                              int rowIndex,
-                                                              int colIndex,
-                                                              String title, boolean readOnly) {
+    public static Tuple2<Label, TextArea> addTopLabelTextAreaWithText(GridPane gridPane, String text, int rowIndex, int colIndex, String title, boolean readOnly) {
         return addTopLabelTextAreaWithText(gridPane, rowIndex, colIndex, title, 0, text, readOnly);
     }
 
-    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane,
-                                                              int rowIndex,
-                                                              String title,
-                                                              String prompt,
-                                                              double top) {
-
+    public static Tuple2<Label, TextArea> addTopLabelTextArea(GridPane gridPane, int rowIndex, String title, String prompt, double top) {
         return addTopLabelTextArea(gridPane, rowIndex, 0, title, prompt, top);
     }
 
@@ -582,26 +438,18 @@ public class FormBuilder {
         return inputTextField;
     }
 
-    public static Tuple2<Label, InputTextField> addTopLabelInputTextField(GridPane gridPane,
-                                                                          int rowIndex,
-                                                                          String title) {
+    public static Tuple2<Label, InputTextField> addTopLabelInputTextField(GridPane gridPane, int rowIndex, String title) {
         return addTopLabelInputTextField(gridPane, rowIndex, title, 0);
     }
 
-    public static Tuple2<Label, InputTextField> addTopLabelInputTextField(GridPane gridPane,
-                                                                          int rowIndex,
-                                                                          String title,
-                                                                          double top) {
+    public static Tuple2<Label, InputTextField> addTopLabelInputTextField(GridPane gridPane, int rowIndex, String title, double top) {
 
         final Tuple3<Label, InputTextField, VBox> topLabelWithVBox = addTopLabelInputTextFieldWithVBox(gridPane, rowIndex, title, top);
 
         return new Tuple2<>(topLabelWithVBox.first, topLabelWithVBox.second);
     }
 
-    public static Tuple3<Label, InputTextField, VBox> addTopLabelInputTextFieldWithVBox(GridPane gridPane,
-                                                                                        int rowIndex,
-                                                                                        String title,
-                                                                                        double top) {
+    public static Tuple3<Label, InputTextField, VBox> addTopLabelInputTextFieldWithVBox(GridPane gridPane, int rowIndex, String title, double top) {
 
         InputTextField inputTextField = new InputTextField();
 
@@ -610,16 +458,11 @@ public class FormBuilder {
         return new Tuple3<>(topLabelWithVBox.first, inputTextField, topLabelWithVBox.second);
     }
 
-    public static Tuple2<Label, InfoInputTextField> addTopLabelInfoInputTextField(GridPane gridPane,
-                                                                                  int rowIndex,
-                                                                                  String title) {
+    public static Tuple2<Label, InfoInputTextField> addTopLabelInfoInputTextField(GridPane gridPane, int rowIndex, String title) {
         return addTopLabelInfoInputTextField(gridPane, rowIndex, title, 0);
     }
 
-    public static Tuple2<Label, InfoInputTextField> addTopLabelInfoInputTextField(GridPane gridPane,
-                                                                                  int rowIndex,
-                                                                                  String title,
-                                                                                  double top) {
+    public static Tuple2<Label, InfoInputTextField> addTopLabelInfoInputTextField(GridPane gridPane, int rowIndex, String title, double top) {
 
         InfoInputTextField inputTextField = new InfoInputTextField();
 
@@ -638,6 +481,18 @@ public class FormBuilder {
         passwordField.setPromptText(title);
         GridPane.setRowIndex(passwordField, rowIndex);
         GridPane.setColumnIndex(passwordField, 0);
+        GridPane.setColumnSpan(passwordField, 2);
+        GridPane.setMargin(passwordField, new Insets(top + 10, 0, 20, 0));
+        gridPane.getChildren().add(passwordField);
+
+        return passwordField;
+    }
+
+    public static PasswordTextField addPasswordTextField(GridPane gridPane, int rowIndex, int colIndex, String title, double top) {
+        PasswordTextField passwordField = new PasswordTextField();
+        passwordField.setPromptText(title);
+        GridPane.setRowIndex(passwordField, rowIndex);
+        GridPane.setColumnIndex(passwordField, colIndex);
         GridPane.setColumnSpan(passwordField, 2);
         GridPane.setMargin(passwordField, new Insets(top + 10, 0, 20, 0));
         gridPane.getChildren().add(passwordField);

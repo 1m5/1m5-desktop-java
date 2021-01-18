@@ -575,6 +575,16 @@
     -fx-border-insets: 0 0 0 1;
 }
 
+.user {
+    -fx-font-weight: bold;
+    -fx-text-fill: -ims-white;
+    -fx-font-size: 0.923em;
+    -fx-background-color: -ims-gray-dark;
+    -fx-padding: 0 11 0 11;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: -ims-gray-darkest;
+}
+
 .nav-primary {
     -fx-background-color: -bs-rd-nav-primary-background;
     -fx-padding: 0 11 0 11;

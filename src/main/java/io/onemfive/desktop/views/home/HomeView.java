@@ -36,6 +36,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
+import ra.common.identity.DID;
 import ra.util.LanguageUtil;
 import ra.util.LocaleUtil;
 
@@ -48,6 +49,7 @@ public class HomeView extends InitializableView {
 
     public static StackPane rootContainer;
     private Label versionLabel;
+    private Label user;
     private Runnable onUiReadyHandler;
     private final ToggleGroup navButtons = new ToggleGroup();
     private static Transitions transitions = new Transitions();
@@ -99,6 +101,11 @@ public class HomeView extends InitializableView {
         rootContainer = (StackPane)root;
         if (LanguageUtil.isDefaultLanguageRTL())
             rootContainer.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+
+        user = new Label("ANONYMOUS");
+        user.setAlignment(Pos.CENTER_LEFT);
+        user.getStyleClass().add("user");
+        HBox.setHgrow(user, Priority.NEVER);
 
         final ToggleButton personalButton = new NavButton(PersonalView.class, OneMFiveResources.get("homeView.menu.personal").toUpperCase());
 
@@ -234,7 +241,7 @@ public class HomeView extends InitializableView {
             getStyleClass().add("nav-tertiary");
         }};
 
-        HBox navPane = new HBox(primaryNav, secondaryNav, manConStatusBox) {{
+        HBox navPane = new HBox(user, primaryNav, secondaryNav, manConStatusBox) {{
             setLeftAnchor(this, 0d);
             setRightAnchor(this, 0d);
             setTopAnchor(this, 0d);
@@ -492,7 +499,7 @@ public class HomeView extends InitializableView {
         versionLabel.setTextAlignment(TextAlignment.CENTER);
         versionLabel.setAlignment(Pos.BASELINE_RIGHT);
         versionLabel.setPadding(new Insets(0,0,0,10));
-        versionLabel.setText("0.6.5");
+        versionLabel.setText("0.6.6");
 //        rootContainer.widthProperty().addListener((ov, oldValue, newValue) -> {
 //            versionLabel.setLayoutX(((double) newValue - versionLabel.getWidth()) / 2);
 //        });
@@ -719,6 +726,10 @@ public class HomeView extends InitializableView {
                 noneManConImageView.setEffect(glow);
             }
         }
+    }
+
+    public void updateUser(String username) {
+        this.user.setText(username);
     }
 
 }

@@ -53,9 +53,39 @@ public class MVC {
         }
     }
 
+    public static View loadView(String className) {
+        return loadView(className, true);
+    }
+
     public static View loadView(Class<? extends View> viewClass) {
         // Caching on by default
         return loadView(viewClass, true);
+    }
+
+    public synchronized static View loadView(String viewClassName, boolean useCache) {
+        BaseView view = null;
+        if (viewCache.containsKey(viewClassName) && useCache) {
+            view = viewCache.get(viewClassName);
+        } else {
+            Class<? extends View> viewClass = null;
+            try {
+                viewClass = (Class<? extends View>)Class.forName(viewClassName);
+            } catch (ClassNotFoundException e) {
+                LOG.warning(e.getLocalizedMessage());
+                return null;
+            }
+            URL loc = viewClass.getResource(viewClass.getSimpleName()+".fxml");
+            FXMLLoader loader = new FXMLLoader(loc);
+            try {
+                loader.load();
+                view = loader.getController();
+                if(useCache)
+                    viewCache.put(viewClass.getName(), view);
+            } catch (IOException e) {
+                LOG.warning(e.getLocalizedMessage());
+            }
+        }
+        return view;
     }
 
     public synchronized static View loadView(Class<? extends View> viewClass, boolean useCache) {

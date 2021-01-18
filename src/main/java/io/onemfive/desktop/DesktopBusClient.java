@@ -1,6 +1,7 @@
 package io.onemfive.desktop;
 
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.ops.network.bluetooth.BluetoothOpsView;
 import io.onemfive.desktop.views.ops.network.fullspectrum.FullSpectrumRadioOpsView;
@@ -19,8 +20,8 @@ import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
+import org.neo4j.cypher.internal.v3_4.logical.plans.Top;
 import ra.common.Client;
-import ra.common.DLC;
 import ra.common.Envelope;
 import ra.common.client.TCPBusClient;
 import ra.common.identity.DID;
@@ -30,12 +31,10 @@ import ra.common.network.Network;
 import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
 import ra.common.notification.Subscription;
-import ra.common.route.Route;
 import ra.common.service.ServiceReport;
 import ra.util.Wait;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -44,10 +43,11 @@ public class DesktopBusClient implements Client {
 
     private static final Logger LOG = Logger.getLogger(DesktopBusClient.class.getName());
 
-    public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
+    public static final String VIEW_NAME = "VIEW_NAME";
+    public static final String VIEW_OP = "VIEW_OP";
 
+    public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
     public static final String OPERATION_SUBSCRIBE_REPLY = "SUBSCRIBE";
-    public static final String OPERATION_UPDATE_IDENTITY_VIEW = "UPDATE_IDENTITY_VIEW";
 
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
@@ -60,6 +60,8 @@ public class DesktopBusClient implements Client {
     public DesktopBusClient(TCPBusClient tcpBusClient) {
         busClient = tcpBusClient;
         busClient.setClient(this);
+        activeIdentity = new DID();
+        activeIdentity.setUsername("ANONYMOUS");
     }
 
     public static void registerService(Class serviceClass) {
@@ -103,28 +105,14 @@ public class DesktopBusClient implements Client {
     @Override
     public void reply(Envelope e) {
         LOG.info("Received message for UI...");
-        Route route = e.getRoute();
-        String operation = route.getOperation();
-        switch (operation) {
-            case OPERATION_SUBSCRIBE_REPLY: {
-                LOG.info("Ack of Subscribe received: "+e.toJSON());
-                break;
-            }
-            case OPERATION_UPDATE_IDENTITY_VIEW: {
-                javafx.application.Platform.runLater(() -> {
-                    LOG.info("Updating IdentitiesView active DID...");
-                    IdentitiesView v = (IdentitiesView)MVC.loadView(IdentitiesView.class, true);
-                    v.modelUpdated("update", e);
-                });
-                break;
-            }
-            case OPERATION_NOTIFY_UI: {
-                LOG.warning("UI Notifications not yet implemented.");
-                break;
-            }
-            default: {
-                LOG.warning("Operation unsupported: " + operation);
-            }
+        String viewName = (String)e.getValue(VIEW_NAME);
+        String viewOp = (String)e.getValue(VIEW_OP);
+        View view = MVC.loadView(viewName);
+        if(view instanceof TopicListener) {
+            javafx.application.Platform.runLater(() -> {
+                LOG.info("Updating IdentitiesView active DID...");
+                ((TopicListener)view).modelUpdated(viewOp, e);
+            });
         }
     }
 
@@ -216,7 +204,7 @@ public class DesktopBusClient implements Client {
             }
         }));
 
-        Wait.aSec(1);
+        Wait.aMs(500);
 
         busClient.subscribe(new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
             @Override
