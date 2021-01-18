@@ -26,7 +26,7 @@ public class WalletView extends ActivatableView implements TopicListener {
         TitledGroupBg statusGroup = addTitledGroupBg(pane, gridRow, 1, Resources.get("shared.notes"));
         GridPane.setColumnSpan(statusGroup, 1);
 
-        String note = "Community Wallet is on the roadmap. It will support multiple wallets of each supported monetary wallet (e.g. Bitcoin, Monero) providing a default wallet for each with each community DID.";
+        String note = "Community Wallet is on the roadmap. It will use Bitcoin providing a default wallet for each community DID.";
         notes = addMultilineLabel(pane, ++gridRow, note, Layout.FIRST_ROW_DISTANCE);
 
         LOG.info("Initialized.");

@@ -4,6 +4,7 @@ import io.onemfive.desktop.DesktopBusClient;
 import io.onemfive.desktop.components.AutoTooltipButton;
 import io.onemfive.desktop.components.InputTextField;
 import io.onemfive.desktop.components.PasswordTextField;
+import io.onemfive.desktop.components.overlays.popups.Popup;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
@@ -20,12 +21,17 @@ import ra.common.identity.DID;
 import ra.did.DIDService;
 import ra.util.Resources;
 
+import java.util.List;
+
 import static io.onemfive.desktop.DesktopBusClient.VIEW_NAME;
 import static io.onemfive.desktop.DesktopBusClient.VIEW_OP;
 
 public class IdentitiesView extends ActivatableView implements TopicListener {
 
-    public static final String OPERATION_UPDATE_IDENTITY_VIEW = "UPDATE_IDENTITY_VIEW";
+    public static final String IDENTITIES_LIST = "IDENTITIES_LIST";
+    public static final String ACTIVE_IDENTITY = "ACTIVE_IDENTITY";
+    public static final String CONTACTS_LIST = "CONTACTS_LIST";
+    public static final String IDENTITY_ADDED = "IDENTITY_ADDED";
 
     private GridPane pane;
     private int gridRow = 0;
@@ -206,7 +212,26 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         addIdentity.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(identityAddresses.size()==10) return; // 10 Max Identities
+                if(identityAddresses.size()==10) {
+                    new Popup().information(Resources.get("personalIdentifiesView.maxIdentities"))
+                            .closeButtonText(Resources.get("shared.ok"))
+                            .show();
+                    return;
+                }
+                if(identityAliasTxt.getText().isEmpty()
+                        || identityPwdText.getText().isEmpty()
+                        || identityPwd2Text.getText().isEmpty()) {
+                    new Popup().information(Resources.get("personalIdentifiesView.identityRequired"))
+                            .closeButtonText(Resources.get("shared.ok"))
+                            .show();
+                    return;
+                }
+                if(!identityPwdText.getText().equals(identityPwd2Text.getText())) {
+                    new Popup().information(Resources.get("personalIdentitiesView.pwdMustBeSame"))
+                            .closeButtonText(Resources.get("shared.ok"))
+                            .show();
+                    return;
+                }
                 if(!identityAliasTxt.getText().isEmpty()) {
                     DID did = new DID();
                     did.setUsername(identityAliasTxt.getText());
@@ -214,10 +239,11 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
                     did.setPassphrase2(identityPwd2Text.getText());
                     did.setDescription(identityDescription.getText());
                     Envelope e = Envelope.documentFactory();
-
-                } else {
-                    // TODO: show in pop up
-                    LOG.warning("Alias, pwd, pwd again required.");
+                    e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+                    e.addNVP(VIEW_OP, IDENTITY_ADDED);
+                    e.addData(DID.class, did);
+                    e.addRoute(DIDService.class, DIDService.OPERATION_SAVE_IDENTITY);
+                    DesktopBusClient.deliver(e);
                 }
             }
         });
@@ -281,21 +307,23 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         // Get Identities
         Envelope e1 = Envelope.documentFactory();
         e1.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e1.addNVP(VIEW_OP, OPERATION_UPDATE_IDENTITY_VIEW);
+        e1.addNVP(VIEW_OP, IDENTITIES_LIST);
         e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
         DesktopBusClient.deliver(e1);
 
         // Get Active Identity
-//        Envelope e2 = Envelope.documentFactory();
-//        e2.addNVP(CLIENT_OP, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
-//        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
-//        DesktopBusClient.deliver(e2);
+        Envelope e2 = Envelope.documentFactory();
+        e2.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+        e2.addNVP(VIEW_OP, ACTIVE_IDENTITY);
+        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
+        DesktopBusClient.deliver(e2);
 
         // Get Contacts
-//        Envelope e3 = Envelope.documentFactory();
-//        e3.addNVP(CLIENT_OP, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
-//        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-//        DesktopBusClient.deliver(e3);
+        Envelope e3 = Envelope.documentFactory();
+        e3.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+        e3.addNVP(VIEW_OP, CONTACTS_LIST);
+        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
+        DesktopBusClient.deliver(e3);
 
     }
 
@@ -315,14 +343,27 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         LOG.info("Updating Identities View model...");
         Envelope e = (Envelope) object;
         switch (topic) {
-            case OPERATION_UPDATE_IDENTITY_VIEW: {
-                identitiesList.getItems().add(identityAliasTxt.getText());
+            case IDENTITIES_LIST: {
+                List<DID> identities = (List<DID>)e.getValue("identities");
+                identitiesList.getItems().clear();
+                identitiesList.getItems().addAll(identities);
                 identityAddresses.add(identityAliasTxt.getText());
+                break;
+            }
+            case ACTIVE_IDENTITY: {
+                DID did = (DID)e.getValue("activeIdentity");
+                activeDID = did;
+                break;
+            }
+            case CONTACTS_LIST: {
+
+                break;
+            }
+            case IDENTITY_ADDED: {
                 identityAliasTxt.setText(null);
                 identityPwdText.setText(null);
                 identityPwd2Text.setText(null);
                 identityDescription.setText(null);
-                break;
             }
         }
     }
