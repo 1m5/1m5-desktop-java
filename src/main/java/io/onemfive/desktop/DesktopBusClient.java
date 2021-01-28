@@ -10,7 +10,6 @@ import io.onemfive.desktop.views.ops.network.lifi.LiFiOpsView;
 import io.onemfive.desktop.views.ops.network.satellite.SatelliteOpsView;
 import io.onemfive.desktop.views.ops.network.tor.TOROpsView;
 import io.onemfive.desktop.views.ops.network.wifidirect.WifiDirectOpsView;
-import io.onemfive.desktop.views.personal.identities.IdentitiesView;
 import io.onemfive.desktop.views.settings.network.bluetooth.BluetoothNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.fullspectrum.FullSpectrumRadioNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.i2p.I2PNetworkSettingsView;
@@ -20,7 +19,6 @@ import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
-import org.neo4j.cypher.internal.v3_4.logical.plans.Top;
 import ra.common.Client;
 import ra.common.Envelope;
 import ra.common.client.TCPBusClient;
@@ -64,6 +62,10 @@ public class DesktopBusClient implements Client {
         activeIdentity.setUsername("ANONYMOUS");
     }
 
+    public DID getActiveIdentity() {
+        return activeIdentity;
+    }
+
     public static void registerService(Class serviceClass) {
         Envelope e = Envelope.documentFactory();
         e.setCommandPath(ControlCommand.RegisterService.name());
@@ -104,15 +106,17 @@ public class DesktopBusClient implements Client {
 
     @Override
     public void reply(Envelope e) {
-        LOG.info("Received message for UI...");
         String viewName = (String)e.getValue(VIEW_NAME);
         String viewOp = (String)e.getValue(VIEW_OP);
+        LOG.info("Received message for UI: view="+viewName+"; op="+viewOp);
         View view = MVC.loadView(viewName);
         if(view instanceof TopicListener) {
             javafx.application.Platform.runLater(() -> {
-                LOG.info("Updating IdentitiesView active DID...");
+                LOG.info("Updating view model...");
                 ((TopicListener)view).modelUpdated(viewOp, e);
             });
+        } else {
+            LOG.warning(view.getClass().getName()+" must implement "+TopicListener.class.getName());
         }
     }
 

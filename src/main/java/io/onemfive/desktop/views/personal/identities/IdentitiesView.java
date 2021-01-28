@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import ra.common.Envelope;
 import ra.common.identity.DID;
+import ra.common.network.ControlCommand;
 import ra.did.DIDService;
 import ra.util.Resources;
 
@@ -61,7 +62,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
     private final String identitiesText = Resources.get("personalIdentitiesView.identities");
     private final String contactsText = Resources.get("personalIdentitiesView.contacts");
 
-    private Label currentIdentityLabel;
     private ComboBox<String> authNAliasComboBox;
     private PasswordTextField authNPwdText;
     private InputTextField identityAliasTxt;
@@ -297,33 +297,36 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 int index = contactsList.getSelectionModel().getSelectedIndex();
                 if(index >= 0) {
-                    String itemStr = (String)contactAddresses.get(index);
+                    String itemStr = contactAddresses.get(index);
                     LOG.info(itemStr);
 
                 }
             }
         });
 
-        // Get Identities
         Envelope e1 = Envelope.documentFactory();
+        e1.setCommandPath(ControlCommand.Send.name());
         e1.addNVP(VIEW_NAME, IdentitiesView.class.getName());
         e1.addNVP(VIEW_OP, IDENTITIES_LIST);
         e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
+        e1.ratchet();
         DesktopBusClient.deliver(e1);
 
-        // Get Active Identity
-        Envelope e2 = Envelope.documentFactory();
-        e2.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e2.addNVP(VIEW_OP, ACTIVE_IDENTITY);
-        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
-        DesktopBusClient.deliver(e2);
-
-        // Get Contacts
-        Envelope e3 = Envelope.documentFactory();
-        e3.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e3.addNVP(VIEW_OP, CONTACTS_LIST);
-        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-        DesktopBusClient.deliver(e3);
+//        Envelope e2 = Envelope.documentFactory();
+//        e2.setCommandPath(ControlCommand.Send.name());
+//        e2.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+//        e2.addNVP(VIEW_OP, ACTIVE_IDENTITY);
+//        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
+//        e2.ratchet();
+//        DesktopBusClient.deliver(e2);
+//
+//        Envelope e3 = Envelope.documentFactory();
+//        e3.setCommandPath(ControlCommand.Send.name());
+//        e3.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+//        e3.addNVP(VIEW_OP, CONTACTS_LIST);
+//        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
+//        e3.ratchet();
+//        DesktopBusClient.deliver(e3);
 
     }
 
