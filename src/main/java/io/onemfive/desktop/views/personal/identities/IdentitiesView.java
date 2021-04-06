@@ -186,7 +186,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
 //                if(!authNAliasTxt.getText().isEmpty() && !authNPwdText.getText().isEmpty()) {
 //                    Envelope e = Envelope.documentFactory();
 //                    // 3. Update UI
-//                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_UPDATE_IDENTITY_VIEW);
+//                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
 //                    // 2. Load ordered Contacts
 //                    e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
 //                    // 1. Authenticate
