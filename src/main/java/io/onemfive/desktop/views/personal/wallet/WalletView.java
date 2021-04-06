@@ -6,6 +6,7 @@ import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import ra.btc.BTCWallet;
 import ra.util.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -14,6 +15,8 @@ public class WalletView extends ActivatableView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
+
+    private BTCWallet wallet;
 
     private String overview = Resources.get("personalView.wallet.overview");
     private Label overviewLabel;
