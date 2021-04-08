@@ -1318,6 +1318,10 @@ public class FormBuilder {
         return addPrimaryActionButton(gridPane, rowIndex, title, 15);
     }
 
+    public static Button addPrimaryActionButton(GridPane gridPane, int rowIndex, int colIndex, String title, double top) {
+        return addButton(gridPane, rowIndex, colIndex, title, top, true);
+    }
+
     public static Button addButton(GridPane gridPane, int rowIndex, int columnIndex, String title) {
         return addButton(gridPane, rowIndex, columnIndex, title, 0, false);
     }

@@ -29,6 +29,7 @@ import ra.common.currency.crypto.BTC;
 import ra.util.Resources;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -70,18 +71,32 @@ public class WalletView extends ActivatableView implements TopicListener {
         // Wallets List
         TitledGroupBg listWalletGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("personalView.wallet.list"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(listWalletGroup, 1);
-        walletsListView = addComboBox(pane, ++gridRow);
+        walletsListView = addComboBox(pane, ++gridRow, Resources.get("personalView.wallet.select"));
         walletsListView.setItems(walletsObservable);
         walletsListView.setMaxWidth(300);
+
+        walletsObservable.add("Default");
+        wallets = new ArrayList<>();
+        wallets.add("Default");
+
+        activeWallet = new BTCWallet();
+        activeWallet.setName("Default");
+        activeWallet.setVersion(1);
+        BTC balance = new BTC();
+        balance.setValue(BigInteger.ZERO);
+        activeWallet.setBalance(balance);
+        BTC uncomfBalance = new BTC();
+        uncomfBalance.setValue(BigInteger.ZERO);
+        activeWallet.setUnconfirmedBalance(uncomfBalance);
 
         // Wallet Info
         TitledGroupBg walletGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.active"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(walletGroup, 1);
-        walletNameTxt = addTopLabelTextField(pane, ++gridRow, Resources.get("personalView.wallet.name"), "", Layout.TWICE_FIRST_ROW_DISTANCE).second;
-        walletVersionTxt = addTopLabelTextField(pane, ++gridRow, Resources.get("personalView.wallet.version"), "").second;
-        walletBalanceTxt = addTopLabelTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
-        walletUnconfirmedBalanceTxt = addTopLabelTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
-//        walletImmatureBalanceTxt = addTopLabelTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
+        walletNameTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.name"), "", Layout.TWICE_FIRST_ROW_DISTANCE).second;
+        walletVersionTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.version"), "").second;
+        walletBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
+        walletUnconfirmedBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
+//        walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
 
         // Create Wallet
         TitledGroupBg createWalletGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.create"), Layout.FIRST_ROW_DISTANCE);
@@ -167,6 +182,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                 } else {
                     activeWallet = new BTCWallet();
                     activeWallet.setName(request.walletName);
+                    activeWallet.setVersion(1);
                     BTC balance = new BTC();
                     balance.setValue(BigInteger.ZERO);
                     activeWallet.setBalance(balance);
@@ -177,6 +193,12 @@ public class WalletView extends ActivatableView implements TopicListener {
                     immatureBalance.setValue(BigInteger.ZERO);
                     activeWallet.setImmatureBalance(immatureBalance);
                     walletsObservable.add(request.walletName);
+
+                    walletNameTxt.setText(activeWallet.getName());
+                    walletVersionTxt.setText(activeWallet.getVersion().toString());
+                    walletBalanceTxt.setText(activeWallet.getBalance().value().toString());
+                    walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
+//                    walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
                 }
                 break;
             }
@@ -227,15 +249,10 @@ public class WalletView extends ActivatableView implements TopicListener {
                 } else {
                     activeWallet = request.wallet;
                     walletNameTxt.setText(activeWallet.getName());
-                    walletNameTxt.setVisible(true);
                     walletVersionTxt.setText(activeWallet.getVersion().toString());
-                    walletVersionTxt.setVisible(true);
                     walletBalanceTxt.setText(activeWallet.getBalance().value().toString());
-                    walletBalanceTxt.setVisible(true);
                     walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
-                    walletUnconfirmedBalanceTxt.setVisible(true);
 //                    walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
-//                    walletImmatureBalanceTxt.setVisible(true);
                 }
                 break;
             }
