@@ -129,6 +129,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                 CreateWallet cmd = new CreateWallet(newWalletNameTxt.getText(), disablePrivateKeysOpt.isSelected(), blankOpt.isSelected());
                 e.addNVP(RPCCommand.NAME, cmd.toMap());
                 e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+                e.ratchet();
                 DesktopBusClient.deliver(e);
             }
         });
@@ -146,6 +147,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                     LoadWallet cmd = new LoadWallet(walletName);
                     e.addNVP(RPCCommand.NAME, cmd.toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+                    e.ratchet();
                     DesktopBusClient.deliver(e);
                 }
             }
@@ -159,6 +161,7 @@ public class WalletView extends ActivatableView implements TopicListener {
         e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
         e.addNVP(RPCCommand.NAME, new ListWallets().toMap());
         e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+        e.ratchet();
         DesktopBusClient.deliver(e);
 
         LOG.info("Activated.");
@@ -222,6 +225,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                     CreateWallet cmd = new CreateWallet("Default", false, false);
                     e.addNVP(RPCCommand.NAME, cmd.toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+                    e.ratchet();
                     DesktopBusClient.deliver(e);
                 } else {
                     wallets = request.wallets;
@@ -242,6 +246,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                     e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
                     e.addNVP(RPCCommand.NAME, new GetWalletInfo().toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+                    e.ratchet();
                     DesktopBusClient.deliver(e);
                 }
                 break;
