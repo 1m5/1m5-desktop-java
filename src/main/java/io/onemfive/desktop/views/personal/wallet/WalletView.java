@@ -127,7 +127,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                 e.addNVP(DesktopBusClient.VIEW_OP, CREATE_WALLET_OP);
                 e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
                 CreateWallet cmd = new CreateWallet(newWalletNameTxt.getText(), disablePrivateKeysOpt.isSelected(), blankOpt.isSelected());
-                e.addNVP(RPCCommand.NAME, cmd);
+                e.addNVP(RPCCommand.NAME, cmd.toMap());
                 e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                 DesktopBusClient.deliver(e);
             }
@@ -144,7 +144,7 @@ public class WalletView extends ActivatableView implements TopicListener {
                     e.addNVP(DesktopBusClient.VIEW_OP, LOAD_WALLET_OP);
                     e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
                     LoadWallet cmd = new LoadWallet(walletName);
-                    e.addNVP(RPCCommand.NAME, cmd);
+                    e.addNVP(RPCCommand.NAME, cmd.toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                     DesktopBusClient.deliver(e);
                 }
