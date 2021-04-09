@@ -108,6 +108,10 @@ public class DesktopBusClient implements Client {
     public void reply(Envelope e) {
         String viewName = (String)e.getValue(VIEW_NAME);
         String viewOp = (String)e.getValue(VIEW_OP);
+        if(viewName==null) {
+            LOG.info("No view name provided, ignoring.");
+            return;
+        }
         LOG.info("Received message for UI: view="+viewName+"; op="+viewOp);
         View view = MVC.loadView(viewName);
         if(view instanceof TopicListener) {
