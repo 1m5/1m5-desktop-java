@@ -1,5 +1,6 @@
 package io.onemfive.desktop;
 
+import io.onemfive.desktop.client.TCPBusClient;
 import io.onemfive.desktop.views.TopicListener;
 import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
@@ -21,7 +22,6 @@ import onemfive.ManCon;
 import onemfive.ManConStatus;
 import ra.common.Client;
 import ra.common.Envelope;
-import ra.common.client.TCPBusClient;
 import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
 import ra.common.network.ControlCommand;

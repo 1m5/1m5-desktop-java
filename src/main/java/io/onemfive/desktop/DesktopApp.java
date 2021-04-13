@@ -1,5 +1,6 @@
 package io.onemfive.desktop;
 
+import io.onemfive.desktop.client.TCPBusClient;
 import io.onemfive.desktop.user.Preferences;
 import io.onemfive.desktop.util.ImageUtil;
 import io.onemfive.desktop.views.home.HomeView;
@@ -10,7 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import ra.common.DLC;
 import ra.common.Envelope;
-import ra.common.client.TCPBusClient;
 import ra.common.network.ControlCommand;
 import ra.common.service.ServiceNotAccessibleException;
 import ra.common.service.ServiceNotSupportedException;
