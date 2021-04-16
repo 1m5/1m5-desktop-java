@@ -1,6 +1,5 @@
 package io.onemfive.desktop;
 
-import io.onemfive.desktop.client.TCPBusClient;
 import io.onemfive.desktop.views.TopicListener;
 import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.home.HomeView;
@@ -18,28 +17,37 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
+import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
+import org.neo4j.cypher.internal.v3_4.functions.E;
 import ra.common.Client;
 import ra.common.Envelope;
+import ra.common.file.Multipart;
 import ra.common.identity.DID;
+import ra.common.messaging.DocumentMessage;
 import ra.common.messaging.EventMessage;
-import ra.common.network.ControlCommand;
-import ra.common.network.Network;
-import ra.common.network.NetworkState;
-import ra.common.network.NetworkStatus;
+import ra.common.messaging.Message;
+import ra.common.network.*;
 import ra.common.notification.Subscription;
+import ra.common.route.ExternalRoute;
 import ra.common.service.ServiceReport;
+import ra.common.service.ServiceStatus;
 import ra.util.Wait;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.logging.Logger;
 
-public class DesktopBusClient implements Client {
+public class DesktopClient implements Client {
 
-    private static final Logger LOG = Logger.getLogger(DesktopBusClient.class.getName());
+    private static final Logger LOG = Logger.getLogger(DesktopClient.class.getName());
 
     public static final String VIEW_NAME = "VIEW_NAME";
     public static final String VIEW_OP = "VIEW_OP";
@@ -50,16 +58,29 @@ public class DesktopBusClient implements Client {
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
 
+    private NetworkStatus localhostStatus;
+
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
-    private static TCPBusClient busClient;
+    private ConnectionSpec httpSpec;
+    private OkHttpClient httpClient;
 
-    public DesktopBusClient(TCPBusClient tcpBusClient) {
-        busClient = tcpBusClient;
-        busClient.setClient(this);
+    private int apiPort;
+
+    private static DesktopClient instance;
+
+    private DesktopClient(int apiPort) {
+        this.apiPort = apiPort;
         activeIdentity = new DID();
         activeIdentity.setUsername("ANONYMOUS");
+    }
+
+    public static DesktopClient getInstance(int apiPort) {
+        if(instance == null) {
+            instance = new DesktopClient(apiPort);
+        }
+        return instance;
     }
 
     public DID getActiveIdentity() {
@@ -99,7 +120,7 @@ public class DesktopBusClient implements Client {
         MVC.execute(new Runnable() {
             @Override
             public void run() {
-                busClient.sendMessage(e);
+                instance.sendMessage(e);
             }
         });
     }
@@ -132,7 +153,17 @@ public class DesktopBusClient implements Client {
             v.updateManConBox();
         }));
 
-        busClient.subscribe(new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
+        httpSpec = new ConnectionSpec
+                .Builder(ConnectionSpec.CLEARTEXT)
+                .build();
+        httpClient = new OkHttpClient.Builder()
+                .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2))
+                .connectionSpecs(Collections.singletonList(httpSpec))
+                .retryOnConnectionFailure(true)
+                .followRedirects(true)
+                .build();
+
+        boolean subSuccess = subscribe(new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -214,7 +245,7 @@ public class DesktopBusClient implements Client {
 
         Wait.aMs(500);
 
-        busClient.subscribe(new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
+        subSuccess = subscribe(new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -261,6 +292,186 @@ public class DesktopBusClient implements Client {
         }));
 
         return true;
+    }
+
+    private boolean subscribe(Subscription subscription) {
+
+        return false;
+    }
+
+    private boolean sendMessage(Envelope e) {
+        if(!isConnected() && !connect()) {
+            e.getMessage().addErrorMessage("HTTP Client not connected and unable to connect.");
+            LOG.warning("HTTP Client not connected and unable to connect.");
+//            popError(e);
+            return false;
+        }
+        Message m = e.getMessage();
+        URL url;
+        try {
+            url = new URL("http://localhost:"+apiPort);
+        } catch (MalformedURLException malformedURLException) {
+            LOG.warning(malformedURLException.getLocalizedMessage());
+            return false;
+        }
+        Map<String, Object> h = e.getHeaders();
+        Map<String, String> hStr = new HashMap<>();
+        if(h.containsKey(Envelope.HEADER_AUTHORIZATION) && h.get(Envelope.HEADER_AUTHORIZATION) != null) {
+            hStr.put(Envelope.HEADER_AUTHORIZATION, (String) h.get(Envelope.HEADER_AUTHORIZATION));
+        }
+        if(h.containsKey(Envelope.HEADER_CONTENT_DISPOSITION) && h.get(Envelope.HEADER_CONTENT_DISPOSITION) != null) {
+            hStr.put(Envelope.HEADER_CONTENT_DISPOSITION, (String) h.get(Envelope.HEADER_CONTENT_DISPOSITION));
+        }
+        if(h.containsKey(Envelope.HEADER_CONTENT_TYPE) && h.get(Envelope.HEADER_CONTENT_TYPE) != null) {
+            hStr.put(Envelope.HEADER_CONTENT_TYPE, (String) h.get(Envelope.HEADER_CONTENT_TYPE));
+        }
+        if(h.containsKey(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) && h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) != null) {
+            hStr.put(Envelope.HEADER_CONTENT_TRANSFER_ENCODING, (String) h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING));
+        }
+        if(h.containsKey(Envelope.HEADER_USER_AGENT) && h.get(Envelope.HEADER_USER_AGENT) != null) {
+            hStr.put(Envelope.HEADER_USER_AGENT, (String) h.get(Envelope.HEADER_USER_AGENT));
+        }
+
+        ByteBuffer bodyBytes = null;
+        CacheControl cacheControl = null;
+        if (e.getMultipart() != null) {
+            // handle file upload
+            Multipart mp = e.getMultipart();
+            hStr.put(Envelope.HEADER_CONTENT_TYPE, "multipart/form-data; boundary=" + mp.getBoundary());
+            try {
+                bodyBytes = ByteBuffer.wrap(mp.finish().getBytes());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                // TODO: Provide error message
+                LOG.warning("IOException caught while building HTTP body with multipart: " + e1.getLocalizedMessage());
+                m.addErrorMessage("IOException caught while building HTTP body with multipart: " + e1.getLocalizedMessage());
+//                popError(e);
+                return false;
+            }
+            cacheControl = new CacheControl.Builder().noCache().build();
+        }
+
+        Headers headers = Headers.of(hStr);
+        if (bodyBytes == null) {
+            bodyBytes = ByteBuffer.wrap(e.toJSON().getBytes());
+        } else {
+            bodyBytes.put(e.toJSON().getBytes());
+        }
+
+        RequestBody requestBody = null;
+        if(bodyBytes != null) {
+            if(h.get(Envelope.HEADER_CONTENT_TYPE)==null)
+                requestBody = RequestBody.create(MediaType.parse("application/json"), bodyBytes.array());
+            else
+                requestBody = RequestBody.create(MediaType.parse((String) h.get(Envelope.HEADER_CONTENT_TYPE)), bodyBytes.array());
+        }
+
+        Request.Builder b = new Request.Builder().url(url);
+        if(cacheControl != null)
+            b = b.cacheControl(cacheControl);
+        b = b.headers(headers);
+        if(e.getAction()==null) {
+            e.setAction(Envelope.Action.POST);
+        }
+        switch(e.getAction()) {
+            case POST: {b = b.post(requestBody);break;}
+            case PUT: {b = b.put(requestBody);break;}
+            case DELETE: {b = (requestBody == null ? b.delete() : b.delete(requestBody));break;}
+            case GET: {b = b.get();break;}
+            default: {
+                LOG.warning("Envelope.action must be set to ADD, UPDATE, REMOVE, or VIEW");
+                m.addErrorMessage("Envelope.action must be set to ADD, UPDATE, REMOVE, or VIEW");
+//                popError(e);
+                return false;
+            }
+        }
+        Request req = b.build();
+        if(req == null) {
+            LOG.warning("okhttp3 builder didn't build request.");
+            m.addErrorMessage("okhttp3 builder didn't build request.");
+//            popError(e);
+            return false;
+        }
+        Response response = null;
+        long start;
+        long end;
+        LOG.info("Sending http request, host="+url.getHost());
+        try {
+            start = new Date().getTime();
+            response = httpClient.newCall(req).execute();
+            end = new Date().getTime();
+            LOG.info("Took: "+(end-start)+"ms");
+            if(!response.isSuccessful()) {
+                LOG.warning("HTTP request not successful: "+response.code());
+                m.addErrorMessage(response.code()+"");
+//                    handleFailure(start, end, m, url.toString());
+//                    popError(e);
+                return false;
+            }
+        } catch (IOException e2) {
+            LOG.warning(e2.getLocalizedMessage());
+            m.addErrorMessage(e2.getLocalizedMessage());
+//                popError(e);
+            return false;
+        }
+
+        LOG.info("Received http response.");
+        Headers responseHeaders = response.headers();
+        for (int i = 0; i < responseHeaders.size(); i++) {
+            LOG.info(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+        }
+        ResponseBody responseBody = response.body();
+        if(responseBody != null) {
+            try {
+                e.addContent(responseBody.bytes());
+            } catch (IOException e1) {
+                LOG.warning(e1.getLocalizedMessage());
+            } finally {
+                responseBody.close();
+            }
+//            LOG.info(new String((byte[])DLC.getContent(e)));
+        } else {
+            LOG.info("Body was null.");
+            e.addContent(null);
+        }
+        // Ratchet forward to next Route
+        e.ratchet();
+        return true;
+    }
+
+    public boolean connect() {
+        try {
+            LOG.info("Setting up HTTP spec client....");
+            httpSpec = new ConnectionSpec
+                    .Builder(ConnectionSpec.CLEARTEXT)
+                    .build();
+            LOG.info("Setting up http client...");
+            httpClient = new OkHttpClient.Builder()
+                    .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2))
+                    .connectionSpecs(Collections.singletonList(httpSpec))
+                    .retryOnConnectionFailure(true)
+                    .followRedirects(true)
+                    .build();
+
+        } catch (Exception e) {
+            LOG.warning("Exception caught launching HTTP Client Service: " + e.getLocalizedMessage());
+            localhostStatus = NetworkStatus.ERROR;
+            return false;
+        }
+        localhostStatus = NetworkStatus.CONNECTED;
+        return true;
+    }
+
+    private boolean disconnect() {
+        // Tear down clients and their specs
+        httpClient = null;
+        httpSpec = null;
+        localhostStatus = NetworkStatus.DISCONNECTED;
+        return true;
+    }
+
+    private boolean isConnected() {
+        return localhostStatus == NetworkStatus.CONNECTED;
     }
 
 }

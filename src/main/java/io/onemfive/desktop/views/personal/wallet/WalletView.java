@@ -1,7 +1,6 @@
 package io.onemfive.desktop.views.personal.wallet;
 
-import io.onemfive.desktop.DesktopBusClient;
-import io.onemfive.desktop.components.AutoTooltipButton;
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.InputTextField;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
@@ -12,10 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import ra.btc.BTCWallet;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
@@ -123,14 +119,14 @@ public class WalletView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 Envelope e = Envelope.documentFactory();
                 e.setCommandPath(ControlCommand.Send.name());
-                e.addNVP(DesktopBusClient.VIEW_NAME, WalletView.class.getName());
-                e.addNVP(DesktopBusClient.VIEW_OP, CREATE_WALLET_OP);
-                e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
+                e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+                e.addNVP(DesktopClient.VIEW_OP, CREATE_WALLET_OP);
+                e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
                 CreateWallet cmd = new CreateWallet(newWalletNameTxt.getText(), disablePrivateKeysOpt.isSelected(), blankOpt.isSelected());
                 e.addNVP(RPCCommand.NAME, cmd.toMap());
                 e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                 e.ratchet();
-                DesktopBusClient.deliver(e);
+                DesktopClient.deliver(e);
             }
         });
 
@@ -141,14 +137,14 @@ public class WalletView extends ActivatableView implements TopicListener {
                     String walletName = walletsListView.getSelectionModel().getSelectedItem();
                     Envelope e = Envelope.documentFactory();
                     e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopBusClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopBusClient.VIEW_OP, LOAD_WALLET_OP);
-                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
+                    e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+                    e.addNVP(DesktopClient.VIEW_OP, LOAD_WALLET_OP);
+                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
                     LoadWallet cmd = new LoadWallet(walletName);
                     e.addNVP(RPCCommand.NAME, cmd.toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                     e.ratchet();
-                    DesktopBusClient.deliver(e);
+                    DesktopClient.deliver(e);
                 }
             }
         });
@@ -156,13 +152,13 @@ public class WalletView extends ActivatableView implements TopicListener {
         // List Wallets
         Envelope e = Envelope.documentFactory();
         e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP(DesktopBusClient.VIEW_NAME, WalletView.class.getName());
-        e.addNVP(DesktopBusClient.VIEW_OP, LIST_WALLETS_OP);
-        e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
+        e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+        e.addNVP(DesktopClient.VIEW_OP, LIST_WALLETS_OP);
+        e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
         e.addNVP(RPCCommand.NAME, new ListWallets().toMap());
         e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
         e.ratchet();
-        DesktopBusClient.deliver(e);
+        DesktopClient.deliver(e);
 
         LOG.info("Activated.");
     }
@@ -219,14 +215,14 @@ public class WalletView extends ActivatableView implements TopicListener {
                     // Create Default
                     e = Envelope.documentFactory();
                     e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopBusClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopBusClient.VIEW_OP, CREATE_WALLET_OP);
-                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
+                    e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+                    e.addNVP(DesktopClient.VIEW_OP, CREATE_WALLET_OP);
+                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
                     CreateWallet cmd = new CreateWallet("Default", false, false);
                     e.addNVP(RPCCommand.NAME, cmd.toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                     e.ratchet();
-                    DesktopBusClient.deliver(e);
+                    DesktopClient.deliver(e);
                 } else {
                     wallets = request.wallets;
                 }
@@ -241,13 +237,13 @@ public class WalletView extends ActivatableView implements TopicListener {
                     // Wallet Loaded in Bitcoin Node successfully so get its information for the View
                     e = Envelope.documentFactory();
                     e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopBusClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopBusClient.VIEW_OP, GET_WALLET_INFO_OP);
-                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
+                    e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+                    e.addNVP(DesktopClient.VIEW_OP, GET_WALLET_INFO_OP);
+                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
                     e.addNVP(RPCCommand.NAME, new GetWalletInfo().toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                     e.ratchet();
-                    DesktopBusClient.deliver(e);
+                    DesktopClient.deliver(e);
                 }
                 break;
             }

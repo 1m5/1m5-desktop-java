@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.ops.network.i2p;
 
-import io.onemfive.desktop.DesktopBusClient;
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -89,10 +89,10 @@ public class I2POpsView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 LOG.info("powerButton=" + powerButton.isSelected());
                 if (powerButton.isSelected()) {
-                    DesktopBusClient.startService(I2PService.class);
+                    DesktopClient.startService(I2PService.class);
                 } else {
                     reset();
-                    DesktopBusClient.shutdownService(I2PService.class, hardStop.isSelected());
+                    DesktopClient.shutdownService(I2PService.class, hardStop.isSelected());
                 }
                 powerButton.disableProperty().setValue(true);
                 hardStop.disableProperty().setValue(true);

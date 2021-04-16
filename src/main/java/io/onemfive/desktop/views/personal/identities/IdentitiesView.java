@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.personal.identities;
 
-import io.onemfive.desktop.DesktopBusClient;
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.AutoTooltipButton;
 import io.onemfive.desktop.components.InputTextField;
 import io.onemfive.desktop.components.PasswordTextField;
@@ -24,8 +24,8 @@ import ra.util.Resources;
 
 import java.util.List;
 
-import static io.onemfive.desktop.DesktopBusClient.VIEW_NAME;
-import static io.onemfive.desktop.DesktopBusClient.VIEW_OP;
+import static io.onemfive.desktop.DesktopClient.VIEW_NAME;
+import static io.onemfive.desktop.DesktopClient.VIEW_OP;
 
 public class IdentitiesView extends ActivatableView implements TopicListener {
 
@@ -243,7 +243,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
                     e.addNVP(VIEW_OP, IDENTITY_ADDED);
                     e.addData(DID.class, did);
                     e.addRoute(DIDService.class, DIDService.OPERATION_SAVE_IDENTITY);
-                    DesktopBusClient.deliver(e);
+                    DesktopClient.deliver(e);
                 }
             }
         });
@@ -310,7 +310,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         e1.addNVP(VIEW_OP, IDENTITIES_LIST);
         e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
         e1.ratchet();
-        DesktopBusClient.deliver(e1);
+        DesktopClient.deliver(e1);
 
 //        Envelope e2 = Envelope.documentFactory();
 //        e2.setCommandPath(ControlCommand.Send.name());

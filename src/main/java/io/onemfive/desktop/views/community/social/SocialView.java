@@ -1,6 +1,6 @@
 package io.onemfive.desktop.views.community.social;
 
-import io.onemfive.desktop.DesktopBusClient;
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -82,7 +82,7 @@ public class SocialView extends ActivatableView implements TopicListener {
                 e.addRoute(NetworkManagerService.class.getName(), NetworkManagerService.OPERATION_SEND);
                 e.addContent(txtToSend);
                 e.ratchet();
-                DesktopBusClient.deliver(e);
+                DesktopClient.deliver(e);
                 textTextField.setText(null);
             };
         });

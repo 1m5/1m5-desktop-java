@@ -1,6 +1,5 @@
 package io.onemfive.desktop;
 
-import io.onemfive.desktop.client.TCPBusClient;
 import io.onemfive.desktop.user.Preferences;
 import io.onemfive.desktop.util.ImageUtil;
 import io.onemfive.desktop.views.home.HomeView;
@@ -9,26 +8,15 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import ra.common.DLC;
-import ra.common.Envelope;
-import ra.common.network.ControlCommand;
-import ra.common.service.ServiceNotAccessibleException;
-import ra.common.service.ServiceNotSupportedException;
 import ra.common.service.ServiceStatus;
-import ra.common.service.ServiceStatusObserver;
-import ra.util.AppThread;
 import ra.util.Config;
 import ra.util.LocaleUtil;
-import ra.util.Wait;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import static io.onemfive.desktop.CssTheme.CSS_THEME_DARK;
 import static io.onemfive.desktop.CssTheme.CSS_THEME_LIGHT;
 import static io.onemfive.desktop.util.Layout.*;
 
@@ -53,9 +41,7 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
     private ServiceStatus uiServiceStatus = ServiceStatus.NOT_INITIALIZED;
 
     private Properties properties;
-    private TCPBusClient tcpBusClient;
-    private AppThread busThread;
-    private DesktopBusClient desktopBusClient;
+    private DesktopClient desktopClient;
 
     public DesktopApp() {
         shutDownHandler = this::stop;
@@ -73,16 +59,6 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
             LOG.severe(e.getLocalizedMessage());
         }
 
-        tcpBusClient = new TCPBusClient();
-        busThread = new AppThread(tcpBusClient);
-        busThread.setName("1M5-Bus-Client-Thread");
-        busThread.setDaemon(true);
-        busThread.start();
-
-        while(!tcpBusClient.isInitiated()) {
-            Wait.aMs(500); // Wait for bus client to verify controller is responding
-        }
-
         shutDownHandler = new Runnable() {
             @Override
             public void run() {
@@ -97,8 +73,9 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         Preferences.locale = Locale.US;
 
         // Initialize Desktop Bus Client
-        desktopBusClient = new DesktopBusClient(tcpBusClient);
-        desktopBusClient.start(properties);
+        int apiPort = (Integer)properties.get("1m5.desktop.api.port");
+        desktopClient = DesktopClient.getInstance(apiPort);
+        desktopClient.start(properties);
     }
 
     @Override
@@ -159,7 +136,6 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
 //                });
 //            }, 200, TimeUnit.MILLISECONDS);
             shutDownRequested = true;
-            tcpBusClient.shutdown(false);
             Platform.exit();
         }
     }
