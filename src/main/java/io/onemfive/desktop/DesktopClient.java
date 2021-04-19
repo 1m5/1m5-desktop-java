@@ -33,6 +33,7 @@ import ra.common.notification.Subscription;
 import ra.common.route.ExternalRoute;
 import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
+import ra.maildrop.MailDropService;
 import ra.util.Wait;
 
 import javax.net.ssl.SSLContext;
@@ -147,6 +148,7 @@ public class DesktopClient implements Client {
 
     public boolean start(Properties p) {
         LOG.info("Starting Desktop Bus Client...");
+
         MVC.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
             LOG.info("Updating ManCon status...");
             HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
@@ -297,6 +299,14 @@ public class DesktopClient implements Client {
     private boolean subscribe(Subscription subscription) {
 
         return false;
+    }
+
+    private List<Envelope> getMail(String client) {
+        Envelope e = Envelope.documentFactory();
+        e.setClient(client);
+        e.addRoute(MailDropService.class, MailDropService.OPERATION_PICKUP_CLEAN);
+        sendMessage(e);
+        return (List<Envelope>)e.getValue("ra.maildrop.Mail");
     }
 
     private boolean sendMessage(Envelope e) {
