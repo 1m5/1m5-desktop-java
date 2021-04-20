@@ -73,7 +73,7 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         Preferences.locale = Locale.US;
 
         // Initialize Desktop Bus Client
-        int apiPort = (Integer)properties.get("1m5.desktop.api.port");
+        int apiPort = Integer.parseInt(properties.getProperty("1m5.desktop.api.port"));
         desktopClient = DesktopClient.getInstance(apiPort);
         desktopClient.start(properties);
     }

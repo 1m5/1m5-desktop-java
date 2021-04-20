@@ -34,6 +34,7 @@ import ra.common.route.ExternalRoute;
 import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
 import ra.maildrop.MailDropService;
+import ra.notification.NotificationService;
 import ra.util.Wait;
 
 import javax.net.ssl.SSLContext;
@@ -44,6 +45,7 @@ import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class DesktopClient implements Client {
@@ -58,6 +60,8 @@ public class DesktopClient implements Client {
 
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
+
+    private final Map<String, List<Subscription>> subscriptions = new HashMap<>();
 
     private NetworkStatus localhostStatus;
 
@@ -163,9 +167,29 @@ public class DesktopClient implements Client {
                 .connectionSpecs(Collections.singletonList(httpSpec))
                 .retryOnConnectionFailure(true)
                 .followRedirects(true)
+                .readTimeout(5, TimeUnit.MINUTES)
                 .build();
 
-        boolean subSuccess = subscribe(new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
+        // Setup Mailbox Checker Task for default system
+//        MVC.runPeriodically(new Runnable() {
+//            @Override
+//            public void run() {
+//                List<Subscription> subs = subscriptions.get("default");
+//                List<Envelope> mail = getMail("default");
+//                for(Envelope e : mail) {
+//                    if(e.getMessage() instanceof EventMessage) {
+//                        EventMessage em = (EventMessage) e.getMessage();
+//                        for(Subscription sub : subs) {
+//                            if(sub.getEventMessageType().name().equals(em.getType())) {
+//                                sub.getClient().reply(e);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }, 5);
+
+        subscribe("default", new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -245,9 +269,7 @@ public class DesktopClient implements Client {
             }
         }));
 
-        Wait.aMs(500);
-
-        subSuccess = subscribe(new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
+        subscribe("default", new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -296,15 +318,28 @@ public class DesktopClient implements Client {
         return true;
     }
 
-    private boolean subscribe(Subscription subscription) {
-
-        return false;
+    private boolean subscribe(String client, Subscription subscription) {
+        Envelope e = Envelope.documentFactory();
+        e.addNVP("EventMessageType", subscription.getEventMessageType().name());
+        e.addNVP("ClientId", client);
+        e.addNVP("Service", MailDropService.class.getName());
+        e.addNVP("Operation", MailDropService.OPERATION_DROPOFF);
+        e.addRoute(NotificationService.class.getName(), NotificationService.OPERATION_SUBSCRIBE);
+        List<Subscription> subs = subscriptions.get(client);
+        if(subs==null) {
+            subs = new ArrayList<>();
+            subscriptions.put(client, subs);
+        }
+        subs.add(subscription);
+        e.ratchet();
+        return sendMessage(e);
     }
 
     private List<Envelope> getMail(String client) {
         Envelope e = Envelope.documentFactory();
         e.setClient(client);
         e.addRoute(MailDropService.class, MailDropService.OPERATION_PICKUP_CLEAN);
+        e.ratchet();
         sendMessage(e);
         return (List<Envelope>)e.getValue("ra.maildrop.Mail");
     }
