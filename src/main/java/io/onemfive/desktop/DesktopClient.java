@@ -56,7 +56,6 @@ public class DesktopClient implements Client {
     public static final String VIEW_OP = "VIEW_OP";
 
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
-    public static final String OPERATION_SUBSCRIBE_REPLY = "SUBSCRIBE";
 
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
@@ -171,25 +170,26 @@ public class DesktopClient implements Client {
                 .build();
 
         // Setup Mailbox Checker Task for default system
-//        MVC.runPeriodically(new Runnable() {
-//            @Override
-//            public void run() {
-//                List<Subscription> subs = subscriptions.get("default");
-//                List<Envelope> mail = getMail("default");
-//                for(Envelope e : mail) {
-//                    if(e.getMessage() instanceof EventMessage) {
-//                        EventMessage em = (EventMessage) e.getMessage();
-//                        for(Subscription sub : subs) {
-//                            if(sub.getEventMessageType().name().equals(em.getType())) {
-//                                sub.getClient().reply(e);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }, 5);
+        MVC.runPeriodically(new Runnable() {
+            @Override
+            public void run() {
+                List<Subscription> subs = subscriptions.get(DesktopClient.class.getName());
+                List<Envelope> mail = getMail(DesktopClient.class.getName());
+                LOG.info(mail.size()+" mail received.");
+                for(Envelope e : mail) {
+                    if(e.getMessage() instanceof EventMessage) {
+                        EventMessage em = (EventMessage) e.getMessage();
+                        for(Subscription sub : subs) {
+                            if(sub.getEventMessageType().name().equals(em.getType())) {
+                                sub.getClient().reply(e);
+                            }
+                        }
+                    }
+                }
+            }
+        }, 5);
 
-        subscribe("default", new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
+        subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -269,7 +269,7 @@ public class DesktopClient implements Client {
             }
         }));
 
-        subscribe("default", new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
+        subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
             @Override
             public void reply(Envelope e) {
                 javafx.application.Platform.runLater(() -> {
@@ -462,9 +462,9 @@ public class DesktopClient implements Client {
 
         LOG.info("Received http response.");
         Headers responseHeaders = response.headers();
-        for (int i = 0; i < responseHeaders.size(); i++) {
-            LOG.info(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-        }
+//        for (int i = 0; i < responseHeaders.size(); i++) {
+//            LOG.info(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//        }
         ResponseBody responseBody = response.body();
         if(responseBody != null) {
             try {
