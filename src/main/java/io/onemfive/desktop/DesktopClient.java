@@ -175,6 +175,10 @@ public class DesktopClient implements Client {
             public void run() {
                 List<Subscription> subs = subscriptions.get(DesktopClient.class.getName());
                 List<Envelope> mail = getMail(DesktopClient.class.getName());
+                if(mail == null) {
+                    LOG.info("No Mail.");
+                    return;
+                }
                 LOG.info(mail.size()+" mail received.");
                 for(Envelope e : mail) {
                     if(e.getMessage() instanceof EventMessage) {
