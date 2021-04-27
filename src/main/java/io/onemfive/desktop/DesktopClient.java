@@ -170,155 +170,156 @@ public class DesktopClient implements Client {
                 .build();
 
         // Setup Mailbox Checker Task for default system
-        MVC.runPeriodically(new Runnable() {
-            @Override
-            public void run() {
-                List<Subscription> subs = subscriptions.get(DesktopClient.class.getName());
-                List<Envelope> mail = getMail(DesktopClient.class.getName());
-                if(mail == null) {
-                    LOG.info("No Mail.");
-                    return;
-                }
-                LOG.info(mail.size()+" mail received.");
-                for(Envelope e : mail) {
-                    if(e.getMessage() instanceof EventMessage) {
+//        MVC.runPeriodically(new Runnable() {
+//            @Override
+//            public void run() {
+//                List<Subscription> subs = subscriptions.get(DesktopClient.class.getName());
+//                List<Envelope> mail = getMail(DesktopClient.class.getName());
+//                if(mail == null) {
+//                    LOG.info("No Mail.");
+//                    return;
+//                }
+//                LOG.info(mail.size()+" mail received.");
+//                for(Envelope e : mail) {
+//                    if(e.getMessage() instanceof EventMessage) {
+//                        EventMessage em = (EventMessage) e.getMessage();
+//                        for(Subscription sub : subs) {
+//                            if(sub.getEventMessageType().name().equals(em.getType())) {
+//                                sub.getClient().reply(e);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }, 5);
+
+        if(false) {
+            subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
+                @Override
+                public void reply(Envelope e) {
+                    javafx.application.Platform.runLater(() -> {
+                        LOG.info("Updating UI with Network State...");
                         EventMessage em = (EventMessage) e.getMessage();
-                        for(Subscription sub : subs) {
-                            if(sub.getEventMessageType().name().equals(em.getType())) {
-                                sub.getClient().reply(e);
+                        NetworkState state = (NetworkState) em.getMessage();
+                        networkStates.put(state.network.name(), state);
+                        switch (state.network) {
+                            case LiFi: {
+                                ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(LiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case Tor: {
+                                ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(TORNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case I2P: {
+                                ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(I2PNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case Bluetooth: {
+                                ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(BluetoothNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case WiFi: {
+                                ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(WiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case Satellite: {
+                                ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(SatelliteNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
+                            }
+                            case FSRadio: {
+                                ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                ((TopicListener) MVC.loadView(FullSpectrumRadioNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
+                                break;
                             }
                         }
-                    }
-                }
-            }
-        }, 5);
 
-        subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.NETWORK_STATE_UPDATE, new Client() {
-            @Override
-            public void reply(Envelope e) {
-                javafx.application.Platform.runLater(() -> {
-                    LOG.info("Updating UI with Network State...");
-                    EventMessage em = (EventMessage)e.getMessage();
-                    NetworkState state = (NetworkState)em.getMessage();
-                    networkStates.put(state.network.name(), state);
-                    switch(state.network) {
-                        case LiFi: {
-                            ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(LiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case Tor: {
-                            ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(TORNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case I2P: {
-                            ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(I2PNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case Bluetooth: {
-                            ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(BluetoothNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case WiFi: {
-                            ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(WiFiNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case Satellite: {
-                            ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(SatelliteNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                        case FSRadio: {
-                            ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            ((TopicListener) MVC.loadView(FullSpectrumRadioNetworkSettingsView.class, true)).modelUpdated(NetworkState.class.getSimpleName(), state);
-                            break;
-                        }
-                    }
+                        NetworkState torNS = networkStates.get(Network.Tor.name());
+                        NetworkState i2pNS = networkStates.get(Network.I2P.name());
+                        NetworkState btNS = networkStates.get(Network.Bluetooth.name());
+                        NetworkState wifiNS = networkStates.get(Network.WiFi.name());
+                        NetworkState satNS = networkStates.get(Network.Satellite.name());
+                        NetworkState fsRadNS = networkStates.get(Network.FSRadio.name());
+                        NetworkState lifiNS = networkStates.get(Network.LiFi.name());
 
-                    NetworkState torNS = networkStates.get(Network.Tor.name());
-                    NetworkState i2pNS = networkStates.get(Network.I2P.name());
-                    NetworkState btNS = networkStates.get(Network.Bluetooth.name());
-                    NetworkState wifiNS = networkStates.get(Network.WiFi.name());
-                    NetworkState satNS = networkStates.get(Network.Satellite.name());
-                    NetworkState fsRadNS = networkStates.get(Network.FSRadio.name());
-                    NetworkState lifiNS = networkStates.get(Network.LiFi.name());
+                        boolean outernetAvailable = btNS != null && btNS.networkStatus == NetworkStatus.CONNECTED
+                                || wifiNS != null && wifiNS.networkStatus == NetworkStatus.CONNECTED
+                                || satNS != null && satNS.networkStatus == NetworkStatus.CONNECTED
+                                || fsRadNS != null && fsRadNS.networkStatus == NetworkStatus.CONNECTED
+                                || lifiNS != null && lifiNS.networkStatus == NetworkStatus.CONNECTED;
 
-                    boolean outernetAvailable = btNS!=null && btNS.networkStatus == NetworkStatus.CONNECTED
-                            || wifiNS!=null && wifiNS.networkStatus == NetworkStatus.CONNECTED
-                            || satNS!=null && satNS.networkStatus == NetworkStatus.CONNECTED
-                            || fsRadNS!=null && fsRadNS.networkStatus == NetworkStatus.CONNECTED
-                            || lifiNS!=null && lifiNS.networkStatus == NetworkStatus.CONNECTED;
+                        boolean privateReroutedInternetAvailable = torNS != null && torNS.networkStatus == NetworkStatus.CONNECTED
+                                && i2pNS != null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
 
-                    boolean privateReroutedInternetAvailable = torNS!=null && torNS.networkStatus == NetworkStatus.CONNECTED
-                            && i2pNS!=null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
+                        boolean privateInternetAvailable = torNS != null && torNS.networkStatus == NetworkStatus.CONNECTED
+                                || i2pNS != null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
 
-                    boolean privateInternetAvailable = torNS!=null && torNS.networkStatus == NetworkStatus.CONNECTED
-                            || i2pNS!=null && i2pNS.networkStatus == NetworkStatus.CONNECTED;
-
-                    if(outernetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NEO;
-                    else if(privateReroutedInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.VERYHIGH;
-                    else if(privateInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.MEDIUM;
-                    else ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NONE;
+                        if (outernetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NEO;
+                        else if (privateReroutedInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.VERYHIGH;
+                        else if (privateInternetAvailable) ManConStatus.MAX_AVAILABLE_MANCON = ManCon.MEDIUM;
+                        else ManConStatus.MAX_AVAILABLE_MANCON = ManCon.NONE;
 
 //                    HomeView v = (HomeView)MVC.loadView(HomeView.class, true);
 //                    v.updateManConBox();
 
-                    MVC.manConStatusUpdated();
+                        MVC.manConStatusUpdated();
 
-                });
-            }
-        }));
+                    });
+                }
+            }));
 
-        subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
-            @Override
-            public void reply(Envelope e) {
-                javafx.application.Platform.runLater(() -> {
-                    LOG.info("Updating UI with Service Report...");
-                    EventMessage em = (EventMessage)e.getMessage();
-                    ServiceReport report = (ServiceReport)em.getMessage();
-                    if(report.serviceClassName==null) {
-                        LOG.warning("No serviceClassName in Service Report! BUG");
-                        return;
-                    }
-                    serviceReports.put(report.serviceClassName, report);
-                    switch(report.serviceClassName) {
-                        case "ra.lifi.LiFiService": {
-                            ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
+            subscribe(DesktopClient.class.getName(), new Subscription(EventMessage.Type.SERVICE_STATUS, new Client() {
+                @Override
+                public void reply(Envelope e) {
+                    javafx.application.Platform.runLater(() -> {
+                        LOG.info("Updating UI with Service Report...");
+                        EventMessage em = (EventMessage) e.getMessage();
+                        ServiceReport report = (ServiceReport) em.getMessage();
+                        if (report.serviceClassName == null) {
+                            LOG.warning("No serviceClassName in Service Report! BUG");
+                            return;
                         }
-                        case "ra.tor.TORClientService": {
-                            ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
+                        serviceReports.put(report.serviceClassName, report);
+                        switch (report.serviceClassName) {
+                            case "ra.lifi.LiFiService": {
+                                ((TopicListener) MVC.loadView(LiFiOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.tor.TORClientService": {
+                                ((TopicListener) MVC.loadView(TOROpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.i2p.I2PService": {
+                                ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.bluetooth.BluetoothService": {
+                                ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.wifidirect.WiFiDirectNetwork": {
+                                ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.satellite.SatelliteService": {
+                                ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
+                            case "ra.gnuradio.GNURadioService": {
+                                ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
+                                break;
+                            }
                         }
-                        case "ra.i2p.I2PService": {
-                            ((TopicListener) MVC.loadView(I2POpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
-                        }
-                        case "ra.bluetooth.BluetoothService": {
-                            ((TopicListener) MVC.loadView(BluetoothOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
-                        }
-                        case "ra.wifidirect.WiFiDirectNetwork": {
-                            ((TopicListener) MVC.loadView(WifiDirectOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
-                        }
-                        case "ra.satellite.SatelliteService": {
-                            ((TopicListener) MVC.loadView(SatelliteOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
-                        }
-                        case "ra.gnuradio.GNURadioService": {
-                            ((TopicListener) MVC.loadView(FullSpectrumRadioOpsView.class, true)).modelUpdated(ServiceReport.class.getSimpleName(), report);
-                            break;
-                        }
-                    }
-                });
-            }
-        }));
-
+                    });
+                }
+            }));
+        }
         return true;
     }
 
@@ -335,7 +336,6 @@ public class DesktopClient implements Client {
             subscriptions.put(client, subs);
         }
         subs.add(subscription);
-        e.ratchet();
         return sendMessage(e);
     }
 
@@ -343,7 +343,6 @@ public class DesktopClient implements Client {
         Envelope e = Envelope.documentFactory();
         e.setClient(client);
         e.addRoute(MailDropService.class, MailDropService.OPERATION_PICKUP_CLEAN);
-        e.ratchet();
         sendMessage(e);
         return (List<Envelope>)e.getValue("ra.maildrop.Mail");
     }
@@ -483,8 +482,6 @@ public class DesktopClient implements Client {
             LOG.info("Body was null.");
             e.addContent(null);
         }
-        // Ratchet forward to next Route
-        e.ratchet();
         return true;
     }
 

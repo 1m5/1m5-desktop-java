@@ -7,6 +7,7 @@ import io.onemfive.desktop.views.View;
 import io.onemfive.desktop.views.commons.agora.AgoraView;
 import io.onemfive.desktop.views.commons.browser.BrowserView;
 import io.onemfive.desktop.views.commons.dashboard.DashboardView;
+import io.onemfive.desktop.views.commons.dex.DEXView;
 import io.onemfive.desktop.views.commons.topics.TopicsView;
 import io.onemfive.desktop.views.home.HomeView;
 import javafx.beans.value.ChangeListener;
@@ -21,7 +22,7 @@ public class CommonsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab agoraTab, browserTab, dashboardTab, topicsTab, exchangeTab;
+    private Tab agoraTab, browserTab, dashboardTab, topicsTab, dexTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -36,6 +37,7 @@ public class CommonsView extends ActivatableView {
         browserTab.setText(Resources.get("commonsView.tabs.browser").toUpperCase());
         dashboardTab.setText(Resources.get("commonsView.tabs.dashboard").toUpperCase());
         topicsTab.setText(Resources.get("commonsView.tabs.topics").toUpperCase());
+        dexTab.setText(Resources.get("commonsView.tabs.dex").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(CommonsView.class) == 1)
@@ -51,6 +53,8 @@ public class CommonsView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DashboardView.class);
             else if (newValue == topicsTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
+            else if (newValue == dexTab)
+                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DEXView.class);
         };
 
         LOG.info("Initialized.");
@@ -67,6 +71,8 @@ public class CommonsView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, BrowserView.class);
         else if (pane.getSelectionModel().getSelectedItem() == topicsTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
+        else if(pane.getSelectionModel().getSelectedItem() == dexTab)
+            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DEXView.class);
         else
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DashboardView.class);
 
@@ -94,6 +100,7 @@ public class CommonsView extends ActivatableView {
         else if (view instanceof BrowserView) tab = browserTab;
         else if (view instanceof DashboardView) tab = dashboardTab;
         else if (view instanceof TopicsView) tab = topicsTab;
+        else if (view instanceof DEXView) tab = dexTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

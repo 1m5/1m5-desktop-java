@@ -9,7 +9,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +114,7 @@ public class AutoCompleteComboBox<T> extends JFXComboBox<T> {
     private void filterBy(String query) {
         ArrayList<T> newMatchingList = new ArrayList<>();
         for (T item : completeList)
-            if (StringUtils.containsIgnoreCase(asString(item), query))
+            if (item.toString().toLowerCase().contains(query.toLowerCase()))
                 newMatchingList.add(item);
         matchingList = newMatchingList;
         setValue(null);
