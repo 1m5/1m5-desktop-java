@@ -22,6 +22,7 @@ import onemfive.ManCon;
 import onemfive.ManConStatus;
 import org.neo4j.cypher.internal.v3_4.functions.E;
 import ra.common.Client;
+import ra.common.DLC;
 import ra.common.Envelope;
 import ra.common.file.Multipart;
 import ra.common.identity.DID;
@@ -400,11 +401,13 @@ public class DesktopClient implements Client {
         }
 
         Headers headers = Headers.of(hStr);
+        byte[] body = e.toJSON().getBytes();
         if (bodyBytes == null) {
-            bodyBytes = ByteBuffer.wrap(e.toJSON().getBytes());
+            bodyBytes = ByteBuffer.wrap(body);
         } else {
-            bodyBytes.put(e.toJSON().getBytes());
+            bodyBytes.put(body);
         }
+        LOG.info("Request: "+new String(body));
 
         RequestBody requestBody = null;
         if(bodyBytes != null) {
@@ -477,11 +480,12 @@ public class DesktopClient implements Client {
             } finally {
                 responseBody.close();
             }
-//            LOG.info(new String((byte[])DLC.getContent(e)));
+            LOG.info("Response: " + new String((byte[]) e.getContent()));
         } else {
             LOG.info("Body was null.");
             e.addContent(null);
         }
+        reply(e);
         return true;
     }
 

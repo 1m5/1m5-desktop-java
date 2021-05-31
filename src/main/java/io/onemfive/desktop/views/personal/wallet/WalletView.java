@@ -2,6 +2,7 @@ package io.onemfive.desktop.views.personal.wallet;
 
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.InputTextField;
+import io.onemfive.desktop.components.PasswordTextField;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -12,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.neo4j.cypher.internal.v3_5.ast.Create;
 import ra.btc.BTCWallet;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
@@ -24,6 +26,7 @@ import ra.common.Envelope;
 import ra.common.currency.crypto.BTC;
 import ra.common.network.ControlCommand;
 import ra.util.Resources;
+import ra.util.Wait;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -52,9 +55,10 @@ public class WalletView extends ActivatableView implements TopicListener {
     private TextField walletUnconfirmedBalanceTxt;
 //    private TextField walletImmatureBalanceTxt;
 
+    // Create Wallet
     private InputTextField newWalletNameTxt;
-    private CheckBox disablePrivateKeysOpt;
-    private CheckBox blankOpt;
+    private PasswordTextField passphraseTxt;
+    private PasswordTextField passphrase2Txt;
     private Button createWalletButton;
 
     private ObservableList<String> walletsObservable = FXCollections.observableArrayList();
@@ -71,10 +75,13 @@ public class WalletView extends ActivatableView implements TopicListener {
         walletsListView = addComboBox(pane, ++gridRow, Resources.get("personalView.wallet.select"));
         walletsListView.setItems(walletsObservable);
         walletsListView.setMaxWidth(300);
-
-        walletsObservable.add("Default");
         wallets = new ArrayList<>();
-        wallets.add("Default");
+
+        Envelope e = Envelope.documentFactory();
+        e.setClient(DesktopClient.class.getName());
+        e.addRoute(BitcoinService.class.getName(), BitcoinService.OPERATION_RPC_REQUEST);
+        e.addNVP(RPCCommand.NAME, new ListWallets());
+        DesktopClient.deliver(e);
 
         activeWallet = new BTCWallet();
         activeWallet.setName("Default");
@@ -90,20 +97,24 @@ public class WalletView extends ActivatableView implements TopicListener {
         TitledGroupBg walletGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.active"),Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(walletGroup, 1);
         walletNameTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.name"), "", Layout.TWICE_FIRST_ROW_DISTANCE).second;
+        walletNameTxt.setMaxWidth(300);
         walletVersionTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.version"), "").second;
+        walletVersionTxt.setMaxWidth(300);
         walletBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
+        walletBalanceTxt.setMaxWidth(300);
         walletUnconfirmedBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
+        walletUnconfirmedBalanceTxt.setMaxWidth(300);
 //        walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
 
         // Create Wallet
-        TitledGroupBg createWalletGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.create"), Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg createWalletGroup = addTitledGroupBg(pane, ++gridRow, 5, Resources.get("personalView.wallet.create"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(createWalletGroup, 1);
         newWalletNameTxt = addInputTextField(pane, ++gridRow, Resources.get("personalView.wallet.name"), Layout.TWICE_FIRST_ROW_DISTANCE);
         newWalletNameTxt.setMaxWidth(300);
-        disablePrivateKeysOpt = addCheckBox(pane, ++gridRow, Resources.get("personalView.wallet.disablePriveKeys"), Layout.FIRST_ROW_DISTANCE);
-        disablePrivateKeysOpt.setSelected(false);
-        blankOpt = addCheckBox(pane, ++gridRow, Resources.get("personalView.wallet.blank"), Layout.FIRST_ROW_DISTANCE);
-        blankOpt.setSelected(false);
+        passphraseTxt = addPasswordTextField(pane, ++gridRow, Resources.get("personalView.wallet.passphrase"), Layout.FIRST_ROW_DISTANCE);
+        passphraseTxt.setMaxWidth(300);
+        passphrase2Txt = addPasswordTextField(pane, ++gridRow, Resources.get("personalView.wallet.passphrase2"));
+        passphrase2Txt.setMaxWidth(300);
         createWalletButton = addPrimaryActionButton(pane, ++gridRow, Resources.get("shared.create"), Layout.FIRST_ROW_DISTANCE);
         createWalletButton.getStyleClass().add("action-button");
 
@@ -117,15 +128,21 @@ public class WalletView extends ActivatableView implements TopicListener {
         createWalletButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                // TODO: Error checking
                 Envelope e = Envelope.documentFactory();
                 e.setCommandPath(ControlCommand.Send.name());
                 e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
                 e.addNVP(DesktopClient.VIEW_OP, CREATE_WALLET_OP);
-                e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
-                CreateWallet cmd = new CreateWallet(newWalletNameTxt.getText(), disablePrivateKeysOpt.isSelected(), blankOpt.isSelected());
+                CreateWallet cmd = new CreateWallet(
+                        newWalletNameTxt.getText(),
+                        false,
+                        false,
+                        passphraseTxt.getText(),
+                        false,
+                        false,
+                        false);
                 e.addNVP(RPCCommand.NAME, cmd.toMap());
                 e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                e.ratchet();
                 DesktopClient.deliver(e);
             }
         });
@@ -135,30 +152,20 @@ public class WalletView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 if(walletsObservable.size() > 0) {
                     String walletName = walletsListView.getSelectionModel().getSelectedItem();
+                    LOG.info("Selected wallet: "+walletName);
                     Envelope e = Envelope.documentFactory();
                     e.setCommandPath(ControlCommand.Send.name());
                     e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopClient.VIEW_OP, LOAD_WALLET_OP);
-                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
-                    LoadWallet cmd = new LoadWallet(walletName);
-                    e.addNVP(RPCCommand.NAME, cmd.toMap());
+                    e.addNVP(DesktopClient.VIEW_OP, GET_WALLET_INFO_OP);
+                    e.addNVP(RPCCommand.NAME, new GetWalletInfo(walletName).toMap());
                     e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                    e.ratchet();
                     DesktopClient.deliver(e);
                 }
             }
         });
 
         // List Wallets
-        Envelope e = Envelope.documentFactory();
-        e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
-        e.addNVP(DesktopClient.VIEW_OP, LIST_WALLETS_OP);
-        e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
-        e.addNVP(RPCCommand.NAME, new ListWallets().toMap());
-        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-        e.ratchet();
-        DesktopClient.deliver(e);
+        listWallets();
 
         LOG.info("Activated.");
     }
@@ -175,85 +182,49 @@ public class WalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
+        String json = new String((byte[])e.getContent());
         switch (topic) {
             case CREATE_WALLET_OP: {
-                CreateWallet request = (CreateWallet) e.getValue(RPCCommand.NAME);
-                RPCResponse response = (RPCResponse) e.getValue(RPCCommand.RESPONSE);
-                if(response.error!=null) {
-                    LOG.warning(response.error.toString());
-                    // TODO: Show in UI
-                } else {
-                    activeWallet = new BTCWallet();
-                    activeWallet.setName(request.walletName);
-                    activeWallet.setVersion(1);
-                    BTC balance = new BTC();
-                    balance.setValue(BigInteger.ZERO);
-                    activeWallet.setBalance(balance);
-                    BTC unconfirmedBalance = new BTC();
-                    unconfirmedBalance.setValue(BigInteger.ZERO);
-                    activeWallet.setUnconfirmedBalance(unconfirmedBalance);
-                    BTC immatureBalance = new BTC();
-                    immatureBalance.setValue(BigInteger.ZERO);
-                    activeWallet.setImmatureBalance(immatureBalance);
-                    walletsObservable.add(request.walletName);
-
-                    walletNameTxt.setText(activeWallet.getName());
-                    walletVersionTxt.setText(activeWallet.getVersion().toString());
-                    walletBalanceTxt.setText(activeWallet.getBalance().value().toString());
-                    walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
-//                    walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
+                CreateWallet request = new CreateWallet();
+                request.fromJSON(json);
+                if(request.error==null) {
+                    LOG.info("Successful wallet creation.");
+                    listWallets();
+                    newWalletNameTxt.setText(null);
+                    passphraseTxt.setText(null);
+                    passphrase2Txt.setText(null);
                 }
                 break;
             }
             case LIST_WALLETS_OP: {
-                ListWallets request = (ListWallets) e.getValue(RPCCommand.NAME);
-                RPCResponse response = (RPCResponse) e.getValue(RPCCommand.RESPONSE);
-                if(response.error!=null) {
-                    LOG.warning(response.error.toString());
-                    // TODO: Show in UI
-                } else if(request.wallets==null || request.wallets.size()==0) {
-                    // Create Default
-                    e = Envelope.documentFactory();
-                    e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopClient.VIEW_OP, CREATE_WALLET_OP);
-                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
-                    CreateWallet cmd = new CreateWallet("Default", false, false);
-                    e.addNVP(RPCCommand.NAME, cmd.toMap());
-                    e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                    e.ratchet();
-                    DesktopClient.deliver(e);
-                } else {
-                    wallets = request.wallets;
+                if("{200}".equals(json)) {
+                    LOG.warning("Bitcoin node not running.");
+                    return;
                 }
-                break;
-            }
-            case LOAD_WALLET_OP: {
-                RPCResponse response = (RPCResponse) e.getValue(RPCCommand.RESPONSE);
-                if(response.error!=null) {
-                    LOG.warning(response.error.toString());
-                    // TODO: Show in UI
-                } else {
-                    // Wallet Loaded in Bitcoin Node successfully so get its information for the View
-                    e = Envelope.documentFactory();
-                    e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
-                    e.addNVP(DesktopClient.VIEW_OP, GET_WALLET_INFO_OP);
-                    e.addRoute(DesktopClient.class, DesktopClient.OPERATION_NOTIFY_UI);
-                    e.addNVP(RPCCommand.NAME, new GetWalletInfo().toMap());
-                    e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                    e.ratchet();
-                    DesktopClient.deliver(e);
+                ListWallets request = new ListWallets();
+                request.fromJSON(json);
+                if(request.wallets!=null) {
+                    wallets = new ArrayList<>();
+                    for(String wallet : request.wallets) {
+                        if(!wallet.isEmpty()) wallets.add(wallet);
+                    }
+                    walletsObservable.clear();
+                    walletsObservable.addAll(wallets);
                 }
+                if(wallets.contains("Default"))
+                    walletsListView.getSelectionModel().select("Default");
+                else
+                    walletsListView.getSelectionModel().selectFirst();
                 break;
             }
             case GET_WALLET_INFO_OP: {
-                GetWalletInfo request = (GetWalletInfo) e.getValue(RPCCommand.NAME);
-                RPCResponse response = (RPCResponse) e.getValue(RPCCommand.RESPONSE);
-                if(response.error!=null) {
-                    LOG.warning(response.error.toString());
-                    // TODO: Show in UI
-                } else {
+                if("{200}".equals(json)) {
+                    LOG.warning("Bitcoin node not running.");
+                    return;
+                }
+                GetWalletInfo request = new GetWalletInfo();
+                request.fromJSON(json);
+                if(request.wallet.getName()!=null) {
                     activeWallet = request.wallet;
                     walletNameTxt.setText(activeWallet.getName());
                     walletVersionTxt.setText(activeWallet.getVersion().toString());
@@ -265,6 +236,16 @@ public class WalletView extends ActivatableView implements TopicListener {
             }
         }
         LOG.info("Model updated.");
+    }
+
+    private void listWallets() {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.Send.name());
+        e.addNVP(DesktopClient.VIEW_NAME, WalletView.class.getName());
+        e.addNVP(DesktopClient.VIEW_OP, LIST_WALLETS_OP);
+        e.addNVP(RPCCommand.NAME, new ListWallets().toMap());
+        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+        DesktopClient.deliver(e);
     }
 }
 
