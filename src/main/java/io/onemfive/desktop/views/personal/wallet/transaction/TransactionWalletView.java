@@ -4,6 +4,7 @@ import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
 import io.onemfive.desktop.views.personal.wallet.receive.ReceiveWalletView;
+import javafx.scene.layout.GridPane;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
 import ra.btc.rpc.wallet.ListWallets;
@@ -14,9 +15,15 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
 
     private static final String LIST_TRANSACTIONS_OP = "ListTransactions";
 
+    private GridPane pane;
+    private int gridRow = 0;
+
     @Override
     protected void initialize() {
+        LOG.info("Initializing...");
+        pane = (GridPane)root;
 
+        LOG.info("Initialized.");
     }
 
     @Override

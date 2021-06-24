@@ -28,6 +28,7 @@ import ra.util.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
@@ -88,14 +89,12 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        String json = new String((byte[])e.getContent());
-        if("{200}".equals(json)) {
-            // TODO: Popup
-            LOG.warning("Bitcoin node not running.");
-            return;
-        }
+        Object cmdObj = e.getValue(RPCCommand.NAME);
         GetWalletInfo request = new GetWalletInfo();
-        request.fromJSON(json);
+        if(cmdObj instanceof String)
+            request.fromJSON((String)cmdObj);
+        else if(cmdObj instanceof Map)
+            request.fromMap((Map<String,Object>)cmdObj);
         if(request.wallet.getName()!=null) {
             activeWallet = request.wallet;
             if(activeWallet.getName().isEmpty())

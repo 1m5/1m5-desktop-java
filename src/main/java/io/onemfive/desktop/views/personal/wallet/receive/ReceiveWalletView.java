@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
@@ -94,10 +95,13 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        String json = new String((byte[])e.getContent());
+        Object cmdObj = e.getValue(RPCCommand.NAME);
         if (GENERATE_ADDRESS_OP.equals(topic)) {
             GetNewAddress request = new GetNewAddress();
-            request.fromJSON(json);
+            if(cmdObj instanceof String)
+                request.fromJSON((String)cmdObj);
+            else if(cmdObj instanceof Map)
+                request.fromMap((Map<String,Object>)cmdObj);
             if (request.error == null) {
                 LOG.info("Successful address creation.");
                 addressForReceiving.setText(request.getAddress());

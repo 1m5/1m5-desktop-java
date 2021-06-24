@@ -28,6 +28,7 @@ import ra.util.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
@@ -103,15 +104,13 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        String json = new String((byte[])e.getContent());
+        Object cmdObj = e.getValue(RPCCommand.NAME);
         if(LIST_WALLETS_OP.equals(topic)) {
-            if("{200}".equals(json)) {
-                // TODO: Popup
-                LOG.warning("Bitcoin node not running.");
-                return;
-            }
             ListWallets request = new ListWallets();
-            request.fromJSON(json);
+            if(cmdObj instanceof String)
+                request.fromJSON((String)cmdObj);
+            else if(cmdObj instanceof Map)
+                request.fromMap((Map<String,Object>)cmdObj);
             if(request.wallets!=null) {
                 wallets = request.wallets;
                 walletsObservable.clear();
@@ -128,13 +127,11 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
             else
                 walletsListView.getSelectionModel().selectFirst();
         } else if(GET_WALLET_INFO_OP.equals(topic)) {
-            if("{200}".equals(json)) {
-                // TODO: Popup
-                LOG.warning("Bitcoin node not running.");
-                return;
-            }
             GetWalletInfo request = new GetWalletInfo();
-            request.fromJSON(json);
+            if(cmdObj instanceof String)
+                request.fromJSON((String)cmdObj);
+            else if(cmdObj instanceof Map)
+                request.fromMap((Map<String,Object>)cmdObj);
             if(request.wallet.getName()!=null) {
                 activeWallet = request.wallet;
                 DesktopClient.setGlobal("activeWallet", activeWallet);

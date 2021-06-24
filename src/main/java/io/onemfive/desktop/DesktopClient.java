@@ -36,6 +36,7 @@ import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
 import ra.maildrop.MailDropService;
 import ra.notification.NotificationService;
+import ra.util.JSONParser;
 import ra.util.Wait;
 
 import javax.net.ssl.SSLContext;
@@ -142,12 +143,6 @@ public class DesktopClient implements Client {
 
     @Override
     public void reply(Envelope e) {
-        String json = new String((byte[])e.getContent());
-        if("{200}".equals(json)) {
-            // TODO: Popup
-            LOG.warning("Bitcoin node not running.");
-            return;
-        }
         String viewName = (String)e.getValue(VIEW_NAME);
         String viewOp = (String)e.getValue(VIEW_OP);
         if(viewName==null) {
@@ -493,16 +488,15 @@ public class DesktopClient implements Client {
         ResponseBody responseBody = response.body();
         if(responseBody != null) {
             try {
-                e.addContent(responseBody.bytes());
+                e.fromMap((Map)JSONParser.parse(new String(responseBody.bytes())));
+//                e.addContent(responseBody.bytes());
             } catch (IOException e1) {
                 LOG.warning(e1.getLocalizedMessage());
             } finally {
                 responseBody.close();
             }
-            LOG.info("Response: " + new String((byte[]) e.getContent()));
         } else {
             LOG.info("Body was null.");
-            e.addContent(null);
         }
         reply(e);
         return true;

@@ -28,6 +28,7 @@ import ra.util.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
@@ -93,9 +94,13 @@ public class SendWalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        String json = new String((byte[])e.getContent());
+        Object cmdObj = e.getValue(RPCCommand.NAME);
         if (SEND_OP.equals(topic)) {
-
+            SendBTC request = new SendBTC();
+//            if(cmdObj instanceof String)
+//                request.fromJSON((String)cmdObj);
+//            else if(cmdObj instanceof Map)
+//                request.fromMap((Map<String,Object>)cmdObj);
         }
         LOG.info("Model updated.");
     }
