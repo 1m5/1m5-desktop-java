@@ -68,6 +68,8 @@ public class DesktopClient implements Client {
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
+    private static Map<String,Object> globals = new HashMap<>();
+
     private ConnectionSpec httpSpec;
     private OkHttpClient httpClient;
 
@@ -130,8 +132,22 @@ public class DesktopClient implements Client {
         });
     }
 
+    public static void setGlobal(String name, Object value) {
+        globals.put(name, value);
+    }
+
+    public static Object getGlobal(String name) {
+        return globals.get(name);
+    }
+
     @Override
     public void reply(Envelope e) {
+        String json = new String((byte[])e.getContent());
+        if("{200}".equals(json)) {
+            // TODO: Popup
+            LOG.warning("Bitcoin node not running.");
+            return;
+        }
         String viewName = (String)e.getValue(VIEW_NAME);
         String viewOp = (String)e.getValue(VIEW_OP);
         if(viewName==null) {
@@ -359,27 +375,30 @@ public class DesktopClient implements Client {
         URL url;
         try {
             url = new URL("http://localhost:"+apiPort);
+            LOG.info("URL: "+url);
         } catch (MalformedURLException malformedURLException) {
             LOG.warning(malformedURLException.getLocalizedMessage());
             return false;
         }
         Map<String, Object> h = e.getHeaders();
         Map<String, String> hStr = new HashMap<>();
-        if(h.containsKey(Envelope.HEADER_AUTHORIZATION) && h.get(Envelope.HEADER_AUTHORIZATION) != null) {
-            hStr.put(Envelope.HEADER_AUTHORIZATION, (String) h.get(Envelope.HEADER_AUTHORIZATION));
-        }
-        if(h.containsKey(Envelope.HEADER_CONTENT_DISPOSITION) && h.get(Envelope.HEADER_CONTENT_DISPOSITION) != null) {
-            hStr.put(Envelope.HEADER_CONTENT_DISPOSITION, (String) h.get(Envelope.HEADER_CONTENT_DISPOSITION));
-        }
-        if(h.containsKey(Envelope.HEADER_CONTENT_TYPE) && h.get(Envelope.HEADER_CONTENT_TYPE) != null) {
-            hStr.put(Envelope.HEADER_CONTENT_TYPE, (String) h.get(Envelope.HEADER_CONTENT_TYPE));
-        }
-        if(h.containsKey(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) && h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) != null) {
-            hStr.put(Envelope.HEADER_CONTENT_TRANSFER_ENCODING, (String) h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING));
-        }
-        if(h.containsKey(Envelope.HEADER_USER_AGENT) && h.get(Envelope.HEADER_USER_AGENT) != null) {
-            hStr.put(Envelope.HEADER_USER_AGENT, (String) h.get(Envelope.HEADER_USER_AGENT));
-        }
+//        if(h.containsKey(Envelope.HEADER_AUTHORIZATION) && h.get(Envelope.HEADER_AUTHORIZATION) != null) {
+//            hStr.put(Envelope.HEADER_AUTHORIZATION, (String) h.get(Envelope.HEADER_AUTHORIZATION));
+//        }
+        hStr.put(Envelope.HEADER_AUTHORIZATION, "Basic cmE6MTIzNA==");
+//        if(h.containsKey(Envelope.HEADER_CONTENT_DISPOSITION) && h.get(Envelope.HEADER_CONTENT_DISPOSITION) != null) {
+//            hStr.put(Envelope.HEADER_CONTENT_DISPOSITION, (String) h.get(Envelope.HEADER_CONTENT_DISPOSITION));
+//        }
+//        if(h.containsKey(Envelope.HEADER_CONTENT_TYPE) && h.get(Envelope.HEADER_CONTENT_TYPE) != null) {
+//            hStr.put(Envelope.HEADER_CONTENT_TYPE, (String) h.get(Envelope.HEADER_CONTENT_TYPE));
+//        }
+        hStr.put(Envelope.HEADER_CONTENT_TYPE, "application/json");
+//        if(h.containsKey(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) && h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING) != null) {
+//            hStr.put(Envelope.HEADER_CONTENT_TRANSFER_ENCODING, (String) h.get(Envelope.HEADER_CONTENT_TRANSFER_ENCODING));
+//        }
+//        if(h.containsKey(Envelope.HEADER_USER_AGENT) && h.get(Envelope.HEADER_USER_AGENT) != null) {
+//            hStr.put(Envelope.HEADER_USER_AGENT, (String) h.get(Envelope.HEADER_USER_AGENT));
+//        }
 
         ByteBuffer bodyBytes = null;
         CacheControl cacheControl = null;
