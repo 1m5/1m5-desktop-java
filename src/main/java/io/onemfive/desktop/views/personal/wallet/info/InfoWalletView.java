@@ -1,8 +1,6 @@
 package io.onemfive.desktop.views.personal.wallet.info;
 
 import io.onemfive.desktop.DesktopClient;
-import io.onemfive.desktop.components.InputTextField;
-import io.onemfive.desktop.components.PasswordTextField;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
@@ -12,14 +10,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
-import ra.btc.rpc.wallet.CreateWallet;
+import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
@@ -83,9 +79,6 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
             }
         });
         activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
-        if(activeWallet==null) {
-            loadWallet("");
-        }
         listWallets();
         LOG.info("Activated.");
     }
@@ -104,36 +97,38 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        Object cmdObj = e.getValue(RPCCommand.NAME);
         if(LIST_WALLETS_OP.equals(topic)) {
-            ListWallets request = new ListWallets();
-            if(cmdObj instanceof String)
-                request.fromJSON((String)cmdObj);
-            else if(cmdObj instanceof Map)
-                request.fromMap((Map<String,Object>)cmdObj);
-            if(request.wallets!=null) {
-                wallets = request.wallets;
+            RPCResponse response = new RPCResponse();
+            Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
+            response.fromMap(responseMap);
+            if(response.result!=null) {
+                List<String> wallets = (List<String>)response.result;
                 walletsObservable.clear();
+                this.wallets.clear();
                for(String walletName : wallets) {
-                   if(walletName.isEmpty())
+                   if(walletName.isEmpty()) {
                        walletsObservable.add(DEFAULT_WALLET_NAME);
-                   else
+                       this.wallets.add(DEFAULT_WALLET_NAME);
+                   } else {
                        walletsObservable.add(walletName);
+                       this.wallets.add(walletName);
+                   }
                }
             }
             // TODO: Select last used wallet
-            if(wallets.contains(DEFAULT_WALLET_NAME))
+            if(activeWallet==null) {
+                // Load default wallet
                 walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
-            else
-                walletsListView.getSelectionModel().selectFirst();
+                loadWallet("");
+            }
         } else if(GET_WALLET_INFO_OP.equals(topic)) {
-            GetWalletInfo request = new GetWalletInfo();
-            if(cmdObj instanceof String)
-                request.fromJSON((String)cmdObj);
-            else if(cmdObj instanceof Map)
-                request.fromMap((Map<String,Object>)cmdObj);
-            if(request.wallet.getName()!=null) {
-                activeWallet = request.wallet;
+            RPCResponse response = new RPCResponse();
+            Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
+            response.fromMap(responseMap);
+            if(response.result!=null) {
+                activeWallet = new BTCWallet();
+                Map<String,Object> m = (Map<String,Object>)response.result;
+                activeWallet.fromMap(m);
                 DesktopClient.setGlobal("activeWallet", activeWallet);
             }
         }
