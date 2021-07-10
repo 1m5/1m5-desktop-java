@@ -13,10 +13,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
+import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.CreateWallet;
 import ra.common.Envelope;
 import ra.common.network.ControlCommand;
 import ra.util.Resources;
+
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
@@ -94,19 +97,19 @@ public class CreateWalletView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String topic, Object object) {
-        LOG.info("Updating model...");
+        LOG.info("Updating model with topic: "+topic);
         Envelope e = (Envelope)object;
-        String json = new String((byte[])e.getContent());
         if (CREATE_WALLET_OP.equals(topic)) {
-            CreateWallet request = new CreateWallet();
-            request.fromJSON(json);
-            if(request.error==null) {
+            RPCResponse response = new RPCResponse();
+            Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
+            response.fromMap(responseMap);
+            if(response.error==null) {
                 LOG.info("Successful wallet creation.");
                 newWalletNameTxt.setText(null);
                 passphraseTxt.setText(null);
                 passphrase2Txt.setText(null);
             } else {
-                errorLabel.setText(request.warning);
+                errorLabel.setText(response.error.message);
                 errorLabel.setVisible(true);
             }
         }
