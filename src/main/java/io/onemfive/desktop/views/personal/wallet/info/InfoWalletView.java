@@ -95,7 +95,7 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String topic, Object object) {
-        LOG.info("Updating model...");
+        LOG.info("Updating model with topic: "+topic);
         Envelope e = (Envelope)object;
         if(LIST_WALLETS_OP.equals(topic)) {
             RPCResponse response = new RPCResponse();
@@ -115,12 +115,6 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                    }
                }
             }
-            // TODO: Select last used wallet
-            if(activeWallet==null) {
-                // Load default wallet
-                walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
-                loadWallet("");
-            }
         } else if(GET_WALLET_INFO_OP.equals(topic)) {
             RPCResponse response = new RPCResponse();
             Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
@@ -131,6 +125,15 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                 activeWallet.fromMap(m);
                 DesktopClient.setGlobal("activeWallet", activeWallet);
             }
+        }
+        if(activeWallet==null) {
+            // Load default wallet
+           loadWallet("");
+        } else {
+            if(activeWallet.getName().isEmpty() || activeWallet.getName().equals(DEFAULT_WALLET_NAME))
+                walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
+            else
+                walletsListView.getSelectionModel().select(activeWallet.getName());
         }
         LOG.info("Model updated.");
     }
