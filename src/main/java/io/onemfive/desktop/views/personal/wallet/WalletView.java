@@ -113,7 +113,7 @@ public class WalletView extends ActivatableView {
         else if (view instanceof DetailsWalletView) tab = detailsTab;
         else if (view instanceof SendWalletView) tab = sendTab;
         else if (view instanceof ReceiveWalletView) tab = receiveTab;
-        else if (view instanceof ReceiveWalletView) tab = transactionTab;
+        else if (view instanceof TransactionWalletView) tab = transactionTab;
         else if (view instanceof SweepWalletView) tab = sweepTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 

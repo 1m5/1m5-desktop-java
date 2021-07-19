@@ -1,33 +1,22 @@
 package io.onemfive.desktop.views.personal.wallet.details;
 
 import io.onemfive.desktop.DesktopClient;
-import io.onemfive.desktop.components.InputTextField;
-import io.onemfive.desktop.components.PasswordTextField;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
-import ra.btc.rpc.wallet.CreateWallet;
 import ra.btc.rpc.wallet.GetWalletInfo;
-import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
 import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -44,7 +33,8 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
     private BTCWallet activeWallet;
     private TextField walletNameTxt;
     private TextField walletVersionTxt;
-    private TextField walletBalanceTxt;
+    private TextField walletBalanceSatsTxt;
+    private TextField walletBalanceBTCTxt;
     private TextField walletUnconfirmedBalanceTxt;
 //    private TextField walletImmatureBalanceTxt;
 
@@ -59,8 +49,10 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         walletNameTxt.setMaxWidth(300);
         walletVersionTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.version"), "").second;
         walletVersionTxt.setMaxWidth(300);
-        walletBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
-        walletBalanceTxt.setMaxWidth(300);
+        walletBalanceSatsTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
+        walletBalanceSatsTxt.setMaxWidth(300);
+        walletBalanceBTCTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance.btc"), "").second;
+        walletBalanceBTCTxt.setMaxWidth(300);
         walletUnconfirmedBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
         walletUnconfirmedBalanceTxt.setMaxWidth(300);
 //        walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
@@ -74,6 +66,8 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
         if(activeWallet==null) {
             loadWallet();
+        } else {
+            updateWalletView();
         }
         LOG.info("Activated.");
     }
@@ -97,15 +91,8 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
             request.fromMap((Map<String,Object>)cmdObj);
         if(request.wallet.getName()!=null) {
             activeWallet = request.wallet;
-            if(activeWallet.getName().isEmpty())
-                walletNameTxt.setText("Default");
-            else
-                walletNameTxt.setText(activeWallet.getName());
-            walletVersionTxt.setText(activeWallet.getVersion().toString());
-            walletBalanceTxt.setText(activeWallet.getBalance().value().toString());
-            walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
-//                    walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
         }
+        updateWalletView();
         LOG.info("Model updated.");
     }
 
@@ -117,6 +104,20 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         e.addNVP(RPCCommand.NAME, new GetWalletInfo().toMap());
         e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
         DesktopClient.deliver(e);
+    }
+
+    private void updateWalletView() {
+        if(activeWallet!=null) {
+            if (activeWallet.getName().isEmpty())
+                walletNameTxt.setText("Default");
+            else
+                walletNameTxt.setText(activeWallet.getName());
+            walletVersionTxt.setText(activeWallet.getVersion().toString());
+            walletBalanceSatsTxt.setText(activeWallet.getBalance().value().toString());
+            walletBalanceBTCTxt.setText(((double)(activeWallet.getBalance().value().longValue()/100000000))+"");
+            walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
+//            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
+        }
     }
 }
 

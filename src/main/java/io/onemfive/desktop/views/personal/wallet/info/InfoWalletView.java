@@ -95,6 +95,7 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String topic, Object object) {
+        // TODO: Wallet info not completely showing up...few bugs here needing cleaned up
         LOG.info("Updating model with topic: "+topic);
         Envelope e = (Envelope)object;
         if(LIST_WALLETS_OP.equals(topic)) {
