@@ -98,10 +98,8 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
         // TODO: Wallet info not completely showing up...few bugs here needing cleaned up
         LOG.info("Updating model with topic: "+topic);
         Envelope e = (Envelope)object;
+        RPCResponse response = DesktopClient.getResponse(e);
         if(LIST_WALLETS_OP.equals(topic)) {
-            RPCResponse response = new RPCResponse();
-            Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
-            response.fromMap(responseMap);
             if(response.result!=null) {
                 List<String> wallets = (List<String>)response.result;
                 walletsObservable.clear();
@@ -117,9 +115,6 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                }
             }
         } else if(GET_WALLET_INFO_OP.equals(topic)) {
-            RPCResponse response = new RPCResponse();
-            Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
-            response.fromMap(responseMap);
             if(response.result!=null) {
                 activeWallet = new BTCWallet();
                 Map<String,Object> m = (Map<String,Object>)response.result;

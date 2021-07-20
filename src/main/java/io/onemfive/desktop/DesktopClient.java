@@ -21,6 +21,9 @@ import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import org.neo4j.cypher.internal.v3_4.functions.E;
+import ra.btc.RPCCommand;
+import ra.btc.rpc.RPCError;
+import ra.btc.rpc.RPCResponse;
 import ra.common.Client;
 import ra.common.DLC;
 import ra.common.Envelope;
@@ -131,6 +134,17 @@ public class DesktopClient implements Client {
                 instance.sendMessage(e);
             }
         });
+    }
+
+    public static RPCResponse getResponse(Envelope e) {
+        RPCResponse response = new RPCResponse();
+        Object responseObj = e.getValue(RPCCommand.RESPONSE);
+        if(responseObj instanceof String) {
+            response.fromJSON((String)responseObj);
+        } else if(responseObj instanceof Map) {
+            response.fromMap((Map<String, Object>) responseObj);
+        }
+        return response;
     }
 
     public static void setGlobal(String name, Object value) {
