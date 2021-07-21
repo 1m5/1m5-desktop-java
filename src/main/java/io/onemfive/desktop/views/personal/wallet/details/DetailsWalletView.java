@@ -23,8 +23,6 @@ import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class DetailsWalletView extends ActivatableView implements TopicListener {
 
-    private static final String DEFAULT_WALLET_NAME = "Default";
-
     private static final String GET_WALLET_INFO_OP = "GetWalletInfo";
 
     private GridPane pane;
@@ -117,6 +115,15 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
             walletBalanceBTCTxt.setText(((double)(activeWallet.getBalance().value().longValue()/100000000))+"");
             walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
 //            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
+        }
+    }
+
+    @Override
+    public void afterLoad() {
+        BTCWallet globalWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
+        if(globalWallet!=null && activeWallet!=null && !globalWallet.getName().equals(activeWallet.getName())){
+            activeWallet = globalWallet;
+            updateWalletView();
         }
     }
 }

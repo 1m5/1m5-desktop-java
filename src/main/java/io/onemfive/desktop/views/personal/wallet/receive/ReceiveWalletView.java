@@ -121,7 +121,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
                 // with all parameters after address being optional and/or interchangeable,
                 // with amount being in BTC units not Satoshis. All <parameters> should be
                 // URI encoded (e.g. spaces become %20 etc).
-                String qrCodeFormat = "bitcoin:"+address;
+                String qrCodeFormat = "bitcoin:"+address.toUpperCase();
                 QRCodeWriter qrCodeWriter = new QRCodeWriter();
                 BufferedImage bufferedImage = null;
                 try {

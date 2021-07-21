@@ -25,4 +25,6 @@ public abstract class BaseView implements View {
         this.root = root;
     }
 
+    public void afterLoad() {}
+
 }

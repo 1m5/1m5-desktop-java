@@ -20,6 +20,7 @@ import ra.btc.Transaction;
 import ra.btc.rpc.wallet.CreateWallet;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.btc.rpc.wallet.ListWallets;
+import ra.btc.rpc.wallet.SendToAddress;
 import ra.btc.uses.SendBTC;
 import ra.common.Envelope;
 import ra.common.currency.crypto.BTC;
@@ -33,8 +34,6 @@ import java.util.Map;
 import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class SendWalletView extends ActivatableView implements TopicListener {
-
-    private static final String DEFAULT_WALLET_NAME = "Default";
 
     private static final String SEND_OP = "Send";
 
@@ -50,11 +49,12 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg listWalletGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("personalView.wallet.import"));
-        GridPane.setColumnSpan(listWalletGroup, 3);
-        publicKeyTxt = addInputTextField(pane, gridRow,Resources.get("personalView.wallet.receiver.pubkey"), Layout.FIRST_ROW_DISTANCE);
-        publicKeyTxt.setMaxWidth(300);
-        sendButton = addPrimaryActionButton(pane, gridRow, 2, Resources.get("personalView.wallet.send"), Layout.FIRST_ROW_DISTANCE);
+        addTitledGroupBg(pane, gridRow, 4, Resources.get("personalView.wallet.import"));
+        publicKeyTxt = addInputTextField(pane, gridRow++,Resources.get("personalView.wallet.receiver.pubkey"), Layout.FIRST_ROW_DISTANCE);
+        publicKeyTxt.setMaxWidth(500);
+        receiverAmountTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.amount"), Layout.FIRST_ROW_DISTANCE);
+        receiverAmountTxt.setMaxWidth(300);
+        sendButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.send"), Layout.FIRST_ROW_DISTANCE);
         sendButton.getStyleClass().add("action-button");
 
         LOG.info("Initialized.");
@@ -72,10 +72,19 @@ public class SendWalletView extends ActivatableView implements TopicListener {
                 e.setCommandPath(ControlCommand.Send.name());
                 e.addNVP(DesktopClient.VIEW_NAME, SendWalletView.class.getName());
                 e.addNVP(DesktopClient.VIEW_OP, SEND_OP);
-                SendBTC sendBTC = new SendBTC();
-                sendBTC.receiverAmount = new BTC(Double.parseDouble(receiverAmountTxt.getText()));
-                e.addNVP("BTC", sendBTC);
-                e.addRoute(BitcoinService.class, BitcoinService.OPERATION_SEND_BTC);
+//                SendBTC sendBTC = new SendBTC();
+                double receiverAmount = Double.parseDouble(receiverAmountTxt.getText());
+//                sendBTC.receiverAmount = new BTC(receiverAmount);
+                double devFee = 0.01;
+                // TODO: Send Dev Fee
+//                sendBTC.devFee = new BTC(devFee);
+                double estMinerFee = 0.0000015;
+//                sendBTC.estimatedMinerFee = new BTC(estMinerFee);
+//                sendBTC.receiverAddress = publicKeyTxt.getText();
+//                sendBTC.totalAmount = new BTC(receiverAmount+devFee+estMinerFee);
+                BTCWallet activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
+                e.addNVP(RPCCommand.NAME, new SendToAddress(activeWallet.getName(), publicKeyTxt.getText(), receiverAmount).toMap());
+                e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
                 DesktopClient.deliver(e);
             }
         });

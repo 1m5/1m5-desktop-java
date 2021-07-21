@@ -104,6 +104,8 @@ public class MVC {
                 LOG.warning(e.getLocalizedMessage());
             }
         }
+        if(view!=null)
+            view.afterLoad();
         return view;
     }
 
