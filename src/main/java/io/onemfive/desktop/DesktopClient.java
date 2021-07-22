@@ -22,6 +22,7 @@ import onemfive.ManCon;
 import onemfive.ManConStatus;
 import org.neo4j.cypher.internal.v3_4.functions.E;
 import ra.btc.RPCCommand;
+import ra.btc.Transaction;
 import ra.btc.rpc.RPCError;
 import ra.btc.rpc.RPCResponse;
 import ra.common.Client;
@@ -66,6 +67,8 @@ public class DesktopClient implements Client {
     private final Map<String,NetworkState> networkStates = new HashMap<>();
 
     private final Map<String, List<Subscription>> subscriptions = new HashMap<>();
+
+    private final List<Transaction> transactions = new ArrayList<>();
 
     private NetworkStatus localhostStatus;
 
@@ -153,6 +156,14 @@ public class DesktopClient implements Client {
 
     public static Object getGlobal(String name) {
         return globals.get(name);
+    }
+
+    public static void addBitcoinTransaction(Transaction tx) {
+        instance.transactions.add(tx);
+    }
+
+    public static List<Transaction> getBitcoinTransactions() {
+        return instance.transactions;
     }
 
     @Override

@@ -17,6 +17,7 @@ import ra.btc.BTCWallet;
 import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
 import ra.btc.Transaction;
+import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.CreateWallet;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.btc.rpc.wallet.ListWallets;
@@ -49,7 +50,7 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        addTitledGroupBg(pane, gridRow, 4, Resources.get("personalView.wallet.import"));
+        addTitledGroupBg(pane, gridRow, 4, Resources.get("personalView.wallet.send"));
         publicKeyTxt = addInputTextField(pane, gridRow++,Resources.get("personalView.wallet.receiver.pubkey"), Layout.FIRST_ROW_DISTANCE);
         publicKeyTxt.setMaxWidth(500);
         receiverAmountTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.amount"), Layout.FIRST_ROW_DISTANCE);
@@ -72,16 +73,9 @@ public class SendWalletView extends ActivatableView implements TopicListener {
                 e.setCommandPath(ControlCommand.Send.name());
                 e.addNVP(DesktopClient.VIEW_NAME, SendWalletView.class.getName());
                 e.addNVP(DesktopClient.VIEW_OP, SEND_OP);
-//                SendBTC sendBTC = new SendBTC();
                 double receiverAmount = Double.parseDouble(receiverAmountTxt.getText());
-//                sendBTC.receiverAmount = new BTC(receiverAmount);
                 double devFee = 0.01;
-                // TODO: Send Dev Fee
-//                sendBTC.devFee = new BTC(devFee);
                 double estMinerFee = 0.0000015;
-//                sendBTC.estimatedMinerFee = new BTC(estMinerFee);
-//                sendBTC.receiverAddress = publicKeyTxt.getText();
-//                sendBTC.totalAmount = new BTC(receiverAmount+devFee+estMinerFee);
                 BTCWallet activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
                 e.addNVP(RPCCommand.NAME, new SendToAddress(activeWallet.getName(), publicKeyTxt.getText(), receiverAmount).toMap());
                 e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
@@ -103,13 +97,16 @@ public class SendWalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        Object cmdObj = e.getValue(RPCCommand.NAME);
-        if (SEND_OP.equals(topic)) {
-            SendBTC request = new SendBTC();
-//            if(cmdObj instanceof String)
-//                request.fromJSON((String)cmdObj);
-//            else if(cmdObj instanceof Map)
-//                request.fromMap((Map<String,Object>)cmdObj);
+        RPCResponse response = DesktopClient.getResponse(e);
+        if(SEND_OP.equals(topic)) {
+            if(response.result!=null) {
+                Transaction tx = new Transaction();
+                tx.txid = (String)response.result;
+                DesktopClient.addBitcoinTransaction(tx);
+                LOG.info("TX.id: "+tx.txid);
+                publicKeyTxt.setText(null);
+                receiverAmountTxt.setText(null);
+            }
         }
         LOG.info("Model updated.");
     }
