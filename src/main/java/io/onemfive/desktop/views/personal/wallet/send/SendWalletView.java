@@ -100,10 +100,9 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         RPCResponse response = DesktopClient.getResponse(e);
         if(SEND_OP.equals(topic)) {
             if(response.result!=null) {
-                Transaction tx = new Transaction();
-                tx.txid = (String)response.result;
-                DesktopClient.addBitcoinTransaction(tx);
-                LOG.info("TX.id: "+tx.txid);
+                String txid = (String)response.result;
+                DesktopClient.addBitcoinTransaction(txid);
+                LOG.info("txid: "+txid);
                 publicKeyTxt.setText(null);
                 receiverAmountTxt.setText(null);
             }

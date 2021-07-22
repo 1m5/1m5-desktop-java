@@ -68,7 +68,7 @@ public class DesktopClient implements Client {
 
     private final Map<String, List<Subscription>> subscriptions = new HashMap<>();
 
-    private final List<Transaction> transactions = new ArrayList<>();
+    private final List<String> transactions = new ArrayList<>();
 
     private NetworkStatus localhostStatus;
 
@@ -158,11 +158,11 @@ public class DesktopClient implements Client {
         return globals.get(name);
     }
 
-    public static void addBitcoinTransaction(Transaction tx) {
-        instance.transactions.add(tx);
+    public static void addBitcoinTransaction(String txid) {
+        instance.transactions.add(txid);
     }
 
-    public static List<Transaction> getBitcoinTransactions() {
+    public static List<String> getBitcoinTransactions() {
         return instance.transactions;
     }
 
