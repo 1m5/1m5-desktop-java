@@ -1,15 +1,12 @@
 package io.onemfive.desktop.views.personal.wallet.receive;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TextFieldWithCopyIcon;
 import io.onemfive.desktop.components.TitledGroupBg;
-import io.onemfive.desktop.util.ImageUtil;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
@@ -17,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import ra.btc.*;
@@ -30,18 +26,12 @@ import ra.util.Resources;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class ReceiveWalletView extends ActivatableView implements TopicListener {
 
     private static final String GENERATE_ADDRESS_OP = "GenerateAddress";
-    private static final String CHECK_TRANSACTION_OP = "CheckTransaction";
 
     private GridPane pane;
     private int gridRow = 0;
@@ -148,6 +138,8 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
                     return;
                 }
             }
+        } else {
+            LOG.warning(topic + " topic not supported in "+ReceiveWalletView.class.getName());
         }
         LOG.info("Model updated.");
     }
