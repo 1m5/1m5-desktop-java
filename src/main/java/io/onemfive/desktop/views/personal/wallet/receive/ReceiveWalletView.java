@@ -125,7 +125,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
                 QRCodeWriter qrCodeWriter = new QRCodeWriter();
                 BufferedImage bufferedImage = null;
                 try {
-                    BitMatrix byteMatrix = qrCodeWriter.encode(address, BarcodeFormat.QR_CODE, qrCodeWidth, qrCodeHeight);
+                    BitMatrix byteMatrix = qrCodeWriter.encode(qrCodeFormat, BarcodeFormat.QR_CODE, qrCodeWidth, qrCodeHeight);
                     bufferedImage = new BufferedImage(qrCodeWidth, qrCodeHeight, BufferedImage.TYPE_INT_RGB);
                     bufferedImage.createGraphics();
 
@@ -160,7 +160,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
             e.addNVP(DesktopClient.VIEW_NAME, ReceiveWalletView.class.getName());
             e.addNVP(DesktopClient.VIEW_OP, GENERATE_ADDRESS_OP);
 //            e.addNVP(RPCCommand.NAME, new GetNewAddress(activeWallet.getName(), "", AddressType.LEGACY).toMap());
-            e.addNVP(RPCCommand.NAME, new GetNewAddress("", "", AddressType.BECH32).toMap());
+            e.addNVP(RPCCommand.NAME, new GetNewAddress(((BTCWallet)DesktopClient.getGlobal("activeWallet")).getName(), "", AddressType.BECH32).toMap());
             e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
             DesktopClient.deliver(e);
 //        }
