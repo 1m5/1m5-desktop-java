@@ -21,6 +21,7 @@ import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import org.neo4j.cypher.internal.v3_4.functions.E;
+import ra.btc.BTCWallet;
 import ra.btc.RPCCommand;
 import ra.btc.Transaction;
 import ra.btc.rpc.RPCError;
@@ -28,6 +29,7 @@ import ra.btc.rpc.RPCResponse;
 import ra.common.Client;
 import ra.common.DLC;
 import ra.common.Envelope;
+import ra.common.currency.crypto.BTC;
 import ra.common.file.Multipart;
 import ra.common.identity.DID;
 import ra.common.messaging.DocumentMessage;
@@ -68,6 +70,7 @@ public class DesktopClient implements Client {
 
     private final Map<String, List<Subscription>> subscriptions = new HashMap<>();
 
+    private BTCWallet activeWallet;
     private final List<String> transactions = new ArrayList<>();
 
     private NetworkStatus localhostStatus;
@@ -75,7 +78,7 @@ public class DesktopClient implements Client {
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
-    private static Map<String,Object> globals = new HashMap<>();
+    private Map<String,Object> globals = new HashMap<>();
 
     private ConnectionSpec httpSpec;
     private OkHttpClient httpClient;
@@ -151,11 +154,11 @@ public class DesktopClient implements Client {
     }
 
     public static void setGlobal(String name, Object value) {
-        globals.put(name, value);
+        instance.globals.put(name, value);
     }
 
     public static Object getGlobal(String name) {
-        return globals.get(name);
+        return instance.globals.get(name);
     }
 
     public static void addBitcoinTransaction(String txid) {
@@ -164,6 +167,14 @@ public class DesktopClient implements Client {
 
     public static List<String> getBitcoinTransactions() {
         return instance.transactions;
+    }
+
+    public static void setActiveWallet(BTCWallet activeWallet) {
+        instance.activeWallet = activeWallet;
+    }
+
+    public static BTCWallet getActiveWallet() {
+        return instance.activeWallet;
     }
 
     @Override

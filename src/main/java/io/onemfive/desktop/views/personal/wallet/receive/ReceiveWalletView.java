@@ -47,9 +47,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg listWalletGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("personalView.wallet.receive"));
-        GridPane.setColumnSpan(listWalletGroup, 3);
-
+        addTitledGroupBg(pane, gridRow, 3, Resources.get("personalView.wallet.receive"));
         // TODO: QR Code not generating correctly - wallets do not recognize it
         qrcodeImageView = new ImageView();
         qrcodeImageView.setFitHeight(qrCodeHeight);
@@ -61,7 +59,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
         pane.add(qrcodeImageView, 0, gridRow++);
         addressForReceiving = addCompactTopLabelTextFieldWithCopyIcon(pane, gridRow++,Resources.get("personalView.wallet.receive.address"), "").second;
         addressForReceiving.setMaxWidth(500);
-        generateAddressButton = addPrimaryActionButton(pane, gridRow++, 2, Resources.get("personalView.wallet.receive.generate"), Layout.FIRST_ROW_DISTANCE);
+        generateAddressButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.receive.generate"), Layout.FIRST_ROW_DISTANCE);
         generateAddressButton.getStyleClass().add("action-button");
 
         LOG.info("Initialized.");
