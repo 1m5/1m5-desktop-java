@@ -1,8 +1,16 @@
 package io.onemfive.desktop.views;
 
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.util.Transitions;
+import io.onemfive.desktop.views.personal.wallet.info.InfoWalletView;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import ra.btc.BitcoinService;
+import ra.btc.RPCCommand;
+import ra.btc.rpc.RPCRequest;
+import ra.btc.rpc.wallet.ListWallets;
+import ra.common.Envelope;
+import ra.common.network.ControlCommand;
 
 import java.util.logging.Logger;
 
@@ -26,5 +34,15 @@ public abstract class BaseView implements View {
     }
 
     public void afterLoad() {}
+
+    public void sendRequest(Class viewClass, String operationName, RPCRequest request) {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.Send.name());
+        e.addNVP(DesktopClient.VIEW_NAME, viewClass.getName());
+        e.addNVP(DesktopClient.VIEW_OP, operationName);
+        e.addNVP(RPCCommand.NAME, request.toMap());
+        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+        DesktopClient.deliver(e);
+    }
 
 }

@@ -68,18 +68,10 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         sendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                // TODO: Error checking
-                Envelope e = Envelope.documentFactory();
-                e.setCommandPath(ControlCommand.Send.name());
-                e.addNVP(DesktopClient.VIEW_NAME, SendWalletView.class.getName());
-                e.addNVP(DesktopClient.VIEW_OP, SEND_OP);
-                double receiverAmount = Double.parseDouble(receiverAmountTxt.getText());
-                double devFee = 0.01;
-                double estMinerFee = 0.0000015;
-                BTCWallet activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
-                e.addNVP(RPCCommand.NAME, new SendToAddress(activeWallet.getName(), publicKeyTxt.getText(), receiverAmount).toMap());
-                e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                DesktopClient.deliver(e);
+                sendRequest(SendWalletView.class, SEND_OP,
+                        new SendToAddress(DesktopClient.getActiveWallet().getName(),
+                                publicKeyTxt.getText(),
+                                Double.parseDouble(receiverAmountTxt.getText())));
             }
         });
 
