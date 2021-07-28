@@ -68,8 +68,7 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         sendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(SendWalletView.class, SEND_OP,
-                        new SendToAddress(DesktopClient.getActiveWallet().getName(),
+                sendRequest(new SendToAddress(DesktopClient.getActiveWallet().getName(),
                                 publicKeyTxt.getText(),
                                 Double.parseDouble(receiverAmountTxt.getText())));
             }

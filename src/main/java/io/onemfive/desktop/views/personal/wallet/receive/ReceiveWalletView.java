@@ -6,7 +6,6 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TextFieldWithCopyIcon;
-import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
@@ -21,7 +20,6 @@ import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.AddressType;
 import ra.btc.rpc.wallet.GetNewAddress;
 import ra.common.Envelope;
-import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
 import java.awt.*;
@@ -72,11 +70,11 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
         generateAddressButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                generateAddress();
+                sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
             }
         });
 
-        generateAddress();
+        sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
 
         LOG.info("Activated.");
     }
@@ -140,20 +138,6 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
             LOG.warning(topic + " topic not supported in "+ReceiveWalletView.class.getName());
         }
         LOG.info("Model updated.");
-    }
-
-    private void generateAddress() {
-//        BTCWallet activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
-//        if(activeWallet!=null) {
-            Envelope e = Envelope.documentFactory();
-            e.setCommandPath(ControlCommand.Send.name());
-            e.addNVP(DesktopClient.VIEW_NAME, ReceiveWalletView.class.getName());
-            e.addNVP(DesktopClient.VIEW_OP, GENERATE_ADDRESS_OP);
-//            e.addNVP(RPCCommand.NAME, new GetNewAddress(activeWallet.getName(), "", AddressType.LEGACY).toMap());
-            e.addNVP(RPCCommand.NAME, new GetNewAddress(((BTCWallet)DesktopClient.getGlobal("activeWallet")).getName(), "", AddressType.BECH32).toMap());
-            e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-            DesktopClient.deliver(e);
-//        }
     }
 
 }

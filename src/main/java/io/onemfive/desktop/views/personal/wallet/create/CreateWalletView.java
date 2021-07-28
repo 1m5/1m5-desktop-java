@@ -67,21 +67,15 @@ public class CreateWalletView extends ActivatableView implements TopicListener {
                 errorLabel.setText("");
                 errorLabel.setVisible(false);
                 // TODO: Error checking
-                Envelope e = Envelope.documentFactory();
-                e.setCommandPath(ControlCommand.Send.name());
-                e.addNVP(DesktopClient.VIEW_NAME, CreateWalletView.class.getName());
-                e.addNVP(DesktopClient.VIEW_OP, CREATE_WALLET_OP);
-                CreateWallet cmd = new CreateWallet(
+                // TODO: Support options in UI
+                sendRequest(new CreateWallet(
                         newWalletNameTxt.getText(),
                         false,
                         false,
                         passphraseTxt.getText(),
                         false,
                         false,
-                        false);
-                e.addNVP(RPCCommand.NAME, cmd.toMap());
-                e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                DesktopClient.deliver(e);
+                        false));
             }
         });
 

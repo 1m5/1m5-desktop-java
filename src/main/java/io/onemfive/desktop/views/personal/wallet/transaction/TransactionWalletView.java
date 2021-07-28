@@ -57,15 +57,13 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
         txComboView.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(TransactionWalletView.class, GET_TRANSACTION_INFO_OP,
-                        new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
+                sendRequest(new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
             }
         });
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(TransactionWalletView.class, GET_TRANSACTION_INFO_OP,
-                        new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
+                sendRequest(new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
             }
         });
         LOG.info("Activated.");

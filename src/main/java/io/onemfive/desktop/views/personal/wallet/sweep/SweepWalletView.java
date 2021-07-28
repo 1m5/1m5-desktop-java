@@ -148,13 +148,7 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
                 if(walletsObservable.size() > 0) {
                     String walletName = walletsListView.getSelectionModel().getSelectedItem();
                     LOG.info("Selected wallet: "+walletName);
-                    Envelope e = Envelope.documentFactory();
-                    e.setCommandPath(ControlCommand.Send.name());
-                    e.addNVP(DesktopClient.VIEW_NAME, SweepWalletView.class.getName());
-                    e.addNVP(DesktopClient.VIEW_OP, GET_WALLET_INFO_OP);
-                    e.addNVP(RPCCommand.NAME, new GetWalletInfo(walletName).toMap());
-                    e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-                    DesktopClient.deliver(e);
+                    sendRequest(new GetWalletInfo(walletName));
                 }
             }
         });

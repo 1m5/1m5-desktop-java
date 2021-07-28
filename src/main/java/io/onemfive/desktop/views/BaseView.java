@@ -35,11 +35,11 @@ public abstract class BaseView implements View {
 
     public void afterLoad() {}
 
-    public void sendRequest(Class viewClass, String operationName, RPCRequest request) {
+    protected void sendRequest(RPCRequest request) {
         Envelope e = Envelope.documentFactory();
         e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP(DesktopClient.VIEW_NAME, viewClass.getName());
-        e.addNVP(DesktopClient.VIEW_OP, operationName);
+        e.addNVP(DesktopClient.VIEW_NAME, getClass().getName());
+        e.addNVP(DesktopClient.VIEW_OP, request.method);
         e.addNVP(RPCCommand.NAME, request.toMap());
         e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
         DesktopClient.deliver(e);

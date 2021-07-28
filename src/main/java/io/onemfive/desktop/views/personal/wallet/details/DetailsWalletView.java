@@ -8,15 +8,11 @@ import io.onemfive.desktop.views.TopicListener;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
-import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.common.Envelope;
-import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -63,7 +59,7 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         LOG.info("Activating...");
         activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
         if(activeWallet==null) {
-            loadWallet();
+            sendRequest(new GetWalletInfo());
         } else {
             updateWalletView();
         }
@@ -92,16 +88,6 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         }
         updateWalletView();
         LOG.info("Model updated.");
-    }
-
-    private void loadWallet() {
-        Envelope e = Envelope.documentFactory();
-        e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP(DesktopClient.VIEW_NAME, DetailsWalletView.class.getName());
-        e.addNVP(DesktopClient.VIEW_OP, GET_WALLET_INFO_OP);
-        e.addNVP(RPCCommand.NAME, new GetWalletInfo().toMap());
-        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
-        DesktopClient.deliver(e);
     }
 
     private void updateWalletView() {

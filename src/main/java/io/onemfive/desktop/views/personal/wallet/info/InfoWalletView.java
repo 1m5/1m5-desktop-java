@@ -13,13 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
-import ra.btc.BitcoinService;
-import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
-import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
 import java.util.ArrayList;
@@ -69,17 +66,17 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                 String walletName = walletsListView.getSelectionModel().getSelectedItem();
                 if(DEFAULT_WALLET_NAME.equals(walletName))
                     walletName = "";
-                sendRequest(InfoWalletView.class, GET_WALLET_INFO_OP, new GetWalletInfo(walletName));
+                sendRequest(new GetWalletInfo(walletName));
             }
         });
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(InfoWalletView.class, LIST_WALLETS_OP, new ListWallets());
+                sendRequest(new ListWallets());
             }
         });
         activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
-        sendRequest(InfoWalletView.class, LIST_WALLETS_OP, new ListWallets());
+        sendRequest(new ListWallets());
         LOG.info("Activated.");
     }
 
@@ -124,7 +121,7 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
         }
         if(activeWallet==null) {
             // Load default wallet
-            sendRequest(InfoWalletView.class, GET_WALLET_INFO_OP, new GetWalletInfo(""));
+            sendRequest(new GetWalletInfo(""));
         } else {
             if(activeWallet.getName().isEmpty() || activeWallet.getName().equals(DEFAULT_WALLET_NAME))
                 walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
