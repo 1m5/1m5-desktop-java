@@ -53,25 +53,33 @@ public class DesktopClient implements Client {
 
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
 
+    // System
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
     private final Map<String,NetworkState> networkStates = new HashMap<>();
-
     private final Map<String, List<Subscription>> subscriptions = new HashMap<>();
+    private NetworkStatus localhostStatus;
+    private final Map<String,Object> globals = new HashMap<>();
+    private ConnectionSpec httpSpec;
+    private OkHttpClient httpClient;
+    private final int apiPort;
 
+    // Personal
     private BTCWallet activeWallet;
     private final List<String> transactions = new ArrayList<>();
-
-    private NetworkStatus localhostStatus;
-
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
-    private Map<String,Object> globals = new HashMap<>();
+    // Community
+    private BTCWallet activeCommunityWallet;
+    private final List<String> communityTransactions = new ArrayList<>();
+    private final Map<String,DID> communityIdentities = new HashMap<>();
+    private DID activeCommunityIdentity;
 
-    private ConnectionSpec httpSpec;
-    private OkHttpClient httpClient;
-
-    private int apiPort;
+    // Public
+    private BTCWallet publicCharityWallet;
+    private final List<String> charitableTransactions = new ArrayList<>();
+    private final Map<String,DID> publicIdentities = new HashMap<>();
+    private DID activePublicIdentity;
 
     private static DesktopClient instance;
 
