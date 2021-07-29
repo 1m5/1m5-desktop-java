@@ -72,7 +72,8 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     @Override
     protected void deactivate() {
         LOG.info("Deactivating...");
-
+        txComboView.setOnAction(null);
+        refreshButton.setOnAction(null);
         LOG.info("Deactivated.");
     }
 
@@ -84,6 +85,11 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
             if (GET_TRANSACTION_INFO_OP.equals(topic)) {
                 Transaction tx = new Transaction();
                 tx.fromMap((Map<String,Object>)response.result);
+                if(!txIdsObservable.contains(tx.txid)) {
+                    txIdsObservable.add(tx.txid);
+                }
+                txComboView.getSelectionModel().select(tx.txid);
+                confirmationsTxtField.setText(tx.confirmations+"");
             } else {
                 LOG.warning(topic + " topic not supported.");
             }
