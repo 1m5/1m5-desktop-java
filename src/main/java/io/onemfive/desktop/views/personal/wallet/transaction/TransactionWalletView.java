@@ -79,6 +79,7 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
 
     @Override
     public void modelUpdated(String topic, Object object) {
+        // TODO: Determine how to pass the txid of the recently created transaction then have it poll periodically until it reaches a certain number of confirmations or number of polls
         Envelope e = (Envelope) object;
         RPCResponse response = DesktopClient.getResponse(e);
         if(response.result!=null) {

@@ -12,6 +12,7 @@ import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
 import ra.common.network.ControlCommand;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 public abstract class BaseView implements View {
