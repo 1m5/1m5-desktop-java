@@ -17,6 +17,8 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
@@ -65,19 +67,19 @@ public class DesktopClient implements Client {
 
     // Personal
     private BTCWallet activeWallet;
-    private final List<String> transactions = new ArrayList<>();
+    private final ObservableList<String> transactions = FXCollections.observableArrayList();
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
     // Community
     private BTCWallet activeCommunityWallet;
-    private final List<String> communityTransactions = new ArrayList<>();
+    private final ObservableList<String> communityTransactions = FXCollections.observableArrayList();
     private final Map<String,DID> communityIdentities = new HashMap<>();
     private DID activeCommunityIdentity;
 
     // Public
     private BTCWallet publicCharityWallet;
-    private final List<String> charitableTransactions = new ArrayList<>();
+    private final ObservableList<String> charitableTransactions = FXCollections.observableArrayList();
     private final Map<String,DID> publicIdentities = new HashMap<>();
     private DID activePublicIdentity;
 
@@ -161,7 +163,7 @@ public class DesktopClient implements Client {
         instance.transactions.add(txid);
     }
 
-    public static List<String> getBitcoinTransactions() {
+    public static ObservableList<String> getBitcoinTransactions() {
         return instance.transactions;
     }
 
