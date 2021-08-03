@@ -19,8 +19,6 @@ import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class DetailsWalletView extends ActivatableView implements TopicListener {
 
-    private static final String GET_WALLET_INFO_OP = "GetWalletInfo";
-
     private GridPane pane;
     private int gridRow = 0;
 

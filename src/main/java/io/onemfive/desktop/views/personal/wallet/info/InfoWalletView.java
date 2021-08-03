@@ -29,15 +29,11 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
 
     private static final String DEFAULT_WALLET_NAME = "Default";
 
-    private static final String LIST_WALLETS_OP = "ListWallets";
-    private static final String GET_WALLET_INFO_OP = "GetWalletInfo";
-
     private GridPane pane;
     private int gridRow = 0;
 
     private List<String> wallets;
     private Button refreshButton;
-    private BTCWallet activeWallet;
     private final ObservableList<String> walletsObservable = FXCollections.observableArrayList();
     private ComboBox<String> walletsListView;
 
@@ -75,7 +71,6 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                 sendRequest(new ListWallets());
             }
         });
-        activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
         sendRequest(new ListWallets());
         LOG.info("Activated.");
     }
@@ -97,7 +92,7 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
         Envelope e = (Envelope)object;
         RPCResponse response = DesktopClient.getResponse(e);
         if(response.result!=null) {
-            if (LIST_WALLETS_OP.equals(topic)) {
+            if (ListWallets.NAME.equals(topic)) {
                 List<String> wallets = (List<String>) response.result;
                 walletsObservable.clear();
                 this.wallets.clear();
@@ -110,8 +105,8 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                         this.wallets.add(walletName);
                     }
                 }
-            } else if (GET_WALLET_INFO_OP.equals(topic)) {
-                activeWallet = new BTCWallet();
+            } else if (GetWalletInfo.NAME.equals(topic)) {
+                BTCWallet activeWallet = new BTCWallet();
                 Map<String, Object> m = (Map<String, Object>) response.result;
                 activeWallet.fromMap(m);
                 DesktopClient.setActiveWallet(activeWallet);
@@ -119,14 +114,14 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
         } else {
             LOG.warning("Response.result was null!");
         }
-        if(activeWallet==null) {
+        if(DesktopClient.getActiveWallet()==null) {
             // Load default wallet
             sendRequest(new GetWalletInfo(""));
         } else {
-            if(activeWallet.getName().isEmpty() || activeWallet.getName().equals(DEFAULT_WALLET_NAME))
+            if(DesktopClient.getActiveWallet().getName().isEmpty() || DesktopClient.getActiveWallet().getName().equals(DEFAULT_WALLET_NAME))
                 walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
             else
-                walletsListView.getSelectionModel().select(activeWallet.getName());
+                walletsListView.getSelectionModel().select(DesktopClient.getActiveWallet().getName());
         }
         LOG.info("Model updated.");
     }

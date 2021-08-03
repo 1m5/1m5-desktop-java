@@ -16,7 +16,6 @@ import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.CreateWallet;
 import ra.common.Envelope;
-import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
 import java.util.Map;
@@ -24,8 +23,6 @@ import java.util.Map;
 import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class CreateWalletView extends ActivatableView implements TopicListener {
-
-    private static final String CREATE_WALLET_OP = "CreateWallet";
 
     private GridPane pane;
     private int gridRow = 0;
@@ -93,7 +90,7 @@ public class CreateWalletView extends ActivatableView implements TopicListener {
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model with topic: "+topic);
         Envelope e = (Envelope)object;
-        if (CREATE_WALLET_OP.equals(topic)) {
+        if (CreateWallet.NAME.equals(topic)) {
             RPCResponse response = new RPCResponse();
             Map<String,Object> responseMap = (Map<String,Object>)e.getValue(RPCCommand.RESPONSE);
             response.fromMap(responseMap);

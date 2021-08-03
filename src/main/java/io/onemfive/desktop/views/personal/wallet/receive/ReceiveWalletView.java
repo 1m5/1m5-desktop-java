@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import ra.btc.*;
 import ra.btc.rpc.RPCResponse;
+import ra.btc.rpc.generate.GenerateToAddress;
 import ra.btc.rpc.wallet.AddressType;
 import ra.btc.rpc.wallet.GetNewAddress;
 import ra.common.Envelope;
@@ -28,8 +29,6 @@ import java.awt.image.BufferedImage;
 import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class ReceiveWalletView extends ActivatableView implements TopicListener {
-
-    private static final String GENERATE_ADDRESS_OP = "GenerateAddress";
 
     private GridPane pane;
     private int gridRow = 0;
@@ -91,7 +90,7 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
 //        Object cmdObj = e.getValue(RPCCommand.NAME);
-        if (GENERATE_ADDRESS_OP.equals(topic)) {
+        if (GetNewAddress.NAME.equals(topic)) {
             RPCResponse response = DesktopClient.getResponse(e);
             if(response.error!=null) {
                 if(response.error.code == -1) {

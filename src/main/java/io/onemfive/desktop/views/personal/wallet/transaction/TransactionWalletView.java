@@ -4,22 +4,19 @@ import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.desktop.views.personal.wallet.info.InfoWalletView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import ra.btc.Transaction;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.tx.GetRawTransaction;
-import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
 import ra.util.Resources;
+import ra.util.Wait;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -30,72 +27,86 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
 
     private GridPane pane;
     private int gridRow = 0;
-
-    private final ObservableList<String> txIdsObservable = FXCollections.observableArrayList(DesktopClient.getBitcoinTransactions());
-    private ComboBox<String> txComboView;
-    private Button refreshButton;
-    private TextField confirmationsTxtField;
+    private TableView txView;
 
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
         pane = (GridPane)root;
         addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.transactions"), Layout.FIRST_ROW_DISTANCE);
-        txComboView = addComboBox(pane, ++gridRow, Resources.get("personalView.wallet.transactions.select"));
-        txComboView.setItems(txIdsObservable);
-        txComboView.setMaxWidth(500);
-        refreshButton = addPrimaryActionButton(pane, ++gridRow, Resources.get("personalView.wallet.transactions.refresh"), Layout.FIRST_ROW_DISTANCE);
-        confirmationsTxtField = addCompactTopLabelTextField(pane, gridRow++, Resources.get("personalView.wallet.transactions.confirmations"), "").second;
-        confirmationsTxtField.setMaxWidth(200);
-        confirmationsTxtField.setEditable(false);
+        txView = addTableViewWithHeader(pane, ++gridRow, Resources.get("personalView.wallet.transactions"));
+        txView.setEditable(false);
+        TableColumn idCol = new TableColumn("Id");
+        idCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("txid"));
+        TableColumn timeCol = new TableColumn("Time");
+        timeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Long>("time"));
+        TableColumn confCol = new TableColumn("Confirmations");
+        confCol.setCellValueFactory(new PropertyValueFactory<Transaction, Integer>("confirmations"));
+        txView.getColumns().addAll(idCol, timeCol, confCol);
+        txView.setItems(DesktopClient.getBitcoinTransactions());
+
         LOG.info("Initialized.");
     }
 
     @Override
     protected void activate() {
         LOG.info("Activating...");
-        txComboView.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                sendRequest(new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
-            }
-        });
-        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                sendRequest(new GetRawTransaction(txComboView.getSelectionModel().getSelectedItem(), true));
-            }
-        });
+        lookupTransactions();
         LOG.info("Activated.");
     }
 
     @Override
     protected void deactivate() {
         LOG.info("Deactivating...");
-        txComboView.setOnAction(null);
-        refreshButton.setOnAction(null);
+
         LOG.info("Deactivated.");
     }
 
     @Override
     public void modelUpdated(String topic, Object object) {
-        // TODO: Determine how to pass the txid of the recently created transaction then have it poll periodically until it reaches a certain number of confirmations or number of polls
         Envelope e = (Envelope) object;
         RPCResponse response = DesktopClient.getResponse(e);
         if(response.result!=null) {
-            if (GET_TRANSACTION_INFO_OP.equals(topic)) {
+            if (GetRawTransaction.NAME.equals(topic)) {
                 Transaction tx = new Transaction();
                 tx.fromMap((Map<String,Object>)response.result);
-                if(!txIdsObservable.contains(tx.txid)) {
-                    txIdsObservable.add(tx.txid);
-                }
-                txComboView.getSelectionModel().select(tx.txid);
-                confirmationsTxtField.setText(tx.confirmations+"");
+                DesktopClient.addBitcoinTransaction(tx);
+
             } else {
                 LOG.warning(topic + " topic not supported.");
             }
         } else {
             LOG.warning("Response.result was null!");
+        }
+    }
+
+    private void lookupTransactions() {
+        if(DesktopClient.getBitcoinTransactions().size() > 0) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<Transaction> txs = DesktopClient.getBitcoinTransactions();
+                    while(txs.size() > 0) {
+                        // Check for Transactions older than 6 hours and remove
+                        long now = new Date().getTime();
+                        List<Integer> remove = new ArrayList<>();
+                        int i = 0;
+                        for(Transaction tx : txs) {
+                            if(now > (tx.time * 6 * 60 * 60 * 1000)) { // kick out transactions older than 6 hours
+                                remove.add(i);
+                            }
+                            i++;
+                        }
+                        for(Integer j : remove) {
+                            txs.remove(j);
+                        }
+                        for(Transaction tx : txs) {
+                            sendRequest(new GetRawTransaction(tx.txid));
+                        }
+                        Wait.aMin(10);
+                    }
+                }
+            }).start();
         }
     }
 

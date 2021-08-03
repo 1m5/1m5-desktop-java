@@ -29,14 +29,13 @@ import ra.common.network.ControlCommand;
 import ra.util.Resources;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class SendWalletView extends ActivatableView implements TopicListener {
-
-    private static final String SEND_OP = "Send";
 
     private GridPane pane;
     private int gridRow = 0;
@@ -89,10 +88,14 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
         RPCResponse response = DesktopClient.getResponse(e);
-        if(SEND_OP.equals(topic)) {
+        if(SendToAddress.NAME.equals(topic)) {
             if(response.result!=null) {
                 String txid = (String)response.result;
-                DesktopClient.addBitcoinTransaction(txid);
+                Transaction tx = new Transaction();
+                tx.txid = txid;
+                tx.time = new Date().getTime();
+                tx.confirmations = 0;
+                DesktopClient.addBitcoinTransaction(tx);
                 LOG.info("txid: "+txid);
                 publicKeyTxt.setText(null);
                 receiverAmountTxt.setText(null);

@@ -23,7 +23,10 @@ import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import ra.btc.BTCWallet;
+import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
+import ra.btc.Transaction;
+import ra.btc.rpc.RPCRequest;
 import ra.btc.rpc.RPCResponse;
 import ra.common.Client;
 import ra.common.Envelope;
@@ -67,7 +70,7 @@ public class DesktopClient implements Client {
 
     // Personal
     private BTCWallet activeWallet;
-    private final ObservableList<String> transactions = FXCollections.observableArrayList();
+    private final ObservableList<Transaction> transactions = FXCollections.observableArrayList();
     private final Map<String,DID> localIdentities = new HashMap<>();
     private DID activeIdentity;
 
@@ -140,6 +143,16 @@ public class DesktopClient implements Client {
         });
     }
 
+    private static void sendBackgroundRequest(RPCRequest request) {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.Send.name());
+        e.addNVP(DesktopClient.VIEW_NAME, DesktopClient.class.getName());
+        e.addNVP(DesktopClient.VIEW_OP, request.method);
+        e.addNVP(RPCCommand.NAME, request.toMap());
+        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+        deliver(e);
+    }
+
     public static RPCResponse getResponse(Envelope e) {
         RPCResponse response = new RPCResponse();
         Object responseObj = e.getValue(RPCCommand.RESPONSE);
@@ -159,11 +172,18 @@ public class DesktopClient implements Client {
         return instance.globals.get(name);
     }
 
-    public static void addBitcoinTransaction(String txid) {
-        instance.transactions.add(txid);
+    public static void scanTransactions() {
+
     }
 
-    public static ObservableList<String> getBitcoinTransactions() {
+    public static void addBitcoinTransaction(Transaction newTx) {
+        for(Transaction tx : instance.transactions) {
+            if(tx.txid.equals(newTx.txid)) return;
+        }
+        instance.transactions.add(newTx);
+    }
+
+    public static ObservableList<Transaction> getBitcoinTransactions() {
         return instance.transactions;
     }
 
@@ -184,14 +204,25 @@ public class DesktopClient implements Client {
             return;
         }
         LOG.info("Received message for UI: view="+viewName+"; op="+viewOp);
-        View view = MVC.loadView(viewName);
-        if(view instanceof TopicListener) {
-            javafx.application.Platform.runLater(() -> {
-                LOG.info("Updating view model...");
-                ((TopicListener)view).modelUpdated(viewOp, e);
-            });
+        if(DesktopClient.class.getName().equals(viewName)) {
+            updateInternalModels(viewOp, e);
         } else {
-            LOG.warning(view.getClass().getName()+" must implement "+TopicListener.class.getName());
+            View view = MVC.loadView(viewName);
+            if (view instanceof TopicListener) {
+                javafx.application.Platform.runLater(() -> {
+                    LOG.info("Updating view model...");
+                    ((TopicListener) view).modelUpdated(viewOp, e);
+                });
+            } else {
+                LOG.warning(view.getClass().getName() + " must implement " + TopicListener.class.getName());
+            }
+        }
+    }
+
+    private void updateInternalModels(String task, Envelope e) {
+        RPCResponse response = getResponse(e);
+        switch(task) {
+
         }
     }
 
