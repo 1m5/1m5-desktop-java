@@ -9,6 +9,7 @@ import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCRequest;
 import ra.btc.rpc.wallet.ListWallets;
+import ra.btc.uses.UseRequest;
 import ra.common.Envelope;
 import ra.common.network.ControlCommand;
 
@@ -43,6 +44,14 @@ public abstract class BaseView implements View {
         e.addNVP(DesktopClient.VIEW_OP, request.method);
         e.addNVP(RPCCommand.NAME, request.toMap());
         e.addRoute(BitcoinService.class, BitcoinService.OPERATION_RPC_REQUEST);
+        DesktopClient.deliver(e);
+    }
+
+    protected void sendRequest(UseRequest useRequest) {
+        Envelope e = Envelope.documentFactory();
+        e.addNVP(DesktopClient.VIEW_NAME, getClass().getName());
+        e.addNVP(UseRequest.class.getName(), useRequest.toMap());
+        e.addRoute(BitcoinService.class, BitcoinService.OPERATION_USE_REQUEST);
         DesktopClient.deliver(e);
     }
 
