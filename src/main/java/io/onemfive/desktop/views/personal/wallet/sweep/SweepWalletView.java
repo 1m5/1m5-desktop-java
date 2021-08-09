@@ -54,12 +54,12 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
         importButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!sweepCheckBox.isSelected()) {
-                    if(importTxt.getText()!=null)
-                        sendRequest(new ImportPrivKey(importTxt.getText()));
-                } else {
+                if(sweepCheckBox.isSelected()) {
                     if(importTxt.getText()!=null)
                         sendRequest(new SweepPrivKey(importTxt.getText()));
+                } else {
+                    if(importTxt.getText()!=null)
+                        sendRequest(new ImportPrivKey(importTxt.getText()));
                 }
             }
         });

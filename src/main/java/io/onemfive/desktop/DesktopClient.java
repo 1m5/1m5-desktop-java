@@ -172,21 +172,6 @@ public class DesktopClient implements Client {
         return instance.globals.get(name);
     }
 
-    public static void scanTransactions() {
-
-    }
-
-    public static void addBitcoinTransaction(Transaction newTx) {
-        for(Transaction tx : instance.transactions) {
-            if(tx.txid.equals(newTx.txid)) return;
-        }
-        instance.transactions.add(newTx);
-    }
-
-    public static ObservableList<Transaction> getBitcoinTransactions() {
-        return instance.transactions;
-    }
-
     public static void setActiveWallet(BTCWallet activeWallet) {
         instance.activeWallet = activeWallet;
     }

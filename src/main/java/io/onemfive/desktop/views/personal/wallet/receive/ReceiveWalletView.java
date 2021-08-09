@@ -15,9 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import ra.btc.*;
 import ra.btc.rpc.RPCResponse;
-import ra.btc.rpc.generate.GenerateToAddress;
 import ra.btc.rpc.wallet.AddressType;
 import ra.btc.rpc.wallet.GetNewAddress;
 import ra.common.Envelope;
@@ -65,16 +63,13 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
     @Override
     protected void activate() {
         LOG.info("Activating...");
-
         generateAddressButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
             }
         });
-
         sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
-
         LOG.info("Activated.");
     }
 

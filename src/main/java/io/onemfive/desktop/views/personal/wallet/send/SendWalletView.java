@@ -91,11 +91,6 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         if(SendToAddress.NAME.equals(topic)) {
             if(response.result!=null) {
                 String txid = (String)response.result;
-                Transaction tx = new Transaction();
-                tx.txid = txid;
-                tx.time = new Date().getTime();
-                tx.confirmations = 0;
-                DesktopClient.addBitcoinTransaction(tx);
                 LOG.info("txid: "+txid);
                 publicKeyTxt.setText(null);
                 receiverAmountTxt.setText(null);

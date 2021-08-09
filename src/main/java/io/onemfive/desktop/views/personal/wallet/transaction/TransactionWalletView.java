@@ -4,18 +4,19 @@ import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import ra.btc.Transaction;
 import ra.btc.rpc.RPCResponse;
-import ra.btc.rpc.tx.GetRawTransaction;
+import ra.btc.rpc.wallet.ListTransactions;
 import ra.common.Envelope;
 import ra.util.Resources;
-import ra.util.Wait;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,8 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     private GridPane pane;
     private int gridRow = 0;
     private TableView txView;
+    private Button refreshButton;
+    private final ObservableList<Transaction> txListObservable = FXCollections.observableArrayList();
 
     @Override
     protected void initialize() {
@@ -43,7 +46,7 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
         TableColumn confCol = new TableColumn("Confirmations");
         confCol.setCellValueFactory(new PropertyValueFactory<Transaction, Integer>("confirmations"));
         txView.getColumns().addAll(idCol, timeCol, confCol);
-        txView.setItems(DesktopClient.getBitcoinTransactions());
+        txView.setItems(txListObservable);
 
         LOG.info("Initialized.");
     }
@@ -51,14 +54,20 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     @Override
     protected void activate() {
         LOG.info("Activating...");
-        lookupTransactions();
+        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                sendRequest(new ListTransactions());
+            }
+        });
+        sendRequest(new ListTransactions());
         LOG.info("Activated.");
     }
 
     @Override
     protected void deactivate() {
         LOG.info("Deactivating...");
-
+        refreshButton.setOnAction(null);
         LOG.info("Deactivated.");
     }
 
@@ -66,47 +75,28 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     public void modelUpdated(String topic, Object object) {
         Envelope e = (Envelope) object;
         RPCResponse response = DesktopClient.getResponse(e);
+        if(response.error!=null) {
+            if(response.error.code == -1) {
+                LOG.warning("Incorrect request: "+response.error.message);
+            } else {
+                LOG.warning(response.error.toJSON());
+            }
+        }
         if(response.result!=null) {
-            if (GetRawTransaction.NAME.equals(topic)) {
-                Transaction tx = new Transaction();
-                tx.fromMap((Map<String,Object>)response.result);
-                DesktopClient.addBitcoinTransaction(tx);
-
+            if (ListTransactions.NAME.equals(topic)) {
+                txListObservable.clear();
+                List<Map<String,Object>> txListMaps = (List<Map<String,Object>>)response.result;
+                Transaction tx;
+                for(Map<String,Object> txM : txListMaps) {
+                    tx = new Transaction();
+                    tx.fromMap(txM);
+                    txListObservable.add(tx);
+                }
             } else {
                 LOG.warning(topic + " topic not supported.");
             }
         } else {
             LOG.warning("Response.result was null!");
-        }
-    }
-
-    private void lookupTransactions() {
-        if(DesktopClient.getBitcoinTransactions().size() > 0) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    List<Transaction> txs = DesktopClient.getBitcoinTransactions();
-                    while(txs.size() > 0) {
-                        // Check for Transactions older than 6 hours and remove
-                        long now = new Date().getTime();
-                        List<Integer> remove = new ArrayList<>();
-                        int i = 0;
-                        for(Transaction tx : txs) {
-                            if(now > (tx.time * 6 * 60 * 60 * 1000)) { // kick out transactions older than 6 hours
-                                remove.add(i);
-                            }
-                            i++;
-                        }
-                        for(Integer j : remove) {
-                            txs.remove(j);
-                        }
-                        for(Transaction tx : txs) {
-                            sendRequest(new GetRawTransaction(tx.txid));
-                        }
-                        Wait.aMin(10);
-                    }
-                }
-            }).start();
         }
     }
 
