@@ -29,26 +29,26 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
     private TextField walletBalanceSatsTxt;
     private TextField walletBalanceBTCTxt;
     private TextField walletUnconfirmedBalanceTxt;
-//    private TextField walletImmatureBalanceTxt;
+    private TextField walletImmatureBalanceTxt;
 
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
         pane = (GridPane)root;
 
-        TitledGroupBg walletGroup = addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.active"), Layout.FIRST_ROW_DISTANCE);
+        TitledGroupBg walletGroup = addTitledGroupBg(pane, ++gridRow, 7, Resources.get("personalView.wallet.active"), Layout.FIRST_ROW_DISTANCE);
         GridPane.setColumnSpan(walletGroup, 1);
         walletNameTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.name"), "").second;
         walletNameTxt.setMaxWidth(300);
         walletVersionTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.version"), "").second;
         walletVersionTxt.setMaxWidth(300);
-        walletBalanceSatsTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
-        walletBalanceSatsTxt.setMaxWidth(300);
         walletBalanceBTCTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance.btc"), "").second;
         walletBalanceBTCTxt.setMaxWidth(300);
+        walletBalanceSatsTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.balance"), "").second;
+        walletBalanceSatsTxt.setMaxWidth(300);
         walletUnconfirmedBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
         walletUnconfirmedBalanceTxt.setMaxWidth(300);
-//        walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
+        walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
 
         LOG.info("Initialized.");
     }
@@ -88,15 +88,6 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
             activeWallet = new BTCWallet();
             activeWallet.fromMap((Map<String,Object>)response.result);
         }
-//        Object cmdObj = e.getValue(RPCCommand.NAME);
-//        GetWalletInfo request = new GetWalletInfo();
-//        if(cmdObj instanceof String)
-//            request.fromJSON((String)cmdObj);
-//        else if(cmdObj instanceof Map)
-//            request.fromMap((Map<String,Object>)cmdObj);
-//        if(request.wallet.getName()!=null) {
-//            activeWallet = request.wallet;
-//        }
         updateWalletView();
         LOG.info("Model updated.");
     }
@@ -111,7 +102,7 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
             walletBalanceSatsTxt.setText(activeWallet.getBalance().value().toString());
             walletBalanceBTCTxt.setText(((double)(activeWallet.getBalance().value().longValue()/100000000))+"");
             walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
-//            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
+            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
         }
     }
 

@@ -24,8 +24,6 @@ import static io.onemfive.desktop.util.FormBuilder.*;
 
 public class TransactionWalletView extends ActivatableView implements TopicListener {
 
-    private static final String GET_TRANSACTION_INFO_OP = "GetTransactionInfo";
-
     private GridPane pane;
     private int gridRow = 0;
     private TableView txView;
@@ -36,16 +34,22 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     protected void initialize() {
         LOG.info("Initializing...");
         pane = (GridPane)root;
-        addTitledGroupBg(pane, ++gridRow, 6, Resources.get("personalView.wallet.transactions"), Layout.FIRST_ROW_DISTANCE);
+        addTitledGroupBg(pane, ++gridRow, 7, Resources.get("personalView.wallet.transactions"), Layout.FIRST_ROW_DISTANCE);
+        refreshButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.transactions.refresh"), Layout.FIRST_ROW_DISTANCE);
+        refreshButton.getStyleClass().add("action-button");
         txView = addTableViewWithHeader(pane, ++gridRow, Resources.get("personalView.wallet.transactions"));
         txView.setEditable(false);
         TableColumn idCol = new TableColumn("Id");
         idCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("txid"));
+        TableColumn amountCol = new TableColumn("Amount");
+        amountCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amount"));
+        TableColumn feeCol = new TableColumn("Fee");
+        feeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("fee"));
         TableColumn timeCol = new TableColumn("Time");
         timeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Long>("time"));
         TableColumn confCol = new TableColumn("Confirmations");
         confCol.setCellValueFactory(new PropertyValueFactory<Transaction, Integer>("confirmations"));
-        txView.getColumns().addAll(idCol, timeCol, confCol);
+        txView.getColumns().addAll(idCol, amountCol, feeCol, timeCol, confCol);
         txView.setItems(txListObservable);
 
         LOG.info("Initialized.");
@@ -57,10 +61,11 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(new ListTransactions());
+                txListObservable.clear();
+                sendRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
             }
         });
-        sendRequest(new ListTransactions());
+        sendRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
         LOG.info("Activated.");
     }
 

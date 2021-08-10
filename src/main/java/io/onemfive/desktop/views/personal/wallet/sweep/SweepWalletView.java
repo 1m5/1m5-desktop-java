@@ -39,11 +39,12 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
         pane = (GridPane)root;
 
         // 1st Row Left: Sweep
-        importKeysGroup = addTitledGroupBg(pane, gridRow, 2, Resources.get("personalView.wallet.import"));
-        importTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.import.privatekey"), Layout.FIRST_ROW_DISTANCE);
-        sweepCheckBox = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"));
-        sweepCheckBox.setSelected(false);
-        importButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.import.send"), Layout.LIST_ROW_HEIGHT);
+        importKeysGroup = addTitledGroupBg(pane, gridRow, 4, Resources.get("personalView.wallet.import"));
+        importTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.import.key"), Layout.FIRST_ROW_DISTANCE);
+        sweepCheckBox = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.FIRST_ROW_DISTANCE);
+        sweepCheckBox.setSelected(true);
+        importButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.LIST_ROW_HEIGHT);
+        importButton.getStyleClass().add("action-button");
 
         LOG.info("Initialized.");
     }
@@ -51,6 +52,16 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
     @Override
     protected void activate() {
         LOG.info("Activating...");
+        sweepCheckBox.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(sweepCheckBox.isSelected()) {
+                    importButton.setText(Resources.get("personalView.wallet.import.sweep"));
+                } else {
+                    importButton.setText(Resources.get("personalView.wallet.import.import"));
+                }
+            }
+        });
         importButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
