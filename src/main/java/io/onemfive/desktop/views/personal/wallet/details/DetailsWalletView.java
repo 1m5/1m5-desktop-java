@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
 import ra.btc.RPCCommand;
+import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.common.Envelope;
 import ra.util.Resources;
@@ -75,15 +76,27 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model...");
         Envelope e = (Envelope)object;
-        Object cmdObj = e.getValue(RPCCommand.NAME);
-        GetWalletInfo request = new GetWalletInfo();
-        if(cmdObj instanceof String)
-            request.fromJSON((String)cmdObj);
-        else if(cmdObj instanceof Map)
-            request.fromMap((Map<String,Object>)cmdObj);
-        if(request.wallet.getName()!=null) {
-            activeWallet = request.wallet;
+        RPCResponse response = DesktopClient.getResponse(e);
+        if(response.error!=null) {
+            if(response.error.code == -1) {
+                LOG.warning("Incorrect request: "+response.error.message);
+            } else {
+                LOG.warning(response.error.toJSON());
+            }
         }
+        if(response.result!=null) {
+            activeWallet = new BTCWallet();
+            activeWallet.fromMap((Map<String,Object>)response.result);
+        }
+//        Object cmdObj = e.getValue(RPCCommand.NAME);
+//        GetWalletInfo request = new GetWalletInfo();
+//        if(cmdObj instanceof String)
+//            request.fromJSON((String)cmdObj);
+//        else if(cmdObj instanceof Map)
+//            request.fromMap((Map<String,Object>)cmdObj);
+//        if(request.wallet.getName()!=null) {
+//            activeWallet = request.wallet;
+//        }
         updateWalletView();
         LOG.info("Model updated.");
     }
