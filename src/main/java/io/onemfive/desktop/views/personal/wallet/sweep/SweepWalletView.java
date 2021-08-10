@@ -30,7 +30,7 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
 
     private TitledGroupBg importKeysGroup;
     private InputTextField importTxt;
-    private CheckBox sweepCheckBox;
+//    private CheckBox sweepCheckBox;
     private Button importButton;
 
     @Override
@@ -41,8 +41,8 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
         // 1st Row Left: Sweep
         importKeysGroup = addTitledGroupBg(pane, gridRow, 4, Resources.get("personalView.wallet.import"));
         importTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.import.key"), Layout.FIRST_ROW_DISTANCE);
-        sweepCheckBox = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.FIRST_ROW_DISTANCE);
-        sweepCheckBox.setSelected(true);
+//        sweepCheckBox = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.FIRST_ROW_DISTANCE);
+//        sweepCheckBox.setSelected(true);
         importButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.LIST_ROW_HEIGHT);
         importButton.getStyleClass().add("action-button");
 
@@ -52,26 +52,28 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
     @Override
     protected void activate() {
         LOG.info("Activating...");
-        sweepCheckBox.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(sweepCheckBox.isSelected()) {
-                    importButton.setText(Resources.get("personalView.wallet.import.sweep"));
-                } else {
-                    importButton.setText(Resources.get("personalView.wallet.import.import"));
-                }
-            }
-        });
+//        sweepCheckBox.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                if(sweepCheckBox.isSelected()) {
+//                    importButton.setText(Resources.get("personalView.wallet.import.sweep"));
+//                } else {
+//                    importButton.setText(Resources.get("personalView.wallet.import.import"));
+//                }
+//            }
+//        });
         importButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(sweepCheckBox.isSelected()) {
-                    if(importTxt.getText()!=null)
-                        sendRequest(new SweepPrivKey(importTxt.getText()));
-                } else {
+//                if(sweepCheckBox.isSelected()) {
+//                    if(importTxt.getText()!=null) {
+//                        sendRequest(new SweepPrivKey(importTxt.getText()));
+//                        LOG.warning("Sweep not yet supported");
+//                    }
+//                } else {
                     if(importTxt.getText()!=null)
                         sendRequest(new ImportPrivKey(importTxt.getText()));
-                }
+//                }
             }
         });
         LOG.info("Activated.");
