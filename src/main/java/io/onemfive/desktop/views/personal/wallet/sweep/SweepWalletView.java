@@ -43,7 +43,7 @@ public class SweepWalletView extends ActivatableView implements TopicListener {
         importTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.import.key"), Layout.FIRST_ROW_DISTANCE);
 //        sweepCheckBox = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.FIRST_ROW_DISTANCE);
 //        sweepCheckBox.setSelected(true);
-        importButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.import.sweep"), Layout.LIST_ROW_HEIGHT);
+        importButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.import.import"), Layout.LIST_ROW_HEIGHT);
         importButton.getStyleClass().add("action-button");
 
         LOG.info("Initialized.");
