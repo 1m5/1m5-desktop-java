@@ -9,7 +9,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkPeer;
 import ra.common.network.NetworkState;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.addSlideToggleButton;
 import static io.onemfive.desktop.util.FormBuilder.addTopLabelListView;

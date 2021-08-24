@@ -14,7 +14,7 @@ import io.onemfive.desktop.views.ViewPath;
 import io.onemfive.desktop.views.commons.CommonsView;
 import io.onemfive.desktop.views.commons.browser.BrowserView;
 import io.onemfive.desktop.views.home.HomeView;
-import ra.util.Resources;
+import ra.common.Resources;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

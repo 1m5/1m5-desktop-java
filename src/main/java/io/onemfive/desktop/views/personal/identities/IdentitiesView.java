@@ -20,7 +20,7 @@ import ra.common.Envelope;
 import ra.common.identity.DID;
 import ra.common.network.ControlCommand;
 import ra.did.DIDService;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.List;
 

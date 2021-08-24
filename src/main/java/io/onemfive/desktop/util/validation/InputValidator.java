@@ -1,6 +1,6 @@
 package io.onemfive.desktop.util.validation;
 
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.math.BigInteger;
 

@@ -17,7 +17,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import ra.util.Resources;
+import ra.common.Resources;
 
 public class WalletView extends ActivatableView {
 

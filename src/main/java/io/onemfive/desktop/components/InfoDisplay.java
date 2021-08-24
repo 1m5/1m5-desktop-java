@@ -15,7 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextFlow;
-import ra.util.Resources;
+import ra.common.Resources;
 
 /**
  * Convenience Component for info icon, info text and link display in a GridPane.

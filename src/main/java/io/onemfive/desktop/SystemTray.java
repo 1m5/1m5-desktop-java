@@ -2,7 +2,7 @@ package io.onemfive.desktop;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

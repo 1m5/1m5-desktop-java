@@ -39,7 +39,7 @@ import ra.common.notification.Subscription;
 import ra.common.service.ServiceReport;
 import ra.maildrop.MailDropService;
 import ra.notification.NotificationService;
-import ra.util.JSONParser;
+import ra.common.JSONParser;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

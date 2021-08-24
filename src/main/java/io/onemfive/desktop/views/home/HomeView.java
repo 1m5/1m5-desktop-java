@@ -37,8 +37,8 @@ import javafx.scene.text.TextAlignment;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import ra.common.identity.DID;
-import ra.util.LanguageUtil;
-import ra.util.LocaleUtil;
+import ra.common.LanguageUtil;
+import ra.common.LocaleUtil;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

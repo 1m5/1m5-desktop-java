@@ -19,7 +19,7 @@ import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.AddressType;
 import ra.btc.rpc.wallet.GetNewAddress;
 import ra.common.Envelope;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

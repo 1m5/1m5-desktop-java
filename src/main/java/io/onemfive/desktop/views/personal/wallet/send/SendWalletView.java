@@ -26,7 +26,7 @@ import ra.btc.uses.SendBTC;
 import ra.common.Envelope;
 import ra.common.currency.crypto.BTC;
 import ra.common.network.ControlCommand;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.ArrayList;
 import java.util.Date;

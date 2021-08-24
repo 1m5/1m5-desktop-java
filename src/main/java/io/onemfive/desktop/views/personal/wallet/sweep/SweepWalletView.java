@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.rpc.wallet.ImportPrivKey;
 import ra.btc.uses.SweepPrivKey;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 

@@ -1,7 +1,7 @@
 package io.onemfive.desktop;
 
 import onemfive.ManCon;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.net.URL;
 

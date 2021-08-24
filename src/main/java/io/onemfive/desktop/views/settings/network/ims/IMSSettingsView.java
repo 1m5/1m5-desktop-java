@@ -7,7 +7,7 @@ import io.onemfive.desktop.views.TopicListener;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkState;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.addMultilineLabel;
 import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;

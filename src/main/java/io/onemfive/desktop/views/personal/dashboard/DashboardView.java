@@ -7,7 +7,7 @@ import io.onemfive.desktop.views.TopicListener;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 

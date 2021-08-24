@@ -17,7 +17,7 @@ import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.btc.rpc.wallet.ListWallets;
 import ra.common.Envelope;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,7 +16,7 @@ import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.CreateWallet;
 import ra.common.Envelope;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.Map;
 

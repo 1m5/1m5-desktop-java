@@ -7,7 +7,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import ra.util.FileUtil;
+import ra.common.FileUtil;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

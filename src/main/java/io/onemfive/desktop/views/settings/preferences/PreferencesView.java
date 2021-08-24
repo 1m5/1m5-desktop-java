@@ -12,8 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import ra.util.LanguageUtil;
-import ra.util.Resources;
+import ra.common.LanguageUtil;
+import ra.common.Resources;
 
 import java.util.Locale;
 

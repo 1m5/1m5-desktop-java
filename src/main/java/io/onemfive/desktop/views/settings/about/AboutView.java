@@ -6,7 +6,7 @@ import io.onemfive.desktop.views.ActivatableView;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.addCompactTopLabelTextField;
 import static io.onemfive.desktop.util.FormBuilder.addHyperlinkWithIcon;

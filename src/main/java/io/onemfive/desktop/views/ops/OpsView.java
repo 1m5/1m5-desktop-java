@@ -9,7 +9,7 @@ import io.onemfive.desktop.views.ops.dashboard.DashboardOpsView;
 import io.onemfive.desktop.views.ops.network.NetworkOpsView;
 import io.onemfive.desktop.views.ops.platform.PlatformOpsView;
 import io.onemfive.desktop.views.ops.services.ServicesOpsView;
-import ra.util.Resources;
+import ra.common.Resources;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;

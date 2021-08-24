@@ -13,9 +13,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import ra.common.Envelope;
 import ra.common.identity.DID;
-import ra.i2p.I2PService;
+import ra.i2p.embedded.I2PEmbeddedService;
 import ra.networkmanager.NetworkManagerService;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.List;
 
@@ -78,7 +78,7 @@ public class SocialView extends ActivatableView implements TopicListener {
                 LOG.info("Sending text: "+txtToSend);
                 msgCount++;
                 Envelope e = Envelope.documentFactory();
-                e.addRoute(I2PService.class.getName(), I2PService.OPERATION_SEND);
+                e.addRoute(I2PEmbeddedService.class.getName(), I2PEmbeddedService.OPERATION_SEND);
                 e.addRoute(NetworkManagerService.class.getName(), NetworkManagerService.OPERATION_SEND);
                 e.addContent(txtToSend);
                 e.ratchet();

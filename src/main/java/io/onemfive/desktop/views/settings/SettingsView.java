@@ -15,7 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import ra.util.Resources;
+import ra.common.Resources;
 
 public class SettingsView extends ActivatableView {
 

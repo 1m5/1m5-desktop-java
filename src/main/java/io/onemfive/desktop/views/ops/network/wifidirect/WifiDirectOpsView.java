@@ -9,8 +9,8 @@ import javafx.scene.layout.GridPane;
 import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
 import ra.common.service.ServiceStatus;
-import ra.util.Resources;
-import ra.util.StringUtil;
+import ra.common.Resources;
+import ra.common.StringUtil;
 
 import static io.onemfive.desktop.util.FormBuilder.addCompactTopLabelTextField;
 import static io.onemfive.desktop.util.FormBuilder.addTitledGroupBg;

@@ -19,7 +19,7 @@ import net.i2p.router.Router;
 import ra.common.network.NetworkPeer;
 import ra.common.network.NetworkState;
 import ra.common.service.ServiceReport;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 

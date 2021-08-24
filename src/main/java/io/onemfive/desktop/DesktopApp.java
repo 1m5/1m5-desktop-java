@@ -9,8 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import ra.common.service.ServiceStatus;
-import ra.util.Config;
-import ra.util.LocaleUtil;
+import ra.common.Config;
+import ra.common.LocaleUtil;
 
 import java.awt.*;
 import java.util.*;

@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
-import ra.util.Resources;
+import ra.common.Resources;
 
 public class TextFieldWithCopyIcon extends AnchorPane {
 

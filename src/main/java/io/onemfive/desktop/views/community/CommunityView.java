@@ -18,7 +18,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import ra.common.social.Group;
-import ra.util.Resources;
+import ra.common.Resources;
 
 import java.util.Map;
 

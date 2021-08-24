@@ -14,7 +14,7 @@ import io.onemfive.desktop.views.settings.network.lifi.LiFiNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.satellite.SatelliteNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
-import ra.util.Resources;
+import ra.common.Resources;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
