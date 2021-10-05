@@ -19,6 +19,8 @@ import io.onemfive.desktop.views.settings.network.tor.TORNetworkSettingsView;
 import io.onemfive.desktop.views.settings.network.wifidirect.WiFiNetworkSettingsView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import okhttp3.*;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
@@ -57,6 +59,11 @@ public class DesktopClient implements Client {
     public static final String VIEW_OP = "VIEW_OP";
 
     public static final String OPERATION_NOTIFY_UI = "NOTIFY_UI";
+
+    // Client Type
+    public static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    public static int numberOfScreens = Screen.getScreens().size();
+    private static ClientType clientType;
 
     // System
     private final Map<String,ServiceReport> serviceReports = new HashMap<>();
@@ -98,11 +105,22 @@ public class DesktopClient implements Client {
         if(instance == null) {
             instance = new DesktopClient(apiPort);
         }
+        if(screenBounds.getWidth() >= 768 && screenBounds.getHeight() >= 720)
+            DesktopClient.clientType = ClientType.DESKTOP;
+        else if(screenBounds.getWidth()<=414 && screenBounds.getHeight() <= 896)
+            DesktopClient.clientType = ClientType.MOBILE;
+        else
+            DesktopClient.clientType = ClientType.TAB;
+        LOG.info(screenBounds.toString()+"; Screens: "+numberOfScreens+"; Type: "+clientType.name());
         return instance;
     }
 
     public DID getActiveIdentity() {
         return activeIdentity;
+    }
+
+    public static ClientType getClientType() {
+        return clientType;
     }
 
     public static void registerService(Class serviceClass) {
