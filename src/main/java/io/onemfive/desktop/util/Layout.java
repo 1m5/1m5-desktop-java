@@ -1,10 +1,11 @@
 package io.onemfive.desktop.util;
 
 public class Layout {
-    public static final double INITIAL_WINDOW_WIDTH = 1200;
-    public static final double INITIAL_WINDOW_HEIGHT = 710; //740
-    public static final double MIN_WINDOW_WIDTH = 1020;
-    public static final double MIN_WINDOW_HEIGHT = 620;
+    // Desktop
+    public static final double DESKTOP_INITIAL_WINDOW_WIDTH = 1200;
+    public static final double DESKTOP_INITIAL_WINDOW_HEIGHT = 710; //740
+    public static final double DESKTOP_MIN_WINDOW_WIDTH = 1020;
+    public static final double DESKTOP_MIN_WINDOW_HEIGHT = 620;
     public static final double FIRST_ROW_DISTANCE = 20d;
     public static final double COMPACT_FIRST_ROW_DISTANCE = 10d;
     public static final double TWICE_FIRST_ROW_DISTANCE = 20d * 2;
@@ -23,4 +24,11 @@ public class Layout {
     public static final double SPACING_V_BOX = 5d;
     public static final double GRID_GAP = 5d;
     public static final double LIST_ROW_HEIGHT = 34;
+
+    // Mobile
+
+    // Tab
+
+
+
 }

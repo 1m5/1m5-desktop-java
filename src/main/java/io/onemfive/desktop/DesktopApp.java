@@ -5,10 +5,8 @@ import io.onemfive.desktop.util.ImageUtil;
 import io.onemfive.desktop.views.home.HomeView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ra.common.service.ServiceStatus;
 import ra.common.Config;
@@ -19,6 +17,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
+import static io.onemfive.desktop.ClientType.MOBILE;
+import static io.onemfive.desktop.ClientType.TAB;
 import static io.onemfive.desktop.CssTheme.CSS_THEME_LIGHT;
 import static io.onemfive.desktop.util.Layout.*;
 
@@ -94,12 +94,18 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
             // Just ignore the exception and continue, which means the window will use the minimum window size below
             // since we are unable to determine if we can use a larger size
         }
-        WIDTH = maxWindowBounds.width < INITIAL_WINDOW_WIDTH ?
-                Math.max(maxWindowBounds.width, MIN_WINDOW_WIDTH) :
-                INITIAL_WINDOW_WIDTH;
-        HEIGHT = maxWindowBounds.height < INITIAL_WINDOW_HEIGHT ?
-                Math.max(maxWindowBounds.height, MIN_WINDOW_HEIGHT) :
-                INITIAL_WINDOW_HEIGHT;
+        if(DesktopClient.getClientType()==MOBILE || DesktopClient.getClientType()==TAB) {
+            WIDTH = maxWindowBounds.width;
+            HEIGHT = maxWindowBounds.height;
+        } else {
+            WIDTH = maxWindowBounds.width < DESKTOP_INITIAL_WINDOW_WIDTH ?
+                    Math.max(maxWindowBounds.width, DESKTOP_MIN_WINDOW_WIDTH) :
+                    DESKTOP_INITIAL_WINDOW_WIDTH;
+            HEIGHT = maxWindowBounds.height < DESKTOP_INITIAL_WINDOW_HEIGHT ?
+                    Math.max(maxWindowBounds.height, DESKTOP_MIN_WINDOW_HEIGHT) :
+                    DESKTOP_INITIAL_WINDOW_HEIGHT;
+        }
+
         scene = new Scene((StackPane)homeView.getRoot(), WIDTH, HEIGHT);
 
         CssTheme.loadSceneStyles(scene, Preferences.cssTheme);
@@ -115,8 +121,8 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         });
         stage.setTitle("1M5");
         stage.setScene(scene);
-        stage.setMinWidth(MIN_WINDOW_WIDTH);
-        stage.setMinHeight(MIN_WINDOW_HEIGHT);
+        stage.setMinWidth(DESKTOP_MIN_WINDOW_WIDTH);
+        stage.setMinHeight(DESKTOP_MIN_WINDOW_HEIGHT);
         stage.getIcons().add(ImageUtil.getApplicationIconImage());
 
         // make the UI visible
