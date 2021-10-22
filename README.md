@@ -65,22 +65,23 @@ Increments available are based on daily (UT) volume:
 #### Request BTC for Fiat
 1. (M) Alice: Select Amount in BTC (if multiple options)
 2. (M) Alice->Peers: Request BTC for fiat
-3. (M) Bob->Peers: Request fiat for BTC
-4. (S) Alice: Match Bob's Request to Alice's Request
-5. (S) Alice: Lock Alice's Request
-6. (S) Alice->Bob: Accept Bob's Request
+3. (M) Bob: Select Amount in BTC (if multiple options)
+4. (M) Bob->Peers: Request fiat for BTC
+5. (S) Alice: Match Bob's Request to Alice's Request
+6. (S) Alice: Lock Alice's Request
+7. (S) Alice->Bob: Accept Bob's Request
     1. (S) Bob->Alice: Bob's Request already locked (alternative)
-7. (S) Bob: Lock Bob's Request
-8. (S) Bob->BTC: Establish Escrow
-9. (N) Bob->Alice: Request Accepted (Escrow Established Notification with Terms)
-10. (O) Bob satisfies terms (sends fiat)
-11. (M) Bob->Alice: Terms Met
-12. (O) Alice verifies Terms
-13. (M) Alice->Bob: Terms Met Acknowledged
-14. (S) Bob->BTC: Close Escrow
-15. (S) Bob->Peers: Bob's Request Closed
-16. (S) Bob->Alice: Escrow Closed
-17. (S) Alice->Peers: Alice's Request Closed
+8. (S) Bob: Lock Bob's Request
+9. (S) Bob->BTC: Establish Escrow
+10. (N) Bob->Alice: Request Accepted (Escrow Established Notification with Terms)
+11. (O) Bob satisfies terms (sends fiat)
+12. (M) Bob->Alice: Terms Met
+13. (O) Alice verifies Terms
+14. (M) Alice->Bob: Terms Met Acknowledged
+15. (S) Bob->BTC: Close Escrow
+16. (S) Bob->Peers: Bob's Request Closed
+17. (S) Bob->Alice: Escrow Closed
+18. (S) Alice->Peers: Alice's Request Closed
 
 ## Build
 On Linux:
