@@ -16,7 +16,7 @@ import ra.common.network.NetworkState;
 import ra.common.network.NetworkStatus;
 import ra.common.service.ServiceReport;
 import ra.common.service.ServiceStatus;
-import ra.i2p.embedded.I2PEmbeddedService;
+import ra.i2p.I2PService;
 import ra.common.Resources;
 import ra.common.StringUtil;
 
@@ -89,10 +89,10 @@ public class I2POpsView extends ActivatableView implements TopicListener {
             public void handle(ActionEvent actionEvent) {
                 LOG.info("powerButton=" + powerButton.isSelected());
                 if (powerButton.isSelected()) {
-                    DesktopClient.startService(I2PEmbeddedService.class);
+                    DesktopClient.startService(I2PService.class);
                 } else {
                     reset();
-                    DesktopClient.shutdownService(I2PEmbeddedService.class, hardStop.isSelected());
+                    DesktopClient.shutdownService(I2PService.class, hardStop.isSelected());
                 }
                 powerButton.disableProperty().setValue(true);
                 hardStop.disableProperty().setValue(true);
