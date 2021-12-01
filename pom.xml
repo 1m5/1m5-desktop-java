@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.6</version>
+            <version>9.0.10</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>
