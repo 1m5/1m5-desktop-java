@@ -105,24 +105,23 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                         this.wallets.add(walletName);
                     }
                 }
+                if(DesktopClient.getActiveWallet()==null) {
+                    // Load default wallet
+                    sendRequest(new GetWalletInfo(""));
+                }
             } else if (GetWalletInfo.NAME.equals(topic)) {
                 BTCWallet activeWallet = new BTCWallet();
                 Map<String, Object> m = (Map<String, Object>) response.result;
                 activeWallet.fromMap(m);
                 DesktopClient.setActiveWallet(activeWallet);
             }
-        } else {
-            LOG.warning("Response.result was null!");
+        } else if (response.error!=null) {
+            LOG.warning("Response.error.code="+response.error.code+"\nResponse.error.message="+response.error.message);
         }
-        if(DesktopClient.getActiveWallet()==null) {
-            // Load default wallet
-            sendRequest(new GetWalletInfo(""));
-        } else {
-            if(DesktopClient.getActiveWallet().getName().isEmpty() || DesktopClient.getActiveWallet().getName().equals(DEFAULT_WALLET_NAME))
-                walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
-            else
-                walletsListView.getSelectionModel().select(DesktopClient.getActiveWallet().getName());
-        }
+        if(DesktopClient.getActiveWallet().getName().isEmpty() || DesktopClient.getActiveWallet().getName().equals(DEFAULT_WALLET_NAME))
+            walletsListView.getSelectionModel().select(DEFAULT_WALLET_NAME);
+        else
+            walletsListView.getSelectionModel().select(DesktopClient.getActiveWallet().getName());
         LOG.info("Model updated.");
     }
 
