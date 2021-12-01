@@ -49,6 +49,7 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         walletUnconfirmedBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.unconfirmedBalance"), "").second;
         walletUnconfirmedBalanceTxt.setMaxWidth(300);
         walletImmatureBalanceTxt = addTopLabelReadOnlyTextField(pane, ++gridRow, Resources.get("personalView.wallet.immatureBalance"), "").second;
+        walletImmatureBalanceTxt.setMaxWidth(300);
 
         LOG.info("Initialized.");
     }
