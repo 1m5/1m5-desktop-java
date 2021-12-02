@@ -13,8 +13,11 @@ import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.common.Envelope;
 import ra.common.Resources;
+import ra.common.currency.crypto.BTC;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -101,10 +104,12 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
             else
                 walletNameTxt.setText(activeWallet.getName());
             walletVersionTxt.setText(activeWallet.getVersion().toString());
-            walletBalanceSatsTxt.setText(activeWallet.getBalance().value().toString());
-            walletBalanceBTCTxt.setText(new BigDecimal(activeWallet.getBalance().value()).divide(new BigDecimal(100000000)).toString());
-            walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
-            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
+            walletBalanceSatsTxt.setText(activeWallet.getBalance().toString());
+            walletBalanceBTCTxt.setText(new BigDecimal(activeWallet.getBalance())
+                    .divide(new BigDecimal(BTC.SATS_PER_BITCOIN),
+                            new MathContext(BTC.PRECISION, RoundingMode.HALF_EVEN)).toString());
+            walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().toString());
+            walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().toString());
         }
     }
 
