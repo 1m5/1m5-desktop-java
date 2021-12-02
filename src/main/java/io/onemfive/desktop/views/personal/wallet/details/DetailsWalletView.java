@@ -14,6 +14,7 @@ import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.common.Envelope;
 import ra.common.Resources;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -101,7 +102,7 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
                 walletNameTxt.setText(activeWallet.getName());
             walletVersionTxt.setText(activeWallet.getVersion().toString());
             walletBalanceSatsTxt.setText(activeWallet.getBalance().value().toString());
-            walletBalanceBTCTxt.setText(((double)(activeWallet.getBalance().value().longValue()/100000000))+"");
+            walletBalanceBTCTxt.setText(new BigDecimal(activeWallet.getBalance().value()).divide(new BigDecimal(100000000)).toString());
             walletUnconfirmedBalanceTxt.setText(activeWallet.getUnconfirmedBalance().value().toString());
             walletImmatureBalanceTxt.setText(activeWallet.getImmatureBalance().value().toString());
         }
