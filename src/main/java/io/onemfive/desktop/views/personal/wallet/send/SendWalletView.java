@@ -42,6 +42,7 @@ public class SendWalletView extends ActivatableView implements TopicListener {
 
     private InputTextField publicKeyTxt;
     private InputTextField receiverAmountTxt;
+    private CheckBox subtractFeeFromAmountCheck;
     private Button sendButton;
 
     @Override
@@ -54,6 +55,8 @@ public class SendWalletView extends ActivatableView implements TopicListener {
         publicKeyTxt.setMaxWidth(500);
         receiverAmountTxt = addInputTextField(pane, gridRow++, Resources.get("personalView.wallet.amount"), Layout.FIRST_ROW_DISTANCE);
         receiverAmountTxt.setMaxWidth(300);
+        subtractFeeFromAmountCheck = addCheckBox(pane, gridRow++, Resources.get("personalView.wallet.subtractFee"), Layout.FIRST_ROW_DISTANCE);
+        subtractFeeFromAmountCheck.setSelected(false);
         sendButton = addPrimaryActionButton(pane, gridRow++, Resources.get("personalView.wallet.send"), Layout.FIRST_ROW_DISTANCE);
         sendButton.getStyleClass().add("action-button");
 
@@ -63,13 +66,14 @@ public class SendWalletView extends ActivatableView implements TopicListener {
     @Override
     protected void activate() {
         LOG.info("Activating...");
-
         sendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(new SendToAddress(DesktopClient.getActiveWallet().getName(),
-                                publicKeyTxt.getText(),
-                                Double.parseDouble(receiverAmountTxt.getText())));
+                SendToAddress req = new SendToAddress(DesktopClient.getActiveWallet().getName(),
+                        publicKeyTxt.getText(),
+                        Double.parseDouble(receiverAmountTxt.getText()));
+                req.subtractFeeFromAmount = subtractFeeFromAmountCheck.isSelected();
+                sendRequest(req);
             }
         });
 
