@@ -74,7 +74,7 @@
         <dependency>
             <groupId>onemfive</groupId>
             <artifactId>platform</artifactId>
-            <version>0.6.6.14</version>
+            <version>0.6.6.19</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
