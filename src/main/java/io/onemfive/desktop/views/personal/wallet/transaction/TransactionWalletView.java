@@ -17,10 +17,12 @@ import ra.btc.rpc.wallet.ListTransactions;
 import ra.common.Envelope;
 import ra.common.Resources;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
+import static java.util.Objects.nonNull;
 
 public class TransactionWalletView extends ActivatableView implements TopicListener {
 
@@ -44,7 +46,7 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
         TableColumn amountCol = new TableColumn("Amount");
         amountCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amount"));
         TableColumn feeCol = new TableColumn("Fee");
-        feeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("fee"));
+        feeCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("feeString"));
         TableColumn timeCol = new TableColumn("Time");
         timeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Long>("time"));
         TableColumn confCol = new TableColumn("Confirmations");
@@ -80,20 +82,20 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
     public void modelUpdated(String topic, Object object) {
         Envelope e = (Envelope) object;
         RPCResponse response = DesktopClient.getResponse(e);
-        if(response.error!=null) {
+        if(nonNull(response.error)) {
             if(response.error.code == -1) {
                 LOG.warning("Incorrect request: "+response.error.message);
             } else {
                 LOG.warning(response.error.toJSON());
             }
         }
-        if(response.result!=null) {
+        if(nonNull(response.result)) {
             if (ListTransactions.NAME.equals(topic)) {
                 txListObservable.clear();
                 List<Map<String,Object>> txListMaps = (List<Map<String,Object>>)response.result;
                 Transaction tx;
                 for(Map<String,Object> txM : txListMaps) {
-                    tx = new Transaction();
+                    tx = new TransactionRenderer();
                     tx.fromMap(txM);
                     txListObservable.add(tx);
                 }
