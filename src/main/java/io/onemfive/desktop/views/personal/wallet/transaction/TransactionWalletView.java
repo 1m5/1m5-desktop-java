@@ -18,8 +18,7 @@ import ra.common.Envelope;
 import ra.common.Resources;
 
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 import static java.util.Objects.nonNull;
@@ -43,12 +42,12 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
         txView.setEditable(false);
         TableColumn idCol = new TableColumn("Id");
         idCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("txid"));
-        TableColumn amountCol = new TableColumn("Amount");
-        amountCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amount"));
-        TableColumn feeCol = new TableColumn("Fee");
+        TableColumn amountCol = new TableColumn("Amount (Sats)");
+        amountCol.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amountString"));
+        TableColumn feeCol = new TableColumn("Fee (Sats)");
         feeCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("feeString"));
         TableColumn timeCol = new TableColumn("Time");
-        timeCol.setCellValueFactory(new PropertyValueFactory<Transaction, Long>("time"));
+        timeCol.setCellValueFactory(new PropertyValueFactory<Transaction, String>("timeString"));
         TableColumn confCol = new TableColumn("Confirmations");
         confCol.setCellValueFactory(new PropertyValueFactory<Transaction, Integer>("confirmations"));
         txView.getColumns().addAll(idCol, amountCol, feeCol, timeCol, confCol);
@@ -94,11 +93,19 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
                 txListObservable.clear();
                 List<Map<String,Object>> txListMaps = (List<Map<String,Object>>)response.result;
                 Transaction tx;
+                List<Transaction> txList = new ArrayList<>();
                 for(Map<String,Object> txM : txListMaps) {
                     tx = new TransactionRenderer();
                     tx.fromMap(txM);
-                    txListObservable.add(tx);
+                    txList.add(tx);
                 }
+                txList.sort(new Comparator<Transaction>() {
+                    @Override
+                    public int compare(Transaction o1, Transaction o2) {
+                        return o2.time.compareTo(o1.time);
+                    }
+                });
+                txListObservable.addAll(txList);
             } else {
                 LOG.warning(topic + " topic not supported.");
             }
