@@ -2,6 +2,7 @@ package io.onemfive.desktop.views.home;
 
 import com.jfoenix.controls.JFXComboBox;
 import io.onemfive.desktop.DesktopApp;
+import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.OneMFiveResources;
 import io.onemfive.desktop.components.AutoTooltipLabel;
@@ -499,7 +500,7 @@ public class HomeView extends InitializableView {
         versionLabel.setTextAlignment(TextAlignment.CENTER);
         versionLabel.setAlignment(Pos.BASELINE_RIGHT);
         versionLabel.setPadding(new Insets(0,0,0,10));
-        versionLabel.setText("0.6.6");
+        versionLabel.setText((String)DesktopClient.getGlobal("1m5.version"));
 //        rootContainer.widthProperty().addListener((ov, oldValue, newValue) -> {
 //            versionLabel.setLayoutX(((double) newValue - versionLabel.getWidth()) / 2);
 //        });

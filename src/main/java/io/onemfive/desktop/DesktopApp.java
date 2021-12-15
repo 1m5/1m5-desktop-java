@@ -8,11 +8,16 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import ra.common.service.ServiceStatus;
 import ra.common.Config;
 import ra.common.LocaleUtil;
 
 import java.awt.*;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -75,9 +80,21 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
         Preferences.locale = Locale.US;
 
         // Initialize Desktop Bus Client
-        int apiPort = Integer.parseInt(properties.getProperty("1m5.desktop.api.port"));
-        desktopClient = DesktopClient.getInstance(apiPort);
-        desktopClient.start(properties);
+        desktopClient = DesktopClient.getInstance(properties);
+        desktopClient.start();
+
+        // Load maven model
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        try {
+            Model model = reader.read(new FileReader("pom.xml"));
+//            System.out.println(model.getId());
+//            System.out.println(model.getGroupId());
+//            System.out.println(model.getArtifactId());
+            LOG.info("1M5 version: "+model.getVersion());
+            DesktopClient.setGlobal("1m5.version", model.getVersion());
+        } catch (Exception e) {
+            DesktopClient.setGlobal("1m5.version", "?");
+        }
     }
 
     @Override

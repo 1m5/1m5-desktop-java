@@ -1,6 +1,7 @@
 package io.onemfive.desktop.views;
 
 import io.onemfive.desktop.DesktopClient;
+import io.onemfive.desktop.MVC;
 import io.onemfive.desktop.util.Transitions;
 import io.onemfive.desktop.views.personal.wallet.info.InfoWalletView;
 import javafx.fxml.FXML;
@@ -23,8 +24,13 @@ public abstract class BaseView implements View {
     @FXML
     protected Node root;
     protected Transitions transitions;
+    protected DesktopClient desktopClient;
 
     public BaseView() {}
+
+    public void setDesktopClient(DesktopClient client) {
+        desktopClient = client;
+    }
 
     @Override
     public Node getRoot() {

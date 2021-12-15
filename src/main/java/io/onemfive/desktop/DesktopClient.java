@@ -93,6 +93,8 @@ public class DesktopClient implements Client {
     private final Map<String,DID> publicIdentities = new HashMap<>();
     private DID activePublicIdentity;
 
+    private Properties properties;
+
     private static DesktopClient instance;
 
     private DesktopClient(int apiPort) {
@@ -101,9 +103,11 @@ public class DesktopClient implements Client {
         activeIdentity.setUsername("ANONYMOUS");
     }
 
-    public static DesktopClient getInstance(int apiPort) {
+    public static DesktopClient getInstance(Properties properties) {
         if(instance == null) {
+            int apiPort = Integer.parseInt(properties.getProperty("1m5.desktop.api.port"));
             instance = new DesktopClient(apiPort);
+            instance.properties = properties;
         }
         if(screenBounds.getWidth() >= 768 && screenBounds.getHeight() >= 720)
             DesktopClient.clientType = ClientType.DESKTOP;
@@ -229,7 +233,7 @@ public class DesktopClient implements Client {
         }
     }
 
-    public boolean start(Properties p) {
+    public boolean start() {
         LOG.info("Starting Desktop Bus Client...");
 
         MVC.registerManConStatusListener(() -> javafx.application.Platform.runLater(() -> {
