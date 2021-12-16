@@ -9,7 +9,7 @@ import ra.btc.uses.UseRequest;
 import ra.common.Envelope;
 import ra.common.network.ControlCommand;
 
-public class BaseWalletView extends ActivatableView {
+public abstract class BaseWalletView extends ActivatableView {
 
     protected void sendBTCRequest(RPCRequest request) {
         Envelope e = Envelope.documentFactory();
