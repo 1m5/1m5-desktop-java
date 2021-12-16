@@ -11,12 +11,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import ra.common.Envelope;
 import ra.common.identity.DID;
 import ra.i2p.I2PService;
 import ra.networkmanager.NetworkManagerService;
 import ra.common.Resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
@@ -31,8 +33,10 @@ public class SocialView extends ActivatableView implements TopicListener {
     private String contactAddress = Resources.get("communityView.social.contactAddress");
     private ComboBox<String> contactAddressList;
 
-    private String messages = Resources.get("communityView.social.messages");
-    private TextArea messagesTextArea;
+    private String messageTxt = Resources.get("communityView.social.messages");
+//    private TextArea messagesTextArea;
+    private List<Label> messages = new ArrayList<>();
+    private VBox chatBox = new VBox(5);
 
     private String enterText = Resources.get("communityView.social.enterText");
     private TextField textTextField;
@@ -41,7 +45,7 @@ public class SocialView extends ActivatableView implements TopicListener {
     private Button sendTextButton = new Button(sendText);
 
     private Label notes;
-    private int msgCount = 0;
+    private int index = 0;
 
     @Override
     protected void initialize() {
@@ -51,13 +55,14 @@ public class SocialView extends ActivatableView implements TopicListener {
         contactAddressList = addComboBox(pane, ++gridRow, Resources.get("communityView.social.contactAddress"));
         contactAddressList.setItems(contactAddresses);
         contactAddressList.maxWidth(250d);
-        // TODO: Load past messages for last selected conversation
-        // TODO: Change from text area to three columns
-        messagesTextArea = addCompactTopLabelTextAreaWithText(pane, "", ++gridRow, Resources.get("communityView.social.messages"), true).second;
-        messagesTextArea.maxWidth(250d);
+        // TODO: Load past messages for last selected conversation from personal drive
+        chatBox.setMinHeight(400d);
+        chatBox.setMinWidth(200d);
+//        messagesTextArea = addCompactTopLabelTextAreaWithText(pane, "", ++gridRow, Resources.get("communityView.social.messages"), true).second;
+//        messagesTextArea.maxWidth(250d);
 
         textTextField = addInputTextField(pane, ++gridRow, Resources.get("communityView.social.enterText"));
-        textTextField.maxWidth(250d);
+        textTextField.setMinWidth(100d);
         sendTextButton = addPrimaryActionButton(pane, ++gridRow, Resources.get("shared.send"), Layout.FIRST_ROW_DISTANCE);
 
         TitledGroupBg notesGroup = addTitledGroupBg(pane, ++gridRow, 1, Resources.get("shared.notes"), Layout.TWICE_FIRST_ROW_DISTANCE);
@@ -76,12 +81,11 @@ public class SocialView extends ActivatableView implements TopicListener {
                 LOG.info("sendTextButton clicked...");
                 String txtToSend = textTextField.getText();
                 LOG.info("Sending text: "+txtToSend);
-                msgCount++;
+                index++;
                 Envelope e = Envelope.documentFactory();
                 e.addRoute(I2PService.class.getName(), I2PService.OPERATION_SEND);
                 e.addRoute(NetworkManagerService.class.getName(), NetworkManagerService.OPERATION_SEND);
                 e.addContent(txtToSend);
-                e.ratchet();
                 DesktopClient.deliver(e);
                 textTextField.setText(null);
             };
@@ -104,19 +108,19 @@ public class SocialView extends ActivatableView implements TopicListener {
                 break;
             }
             case "newRemoteMessage": {
-                if(messagesTextArea.getText().isEmpty())
-                    messagesTextArea.appendText("\t"+object);
-                else {
-                    messagesTextArea.appendText("\n\n\t" + object);
-                }
+//                if(messagesTextArea.getText().isEmpty())
+//                    messagesTextArea.appendText("\t"+object);
+//                else {
+//                    messagesTextArea.appendText("\n\n\t" + object);
+//                }
                 break;
             }
             case "newLocalMessage": {
-                if(messagesTextArea.getText().isEmpty())
-                    messagesTextArea.appendText((String)object);
-                else {
-                    messagesTextArea.appendText("\n\n" + object);
-                }
+//                if(messagesTextArea.getText().isEmpty())
+//                    messagesTextArea.appendText((String)object);
+//                else {
+//                    messagesTextArea.appendText("\n\n" + object);
+//                }
                 break;
             }
         }
