@@ -2,8 +2,8 @@ package io.onemfive.desktop.views.personal.wallet.transaction;
 
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,13 +17,12 @@ import ra.btc.rpc.wallet.ListTransactions;
 import ra.common.Envelope;
 import ra.common.Resources;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 import static java.util.Objects.nonNull;
 
-public class TransactionWalletView extends ActivatableView implements TopicListener {
+public class TransactionWalletView extends BaseWalletView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -63,10 +62,10 @@ public class TransactionWalletView extends ActivatableView implements TopicListe
             @Override
             public void handle(ActionEvent actionEvent) {
                 txListObservable.clear();
-                sendRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
+                sendBTCRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
             }
         });
-        sendRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
+        sendBTCRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
         LOG.info("Activated.");
     }
 

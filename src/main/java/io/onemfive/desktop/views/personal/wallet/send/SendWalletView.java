@@ -2,40 +2,21 @@ package io.onemfive.desktop.views.personal.wallet.send;
 
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.InputTextField;
-import io.onemfive.desktop.components.PasswordTextField;
-import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import ra.btc.BTCWallet;
-import ra.btc.BitcoinService;
-import ra.btc.RPCCommand;
-import ra.btc.Transaction;
 import ra.btc.rpc.RPCResponse;
-import ra.btc.rpc.wallet.CreateWallet;
-import ra.btc.rpc.wallet.GetWalletInfo;
-import ra.btc.rpc.wallet.ListWallets;
 import ra.btc.rpc.wallet.SendToAddress;
-import ra.btc.uses.SendBTC;
 import ra.common.Envelope;
-import ra.common.currency.crypto.BTC;
-import ra.common.network.ControlCommand;
 import ra.common.Resources;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class SendWalletView extends ActivatableView implements TopicListener {
+public class SendWalletView extends BaseWalletView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -73,7 +54,7 @@ public class SendWalletView extends ActivatableView implements TopicListener {
                         publicKeyTxt.getText(),
                         Double.parseDouble(receiverAmountTxt.getText()));
                 req.subtractFeeFromAmount = subtractFeeFromAmountCheck.isSelected();
-                sendRequest(req);
+                sendBTCRequest(req);
             }
         });
 

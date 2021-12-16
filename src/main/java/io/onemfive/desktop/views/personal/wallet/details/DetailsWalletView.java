@@ -3,12 +3,11 @@ package io.onemfive.desktop.views.personal.wallet.details;
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ra.btc.BTCWallet;
-import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.GetWalletInfo;
 import ra.common.Envelope;
@@ -22,7 +21,7 @@ import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class DetailsWalletView extends ActivatableView implements TopicListener {
+public class DetailsWalletView extends BaseWalletView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -63,7 +62,7 @@ public class DetailsWalletView extends ActivatableView implements TopicListener 
         LOG.info("Activating...");
         activeWallet = (BTCWallet) DesktopClient.getGlobal("activeWallet");
         if(activeWallet==null) {
-            sendRequest(new GetWalletInfo());
+            sendBTCRequest(new GetWalletInfo());
         } else {
             updateWalletView();
         }

@@ -3,8 +3,8 @@ package io.onemfive.desktop.views.personal.wallet.info;
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class InfoWalletView extends ActivatableView implements TopicListener {
+public class InfoWalletView extends BaseWalletView implements TopicListener {
 
     private static final String DEFAULT_WALLET_NAME = "Default";
 
@@ -62,16 +62,16 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                 String walletName = walletsListView.getSelectionModel().getSelectedItem();
                 if(DEFAULT_WALLET_NAME.equals(walletName))
                     walletName = "";
-                sendRequest(new GetWalletInfo(walletName));
+                sendBTCRequest(new GetWalletInfo(walletName));
             }
         });
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(new ListWallets());
+                sendBTCRequest(new ListWallets());
             }
         });
-        sendRequest(new ListWallets());
+        sendBTCRequest(new ListWallets());
         LOG.info("Activated.");
     }
 
@@ -107,7 +107,7 @@ public class InfoWalletView extends ActivatableView implements TopicListener {
                 }
                 if(DesktopClient.getActiveWallet()==null) {
                     // Load default wallet
-                    sendRequest(new GetWalletInfo(""));
+                    sendBTCRequest(new GetWalletInfo(""));
                 }
             } else if (GetWalletInfo.NAME.equals(topic)) {
                 BTCWallet activeWallet = new BTCWallet();

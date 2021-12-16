@@ -1,17 +1,15 @@
 package io.onemfive.desktop.views.personal.wallet.create;
 
-import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.InputTextField;
 import io.onemfive.desktop.components.PasswordTextField;
 import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import ra.btc.BitcoinService;
 import ra.btc.RPCCommand;
 import ra.btc.rpc.RPCResponse;
 import ra.btc.rpc.wallet.CreateWallet;
@@ -22,7 +20,7 @@ import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class CreateWalletView extends ActivatableView implements TopicListener {
+public class CreateWalletView extends BaseWalletView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -65,7 +63,7 @@ public class CreateWalletView extends ActivatableView implements TopicListener {
                 errorLabel.setVisible(false);
                 // TODO: Error checking
                 // TODO: Support options in UI
-                sendRequest(new CreateWallet(
+                sendBTCRequest(new CreateWallet(
                         newWalletNameTxt.getText(),
                         false,
                         false,

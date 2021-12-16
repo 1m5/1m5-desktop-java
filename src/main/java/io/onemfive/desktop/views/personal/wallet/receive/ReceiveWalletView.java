@@ -7,8 +7,8 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import io.onemfive.desktop.DesktopClient;
 import io.onemfive.desktop.components.TextFieldWithCopyIcon;
 import io.onemfive.desktop.util.Layout;
-import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.BaseWalletView;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
 
-public class ReceiveWalletView extends ActivatableView implements TopicListener {
+public class ReceiveWalletView extends BaseWalletView implements TopicListener {
 
     private GridPane pane;
     private int gridRow = 0;
@@ -66,10 +66,10 @@ public class ReceiveWalletView extends ActivatableView implements TopicListener 
         generateAddressButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
+                sendBTCRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
             }
         });
-        sendRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
+        sendBTCRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
         LOG.info("Activated.");
     }
 
