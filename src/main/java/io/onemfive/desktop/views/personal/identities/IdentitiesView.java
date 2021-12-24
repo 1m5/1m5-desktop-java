@@ -304,20 +304,13 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
             }
         });
 
-        Envelope e1 = Envelope.documentFactory();
-        e1.setCommandPath(ControlCommand.Send.name());
-        e1.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e1.addNVP(VIEW_OP, IDENTITIES_LIST);
-        e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
-        e1.ratchet();
-        DesktopClient.deliver(e1);
+        updateIdentitiesList();
 
 //        Envelope e2 = Envelope.documentFactory();
 //        e2.setCommandPath(ControlCommand.Send.name());
 //        e2.addNVP(VIEW_NAME, IdentitiesView.class.getName());
 //        e2.addNVP(VIEW_OP, ACTIVE_IDENTITY);
 //        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
-//        e2.ratchet();
 //        DesktopBusClient.deliver(e2);
 //
 //        Envelope e3 = Envelope.documentFactory();
@@ -325,7 +318,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
 //        e3.addNVP(VIEW_NAME, IdentitiesView.class.getName());
 //        e3.addNVP(VIEW_OP, CONTACTS_LIST);
 //        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-//        e3.ratchet();
 //        DesktopBusClient.deliver(e3);
 
     }
@@ -367,7 +359,17 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
                 identityPwdText.setText(null);
                 identityPwd2Text.setText(null);
                 identityDescription.setText(null);
+                updateIdentitiesList();
             }
         }
+    }
+
+    private void updateIdentitiesList() {
+        Envelope e1 = Envelope.documentFactory();
+        e1.setCommandPath(ControlCommand.Send.name());
+        e1.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+        e1.addNVP(VIEW_OP, IDENTITIES_LIST);
+        e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
+        DesktopClient.deliver(e1);
     }
 }

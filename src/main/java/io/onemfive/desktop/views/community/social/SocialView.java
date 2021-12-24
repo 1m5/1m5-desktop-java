@@ -5,6 +5,7 @@ import io.onemfive.desktop.components.TitledGroupBg;
 import io.onemfive.desktop.util.Layout;
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
+import io.onemfive.desktop.views.personal.wallet.transaction.TransactionRenderer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,9 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import ra.btc.Transaction;
+import ra.btc.rpc.RPCResponse;
+import ra.btc.rpc.wallet.ListTransactions;
 import ra.common.Envelope;
 import ra.common.identity.DID;
 import ra.i2p.I2PService;
@@ -19,9 +23,12 @@ import ra.networkmanager.NetworkManagerService;
 import ra.common.Resources;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static io.onemfive.desktop.util.FormBuilder.*;
+import static java.util.Objects.nonNull;
 
 public class SocialView extends ActivatableView implements TopicListener {
 
@@ -83,10 +90,11 @@ public class SocialView extends ActivatableView implements TopicListener {
                 LOG.info("Sending text: "+txtToSend);
                 index++;
                 Envelope e = Envelope.documentFactory();
+
                 e.addRoute(I2PService.class.getName(), I2PService.OPERATION_SEND);
                 e.addRoute(NetworkManagerService.class.getName(), NetworkManagerService.OPERATION_SEND);
                 e.addContent(txtToSend);
-                DesktopClient.deliver(e);
+                // DesktopClient.deliver(e);
                 textTextField.setText(null);
             };
         });
@@ -99,30 +107,30 @@ public class SocialView extends ActivatableView implements TopicListener {
 
     @Override
     public void modelUpdated(String topic, Object object) {
-        switch (topic) {
-            case "contacts": {
+        Envelope e = (Envelope) object;
+        RPCResponse response = DesktopClient.getResponse(e);
+        if(nonNull(response.error)) {
+            if(response.error.code == -1) {
+                LOG.warning("Incorrect request: "+response.error.message);
+            } else {
+                LOG.warning(response.error.toJSON());
+            }
+        }
+        if(nonNull(response.result)) {
+            if ("contacts".equals(topic)) {
                 contactAddresses.clear();
-                for(DID c : (List<DID>)object) {
-                    contactAddresses.add(c.getUsername() + ": "+c.getPublicKey().getAddress());
+                List<DID> contacts = (List<DID>) response.result;
+                for (DID c : contacts) {
+                    contactAddresses.add(c.getUsername() + ": " + c.getPublicKey().getFingerprint());
                 }
-                break;
+                contactAddresses.sort(Comparator.naturalOrder());
+            } else if("message".equals(topic)) {
+
+            } else {
+                LOG.warning(topic + " topic not supported.");
             }
-            case "newRemoteMessage": {
-//                if(messagesTextArea.getText().isEmpty())
-//                    messagesTextArea.appendText("\t"+object);
-//                else {
-//                    messagesTextArea.appendText("\n\n\t" + object);
-//                }
-                break;
-            }
-            case "newLocalMessage": {
-//                if(messagesTextArea.getText().isEmpty())
-//                    messagesTextArea.appendText((String)object);
-//                else {
-//                    messagesTextArea.appendText("\n\n" + object);
-//                }
-                break;
-            }
+        } else {
+            LOG.warning("Response.result was null!");
         }
     }
 }
