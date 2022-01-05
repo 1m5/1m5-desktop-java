@@ -128,7 +128,7 @@ i#teamicons {
     padding-bottom: 5px;
 }
 .timeline-horizontal::before {
-    background-color: #212121!important;	
+    background-color: #8072ba!important;
 }
 .timeline-item::before {
     border: 2px solid #212121;
@@ -150,7 +150,7 @@ img.donationlogo {
     color: #212121;
 }
 .text-success {
-    color: green!important;
+    color: #8072ba!important;
     font-weight: 700;
 }
 .text-circle {

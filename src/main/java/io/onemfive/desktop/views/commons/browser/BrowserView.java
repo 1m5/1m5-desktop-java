@@ -35,9 +35,9 @@ public class BrowserView extends ActivatableView {
 
     private Scene scene;
 
-    private final WebView webView = new WebView();
-    private final WebEngine engine = webView.getEngine();
-    private final WebHistory history = engine.getHistory();
+    private WebView webView;
+    private WebEngine engine;
+    private WebHistory history;
 
     private EventHandler<KeyEvent> keyEventEventHandler;
 
@@ -49,6 +49,10 @@ public class BrowserView extends ActivatableView {
     protected void initialize() {
         LOG.info("Initializing...");
         super.initialize();
+
+        webView = new WebView();
+        engine = webView.getEngine();
+        history = engine.getHistory();
 
         navigationListener = new Navigation.Listener() {
             @Override
@@ -79,7 +83,7 @@ public class BrowserView extends ActivatableView {
         vBox.getChildren().add(nav);
 
         urlTextField = new JFXTextField();
-        urlTextField.setText("1m5://1m5.1m5");
+        urlTextField.setText("https://1m5.io");
 
         HBox.setHgrow(urlTextField, Priority.ALWAYS);
         nav.getChildren().add(urlTextField);
@@ -153,7 +157,8 @@ public class BrowserView extends ActivatableView {
                     }
                 });
 
-        engine.load(OneMFiveResources.IMS_WEB_INDEX.toExternalForm());
+//        engine.load(OneMFiveResources.IMS_WEB_INDEX.toExternalForm()); // TODO: Get CSS to load
+        engine.load("https://1m5.io");
 
         history.getEntries().addListener(new ListChangeListener<WebHistory.Entry>() {
                  @Override

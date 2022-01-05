@@ -6,6 +6,8 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
 
+    <link rel="shortcut icon" href="assets/img/logo/1m5-white.png" />
+
     <title>1M5 — Invisible Matrix Services, Uncensored Communications</title>
 
     <!-- Fonts -->
@@ -17,24 +19,6 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.1.6/css/fork-awesome.min.css" integrity="sha256-nJE8Vg3b3QQ9hPPpmtsRHKm/nauV4PZiBw5mpSgOvQQ=" crossorigin="anonymous">
 
-    <!-- Favicons -->
-    <link rel="icon" href="assets/img/favicon.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
     <!--  Open Graph Tags -->
@@ -65,9 +49,10 @@
 
           <nav class="nav nav-navbar">
             <a class="nav-link" href="./#mission">Mission</a>
+            <a class="nav-link" href="./#capabilities">Capabilities</a>
             <a class="nav-link" href="./#features">Features</a>
+            <a class="nav-link" href="./#dejavu">Dejavu</a>
             <a class="nav-link" href="./#roadmap">Progress</a>
-            <a class="nav-link" href="collaborate.html">Collaborate</a>
             <a class="nav-link" href="q-and-a.html">Q&A</a>
             <a class="nav-link" href="assets/pdf/1m5-info-deck.pdf">Info</a>
           </nav>
@@ -156,8 +141,8 @@
                   <ul>
                     <li class="mt-3">Web: I2P used for .i2p addresses and Tor for other web requests including .onion addresses. If that fails, it will be assumed that the site is down.</li>
                     <li class="mt-3">P2P (Messenger): I2P used unless found to be blocked. Then Tor will be used as a tunnel to a peer that has I2P enabled.
-                      If Tor blocked, will ratchet up to 1DN for assistance.</li>
-                    <li class="mt-3">Expect latencies of 500 milliseconds to 2 seconds unless 1DN is needed.</li>
+                      If Tor blocked, will ratchet up to non-internet (e.g. Bluetooth) for assistance.</li>
+                    <li class="mt-3">Expect latencies of 500 milliseconds to 2 seconds unless non-internet is needed.</li>
                   </ul>           
                 </div>
 
@@ -166,10 +151,10 @@
                   <p class="mb-0">Normal censorship attempts by states on reading news (public web sites getting blocked, government shutdown of cloud cdn content).
                     Many moving towards using Tor and/or VPNs although no fear of circumventing censorship attempts.</p>
                   <ul>
-                    <li class="mt-3">Tor will be used. If that fails, the request will be forwarded to other peers until a peer can make the request
+                    <li class="mt-3">Web: Unchanged unless Tor fails, then request will be forwarded to an I2P peer with Tor access to make the request
                         returning the result directly back to the requesting peer. If those fail, it will be assumed that the site is down.</li>
                     <li class="mt-3">P2P unchanged</li>
-                    <li class="mt-3">Expect latencies of 500 milliseconds to 4 seconds unless 1DN is needed..</li>
+                    <li class="mt-3">Expect latencies of 500 milliseconds to 4 seconds unless non-internet is needed.</li>
                   </ul>     
                 </div>
 
@@ -177,9 +162,9 @@
                   <img class="shadow-3" src="./assets/img/mancon/mancon3.png" alt="...">
                   <p class="mb-0">Tor and VPNs are beginning to get blocked. Many beginning to move to I2P. Some self-censorship likely. This is the default setting for 1M5.</p>
                   <ul>
-                    <li class="mt-3">Web: will use an I2P peer that has access to Tor to make the request.</li>
+                    <li class="mt-3">Web: will use an I2P peer that has access to Tor to make the request escalating to non-internet if necessary.</li>
                     <li class="mt-3">P2P unchanged</li>
-                    <li class="mt-3">Expect latencies of 4-10 seconds.</li>
+                    <li class="mt-3">Expect latencies of 2-4 seconds unless non-internet is needed.</li>
                   </ul>     
                 </div>
 
@@ -188,11 +173,11 @@
                   <p class="mb-0">I2P is getting attacked slowing the network and people are beginning to get threatened for circumventing censorship attempts resulting in self-censorship.</p>
                   <ul>
                     <li class="mt-3">Web: will use I2P with random delays to forward all requests to a 1M5 peer with Tor access at a lower ManCon. If both I2P and
-                      Tor blocked at end user, 1DN will be used to find a 1M5 peer at a lower ManCon to fulfill the request.</li>
+                      Tor blocked at end user, non-internet will be used to find a 1M5 peer at a lower ManCon to fulfill the request.</li>
                     <li class="mt-3">P2P: will use I2P with random delays of 4-10 seconds. If I2P gets blocked, will attempt to use Tor as a tunnel. If that is blocked,
-                      1DN will be used.</li>
-                    <li class="mt-3">Expect latencies of 6-16 seconds unless 1DN used which could result in very large latencies where only asynchronous messaging
-                      (e.g. Email) and asynchronous web requests are plausible.</li>
+                      non-internet will be used.</li>
+                    <li class="mt-3">Expect latencies of 6-16 seconds unless non-internet used which could result in very large latencies where only asynchronous messaging
+                      (e.g. Email) and asynchronous web requests (feeds) are plausible.</li>
                   </ul>     
                 </div>
 
@@ -201,8 +186,8 @@
                   <p class="mb-0">Internet has been blocked for end user, e.g. local cellular service towers shutdown or provider turns off access and/or
                     threats of imprisonment and/or death are made to induce self-censorship with actual evidence of enforcement.</p>
                   <ul>
-                    <li class="mt-3">Web: 1DN will be used to forward requests to Tor users with a lower ManCon to fulfill the request.</li>
-                    <li class="mt-3">P2P: 1DN peers will be used until a peer with I2P access can route the request.</li>
+                    <li class="mt-3">Web: Non-internet will be used to forward requests to Tor users with a lower ManCon to fulfill the request.</li>
+                    <li class="mt-3">P2P: Non-internet peers will be used until a peer with I2P access can route the request.</li>
                     <li class="mt-3">Expect wide-ranging latencies.</li>
                   </ul>     
                 </div>
@@ -211,10 +196,10 @@
                   <img class="shadow-3" src="./assets/img/mancon/mancon0.png" alt="...">
                   <p class="mb-0">Active sustained censorship of an individual internationally.</p>
                   <ul>
-                    <li class="mt-3">Web: 1DN is used to forward requests to a peer that will then request another peer using I2P with high delays to make the Tor request.</li>
-                    <li class="mt-3">P2P: 1DN is used to forward a message through a random number and combination of 1DN/I2P peers at random delays of up to 90 seconds
-                      at the I2P layer and up to 3 months at the 1M5 layer. A random number of copies (3 min 12 max) of the message are sent out
-                      with the end user having a 12 word mnemonic passphrase as the only key to the data.</li>
+                    <li class="mt-3">Web: Non-internet is used to forward requests to a peer that will then request another peer using I2P with high delays to make the Tor request.</li>
+                    <li class="mt-3">P2P: Non-internet is used to forward a message through a random number and combination of non-internet/I2P peers at random delays of up to 90 seconds
+                      at the I2P layer and up to 1 hour at the 1M5 layer. A random number of copies (3 min 12 max) of the message are sent out
+                      with the end user having a 3/6/12/24 word mnemonic passphrase as the only key to the data.</li>
                     <li class="mt-3">Wide-ranging latencies but highest privacy and censorship-resistance.</li>
                   </ul>
                 </div>
