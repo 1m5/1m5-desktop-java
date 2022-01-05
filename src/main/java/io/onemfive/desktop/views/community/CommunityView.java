@@ -33,7 +33,8 @@ public class CommunityView extends ActivatableView {
     private Scene scene;
     private TabPane pane;
     @FXML
-    private Tab agoraTab, calendarTab, dashboardTab, searchTab, socialTab, walletTab;
+    private Tab dashboardTab,  socialTab;
+//    agoraTab, calendarTab, searchTab, walletTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -46,12 +47,12 @@ public class CommunityView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        agoraTab.setText(Resources.get("communityView.tabs.agora").toUpperCase());
-        calendarTab.setText(Resources.get("communityView.tabs.calendar").toUpperCase());
+//        agoraTab.setText(Resources.get("communityView.tabs.agora").toUpperCase());
+//        calendarTab.setText(Resources.get("communityView.tabs.calendar").toUpperCase());
         dashboardTab.setText(Resources.get("communityView.tabs.dashboard").toUpperCase());
         socialTab.setText(Resources.get("communityView.tabs.social").toUpperCase());
-        searchTab.setText(Resources.get("communityView.tabs.search").toUpperCase());
-        walletTab.setText(Resources.get("communityView.tabs.wallet").toUpperCase());
+//        searchTab.setText(Resources.get("communityView.tabs.search").toUpperCase());
+//        walletTab.setText(Resources.get("communityView.tabs.wallet").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(CommunityView.class) == 1)
@@ -59,18 +60,19 @@ public class CommunityView extends ActivatableView {
         };
 
         tabChangeListener = (ov, oldValue, newValue) -> {
-            if (newValue == agoraTab)
-                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, AgoraView.class);
-            else if (newValue == calendarTab)
-                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, CalendarView.class);
-            else if (newValue == dashboardTab)
+//            if (newValue == agoraTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, AgoraView.class);
+//            else if (newValue == calendarTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, CalendarView.class);
+//            else
+                if (newValue == dashboardTab)
                 MVC.navigation.navigateTo(HomeView.class, CommunityView.class, DashboardView.class);
             else if (newValue == socialTab)
                 MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SocialView.class);
-            else if (newValue == searchTab)
-                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
-            else if (newValue == walletTab)
-                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
+//            else if (newValue == searchTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
+//            else if (newValue == walletTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
         };
 
         // Load Communities
@@ -84,16 +86,17 @@ public class CommunityView extends ActivatableView {
         pane.getSelectionModel().selectedItemProperty().addListener(tabChangeListener);
         MVC.navigation.addListener(navigationListener);
 
-        if (pane.getSelectionModel().getSelectedItem() == agoraTab)
-            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, AgoraView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == calendarTab)
-            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, CalendarView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == socialTab)
+//        if (pane.getSelectionModel().getSelectedItem() == agoraTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, AgoraView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == calendarTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, CalendarView.class);
+//        else
+            if (pane.getSelectionModel().getSelectedItem() == socialTab)
             MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SocialView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == searchTab)
-            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == walletTab)
-            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == searchTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, SearchView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == walletTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommunityView.class, WalletView.class);
         else
             MVC.navigation.navigateTo(HomeView.class, CommunityView.class, DashboardView.class);
 
@@ -117,12 +120,13 @@ public class CommunityView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof AgoraView) tab = agoraTab;
-        else if (view instanceof CalendarView) tab = calendarTab;
-        else if (view instanceof DashboardView) tab = dashboardTab;
+//        if (view instanceof AgoraView) tab = agoraTab;
+//        else if (view instanceof CalendarView) tab = calendarTab;
+//        else
+            if (view instanceof DashboardView) tab = dashboardTab;
         else if (view instanceof SocialView) tab = socialTab;
-        else if (view instanceof SearchView) tab = searchTab;
-        else if (view instanceof WalletView) tab = walletTab;
+//        else if (view instanceof SearchView) tab = searchTab;
+//        else if (view instanceof WalletView) tab = walletTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

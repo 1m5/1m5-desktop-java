@@ -15,24 +15,24 @@
 
     </Tab>
 
-    <Tab fx:id="walletTab" closable="false">
+<!--    <Tab fx:id="walletTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
     <Tab fx:id="socialTab" closable="false">
 
     </Tab>
 
-    <Tab fx:id="searchTab" closable="false">
+<!--    <Tab fx:id="searchTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
-    <Tab fx:id="calendarTab" closable="false">
+<!--    <Tab fx:id="calendarTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
-    <Tab fx:id="agoraTab" closable="false">
+<!--    <Tab fx:id="agoraTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
 </JFXTabPane>

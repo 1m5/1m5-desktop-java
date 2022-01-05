@@ -24,7 +24,8 @@ public class PersonalView extends ActivatableView {
     private Scene scene;
     private TabPane pane;
     @FXML
-    private Tab blogTab, agoraTab, calendarTab, dashboardTab, identitiesTab, walletTab;
+    private Tab dashboardTab, identitiesTab, walletTab;
+//            blogTab, agoraTab, calendarTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -35,9 +36,9 @@ public class PersonalView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        blogTab.setText(Resources.get("personalView.tabs.blog").toUpperCase());
-        agoraTab.setText(Resources.get("personalView.tabs.agora").toUpperCase());
-        calendarTab.setText(Resources.get("personalView.tabs.calendar").toUpperCase());
+//        blogTab.setText(Resources.get("personalView.tabs.blog").toUpperCase());
+//        agoraTab.setText(Resources.get("personalView.tabs.agora").toUpperCase());
+//        calendarTab.setText(Resources.get("personalView.tabs.calendar").toUpperCase());
         dashboardTab.setText(Resources.get("personalView.tabs.dashboard").toUpperCase());
         identitiesTab.setText(Resources.get("personalView.tabs.identities").toUpperCase());
         walletTab.setText(Resources.get("personalView.tabs.wallet").toUpperCase());
@@ -48,13 +49,14 @@ public class PersonalView extends ActivatableView {
         };
 
         tabChangeListener = (ov, oldValue, newValue) -> {
-            if(newValue == blogTab)
-                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, BlogView.class);
-            else if (newValue == agoraTab)
-                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, AgoraView.class);
-            else if (newValue == calendarTab)
-                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, CalendarView.class);
-            else if (newValue == dashboardTab)
+//            if(newValue == blogTab)
+//                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, BlogView.class);
+//            else if (newValue == agoraTab)
+//                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, AgoraView.class);
+//            else if (newValue == calendarTab)
+//                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, CalendarView.class);
+//            else
+                if (newValue == dashboardTab)
                 MVC.navigation.navigateTo(HomeView.class, PersonalView.class, DashboardView.class);
             else if (newValue == identitiesTab)
                 MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class);
@@ -70,13 +72,14 @@ public class PersonalView extends ActivatableView {
         pane.getSelectionModel().selectedItemProperty().addListener(tabChangeListener);
         MVC.navigation.addListener(navigationListener);
 
-        if(pane.getSelectionModel().getSelectedItem() == blogTab)
-            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, BlogView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == agoraTab)
-            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, AgoraView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == calendarTab)
-            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, CalendarView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == identitiesTab)
+//        if(pane.getSelectionModel().getSelectedItem() == blogTab)
+//            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, BlogView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == agoraTab)
+//            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, AgoraView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == calendarTab)
+//            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, CalendarView.class);
+//        else
+            if (pane.getSelectionModel().getSelectedItem() == identitiesTab)
             MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class);
         else if (pane.getSelectionModel().getSelectedItem() == walletTab)
             MVC.navigation.navigateTo(HomeView.class, PersonalView.class, WalletView.class);
@@ -103,10 +106,11 @@ public class PersonalView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof BlogView) tab = blogTab;
-        else if (view instanceof AgoraView) tab = agoraTab;
-        else if (view instanceof CalendarView) tab = calendarTab;
-        else if (view instanceof DashboardView) tab = dashboardTab;
+//        if (view instanceof BlogView) tab = blogTab;
+//        else if (view instanceof AgoraView) tab = agoraTab;
+//        else if (view instanceof CalendarView) tab = calendarTab;
+//        else
+            if (view instanceof DashboardView) tab = dashboardTab;
         else if (view instanceof IdentitiesView) tab = identitiesTab;
         else if (view instanceof WalletView) tab = walletTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");

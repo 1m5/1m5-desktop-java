@@ -22,7 +22,8 @@ public class CommonsView extends ActivatableView {
 
     private TabPane pane;
     @FXML
-    private Tab agoraTab, browserTab, dashboardTab, topicsTab, dexTab;
+    private Tab browserTab, dashboardTab, dexTab;
+//    agoraTab, topicsTab;
 
     private Navigation.Listener navigationListener;
     private ChangeListener<Tab> tabChangeListener;
@@ -33,10 +34,10 @@ public class CommonsView extends ActivatableView {
         LOG.info("Initializing...");
 
         pane = (TabPane)root;
-        agoraTab.setText(Resources.get("commonsView.tabs.agora").toUpperCase());
+//        agoraTab.setText(Resources.get("commonsView.tabs.agora").toUpperCase());
         browserTab.setText(Resources.get("commonsView.tabs.browser").toUpperCase());
         dashboardTab.setText(Resources.get("commonsView.tabs.dashboard").toUpperCase());
-        topicsTab.setText(Resources.get("commonsView.tabs.topics").toUpperCase());
+//        topicsTab.setText(Resources.get("commonsView.tabs.topics").toUpperCase());
         dexTab.setText(Resources.get("commonsView.tabs.dex").toUpperCase());
 
         navigationListener = viewPath -> {
@@ -45,14 +46,15 @@ public class CommonsView extends ActivatableView {
         };
 
         tabChangeListener = (ov, oldValue, newValue) -> {
-            if (newValue == agoraTab)
-                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, AgoraView.class);
-            else if (newValue == browserTab)
+//            if (newValue == agoraTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, AgoraView.class);
+//            else
+                if (newValue == browserTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, BrowserView.class);
             else if (newValue == dashboardTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DashboardView.class);
-            else if (newValue == topicsTab)
-                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
+//            else if (newValue == topicsTab)
+//                MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
             else if (newValue == dexTab)
                 MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DEXView.class);
         };
@@ -65,12 +67,13 @@ public class CommonsView extends ActivatableView {
         pane.getSelectionModel().selectedItemProperty().addListener(tabChangeListener);
         MVC.navigation.addListener(navigationListener);
 
-        if (pane.getSelectionModel().getSelectedItem() == agoraTab)
-            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, AgoraView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == browserTab)
+//        if (pane.getSelectionModel().getSelectedItem() == agoraTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, AgoraView.class);
+//        else
+            if (pane.getSelectionModel().getSelectedItem() == browserTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, BrowserView.class);
-        else if (pane.getSelectionModel().getSelectedItem() == topicsTab)
-            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
+//        else if (pane.getSelectionModel().getSelectedItem() == topicsTab)
+//            MVC.navigation.navigateTo(HomeView.class, CommonsView.class, TopicsView.class);
         else if(pane.getSelectionModel().getSelectedItem() == dexTab)
             MVC.navigation.navigateTo(HomeView.class, CommonsView.class, DEXView.class);
         else
@@ -96,10 +99,11 @@ public class CommonsView extends ActivatableView {
         final Tab tab;
         View view = MVC.loadView(viewClass);
 
-        if (view instanceof AgoraView) tab = agoraTab;
-        else if (view instanceof BrowserView) tab = browserTab;
+//        if (view instanceof AgoraView) tab = agoraTab;
+//        else
+            if (view instanceof BrowserView) tab = browserTab;
         else if (view instanceof DashboardView) tab = dashboardTab;
-        else if (view instanceof TopicsView) tab = topicsTab;
+//        else if (view instanceof TopicsView) tab = topicsTab;
         else if (view instanceof DEXView) tab = dexTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 

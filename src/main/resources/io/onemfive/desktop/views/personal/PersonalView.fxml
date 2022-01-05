@@ -22,16 +22,16 @@
 
     </Tab>
 
-    <Tab fx:id="blogTab" closable="false">
+<!--    <Tab fx:id="blogTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
-    <Tab fx:id="calendarTab" closable="false">
+<!--    <Tab fx:id="calendarTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
-    <Tab fx:id="agoraTab" closable="false">
+<!--    <Tab fx:id="agoraTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
 </JFXTabPane>

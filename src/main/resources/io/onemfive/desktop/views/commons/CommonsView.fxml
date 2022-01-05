@@ -17,13 +17,13 @@
 
     </Tab>
 
-    <Tab fx:id="topicsTab" closable="false">
+<!--    <Tab fx:id="topicsTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
-    <Tab fx:id="agoraTab" closable="false">
+<!--    <Tab fx:id="agoraTab" closable="false">-->
 
-    </Tab>
+<!--    </Tab>-->
 
     <Tab fx:id="dexTab" closable="false">
 
