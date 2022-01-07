@@ -26,6 +26,7 @@ import java.util.List;
 
 import static io.onemfive.desktop.DesktopClient.VIEW_NAME;
 import static io.onemfive.desktop.DesktopClient.VIEW_OP;
+import static java.util.Objects.nonNull;
 
 public class IdentitiesView extends ActivatableView implements TopicListener {
 
@@ -167,7 +168,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
 
     @Override
     protected void activate() {
-        if(activeDID!=null) {
+        if(nonNull(activeDID)) {
             authNAliasComboBox.setValue(activeDID.getUsername());
         }
 
@@ -305,21 +306,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         });
 
         updateIdentitiesList();
-
-//        Envelope e2 = Envelope.documentFactory();
-//        e2.setCommandPath(ControlCommand.Send.name());
-//        e2.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-//        e2.addNVP(VIEW_OP, ACTIVE_IDENTITY);
-//        e2.addRoute(DIDService.class, DIDService.OPERATION_GET_ACTIVE_IDENTITY);
-//        DesktopBusClient.deliver(e2);
-//
-//        Envelope e3 = Envelope.documentFactory();
-//        e3.setCommandPath(ControlCommand.Send.name());
-//        e3.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-//        e3.addNVP(VIEW_OP, CONTACTS_LIST);
-//        e3.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-//        DesktopBusClient.deliver(e3);
-
+        updateContactsList();
     }
 
     @Override
@@ -347,11 +334,15 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
             }
             case ACTIVE_IDENTITY: {
                 DID did = (DID)e.getValue("activeIdentity");
-                activeDID = did;
+                if(nonNull(did)) {
+                    activeDID = did;
+                }
                 break;
             }
             case CONTACTS_LIST: {
-
+                List<DID> contacts = (List<DID>)e.getValue("contacts");
+                contactsList.getItems().clear();
+                contactsList.getItems().addAll(contacts);
                 break;
             }
             case IDENTITY_ADDED: {
@@ -365,11 +356,22 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
     }
 
     private void updateIdentitiesList() {
-        Envelope e1 = Envelope.documentFactory();
-        e1.setCommandPath(ControlCommand.Send.name());
-        e1.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e1.addNVP(VIEW_OP, IDENTITIES_LIST);
-        e1.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
-        DesktopClient.deliver(e1);
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.Send.name());
+        e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+        e.addNVP(VIEW_OP, IDENTITIES_LIST);
+        e.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
+        DesktopClient.deliver(e);
+    }
+
+    private void updateContactsList() {
+        Envelope e = Envelope.documentFactory();
+        e.setCommandPath(ControlCommand.Send.name());
+        e.addNVP("contactsStart",1);
+        e.addNVP("contactsNumber", 10);
+        e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
+        e.addNVP(VIEW_OP, CONTACTS_LIST);
+        e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
+        DesktopClient.deliver(e);
     }
 }
