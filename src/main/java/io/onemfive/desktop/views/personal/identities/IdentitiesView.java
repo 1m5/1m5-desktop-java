@@ -24,29 +24,22 @@ import ra.common.Resources;
 
 import java.util.List;
 
-import static io.onemfive.desktop.DesktopClient.VIEW_NAME;
-import static io.onemfive.desktop.DesktopClient.VIEW_OP;
+import static io.onemfive.desktop.DesktopClient.*;
 import static java.util.Objects.nonNull;
 
 public class IdentitiesView extends ActivatableView implements TopicListener {
 
     public static final String IDENTITIES_LIST = "IDENTITIES_LIST";
     public static final String ACTIVE_IDENTITY = "ACTIVE_IDENTITY";
-    public static final String CONTACTS_LIST = "CONTACTS_LIST";
     public static final String IDENTITY_ADDED = "IDENTITY_ADDED";
 
     private GridPane pane;
     private int gridRow = 0;
 
-    private DID activeDID;
-
     private ObservableList<Object> identityDIDs = FXCollections.observableArrayList();
     private ObservableList<String> identityAddresses = FXCollections.observableArrayList();
-    private ObservableList<Object> contactDIDs = FXCollections.observableArrayList();
-    private ObservableList<String> contactAddresses = FXCollections.observableArrayList();
 
     private ListView<Object> identitiesList;
-    private ListView<Object> contactsList;
 
     private final String authNText = Resources.get("personalIdentitiesView.authn");
     private final String aliasPrompt = Resources.get("shared.alias");
@@ -61,7 +54,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
     private final String editText = Resources.get("shared.edit");
     private final String addText = Resources.get("shared.add");
     private final String identitiesText = Resources.get("personalIdentitiesView.identities");
-    private final String contactsText = Resources.get("personalIdentitiesView.contacts");
 
     private ComboBox<String> authNAliasComboBox;
     private PasswordTextField authNPwdText;
@@ -70,19 +62,10 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
     private PasswordTextField identityPwd2Text;
     private InputTextField identityDescription;
 
-    private InputTextField contactAliasText;
-    private InputTextField contactFingerprintText;
-    private InputTextField contactAddressText;
-    private InputTextField contactDescription;
-
     private Button authN;
     private Button addIdentity;
     private Button editIdentity;
     private Button deleteIdentity;
-
-    private Button addContact;
-    private Button editContact;
-    private Button deleteContact;
 
     @Override
     protected void initialize() {
@@ -130,35 +113,7 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
 
         VBox identityVBox = new VBox(Layout.GRID_GAP, identitiesLabel, identityAliasTxt, identityPwdText, identityPwd2Text, identityDescription, addIdentity, identitiesList);
 
-        // Contacts
-        Label contactsLabel = new Label(contactsText);
-
-        // Add Contact
-        contactAliasText = new InputTextField();
-        contactAliasText.setPromptText(aliasPrompt);
-        contactFingerprintText = new InputTextField();
-        contactFingerprintText.setPromptText(fingerprintPrompt);
-        contactAddressText = new InputTextField();
-        contactAddressText.setPromptText(addressPrompt);
-        contactDescription = new InputTextField();
-        contactDescription.setPromptText(descriptionPrompt);
-        addContact = new AutoTooltipButton(addText);
-        addContact.getStyleClass().add("action-button");
-        editContact = new AutoTooltipButton(editText);
-        editContact.getStyleClass().add("action-button");
-        deleteContact = new AutoTooltipButton(deleteText);
-        deleteContact.getStyleClass().add("button-raised");
-
-        // List Contacts
-        contactsList = new ListView<>();
-        contactsList.setPrefSize(800, 250);
-        contactsList.setItems(contactDIDs);
-        contactsList.setEditable(false);
-        contactsList.getStyleClass().add("listView");
-
-        VBox contactVBox = new VBox(Layout.GRID_GAP, contactsLabel, contactAliasText, contactFingerprintText, contactAddressText, contactDescription, addContact, contactsList);
-
-        HBox mainHBox = new HBox(Layout.GRID_GAP, identityVBox, contactVBox);
+        HBox mainHBox = new HBox(Layout.GRID_GAP, identityVBox);
 
         pane.add(authNHBox, 0, gridRow);
         pane.add(mainHBox, 0, ++gridRow);
@@ -168,8 +123,8 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
 
     @Override
     protected void activate() {
-        if(nonNull(activeDID)) {
-            authNAliasComboBox.setValue(activeDID.getUsername());
+        if(nonNull(DesktopClient.getActivePersonalDID())) {
+            authNAliasComboBox.setValue(getActivePersonalDID().getUsername());
         }
 
         authNAliasComboBox.setOnAction(new EventHandler<ActionEvent>() {
@@ -268,43 +223,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
             }
         });
 
-        addContact.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(!contactAliasText.getText().isEmpty()
-                        && !contactFingerprintText.getText().isEmpty()
-                        && !contactAddressText.getText().isEmpty()) {
-                    DID did = new DID();
-                    did.setUsername(contactAliasText.getText());
-                    did.getPublicKey().setFingerprint(contactFingerprintText.getText());
-                    did.getPublicKey().setAddress(contactAddressText.getText());
-                    contactsList.getItems().add(did);
-                } else {
-                    // TODO: show in pop up
-                    LOG.warning("Alias, fingerprint, and address are required.");
-                }
-            }
-        });
-
-        editContact.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                LOG.info(actionEvent.toString());
-            }
-        });
-
-        deleteContact.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                int index = contactsList.getSelectionModel().getSelectedIndex();
-                if(index >= 0) {
-                    String itemStr = contactAddresses.get(index);
-                    LOG.info(itemStr);
-
-                }
-            }
-        });
-
         updateIdentitiesList();
         updateContactsList();
     }
@@ -315,9 +233,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         addIdentity.setOnAction(null);
         editIdentity.setOnAction(null);
         deleteIdentity.setOnAction(null);
-        addContact.setOnAction(null);
-        editContact.setOnAction(null);
-        deleteContact.setOnAction(null);
     }
 
     @Override
@@ -335,14 +250,8 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
             case ACTIVE_IDENTITY: {
                 DID did = (DID)e.getValue("activeIdentity");
                 if(nonNull(did)) {
-                    activeDID = did;
+                    DesktopClient.setActivePersonalDID(did);
                 }
-                break;
-            }
-            case CONTACTS_LIST: {
-                List<DID> contacts = (List<DID>)e.getValue("contacts");
-                contactsList.getItems().clear();
-                contactsList.getItems().addAll(contacts);
                 break;
             }
             case IDENTITY_ADDED: {
@@ -370,7 +279,6 @@ public class IdentitiesView extends ActivatableView implements TopicListener {
         e.addNVP("contactsStart",1);
         e.addNVP("contactsNumber", 10);
         e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e.addNVP(VIEW_OP, CONTACTS_LIST);
         e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
         DesktopClient.deliver(e);
     }

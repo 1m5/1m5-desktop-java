@@ -39,6 +39,7 @@ import ra.common.messaging.Message;
 import ra.common.network.*;
 import ra.common.notification.Subscription;
 import ra.common.service.ServiceReport;
+import ra.did.DIDService;
 import ra.maildrop.MailDropService;
 import ra.notification.NotificationService;
 import ra.common.JSONParser;
@@ -76,12 +77,13 @@ public class DesktopClient implements Client {
     private final int apiPort;
 
     // Personal
+    private DID activePersonalDID;
     private BTCWallet activeWallet;
     private final ObservableList<Transaction> transactions = FXCollections.observableArrayList();
     private final Map<String,DID> localIdentities = new HashMap<>();
-    private DID activeIdentity;
 
     // Community
+    private DID activeCommunityDID;
     private BTCWallet activeCommunityWallet;
     private final ObservableList<String> communityTransactions = FXCollections.observableArrayList();
     private final Map<String,DID> communityIdentities = new HashMap<>();
@@ -99,8 +101,6 @@ public class DesktopClient implements Client {
 
     private DesktopClient(int apiPort) {
         this.apiPort = apiPort;
-        activeIdentity = new DID();
-        activeIdentity.setUsername("ANONYMOUS");
     }
 
     public static DesktopClient getInstance(Properties properties) {
@@ -119,8 +119,20 @@ public class DesktopClient implements Client {
         return instance;
     }
 
-    public DID getActiveIdentity() {
-        return activeIdentity;
+    public static DID getActivePersonalDID() {
+        return instance.activePersonalDID;
+    }
+
+    public static void setActivePersonalDID(DID did) {
+        instance.activePersonalDID = did;
+    }
+
+    public static DID getActiveCommunityIdentity() {
+        return instance.activeCommunityIdentity;
+    }
+
+    public static void setActiveCommunityIdentity(DID did) {
+        instance.activeCommunityDID = did;
     }
 
     public static ClientType getClientType() {
@@ -252,6 +264,8 @@ public class DesktopClient implements Client {
                 .followRedirects(true)
                 .readTimeout(5, TimeUnit.MINUTES)
                 .build();
+
+        loadPersonalActiveDID();
 
         // Setup Mailbox Checker Task for default system
 //        MVC.runPeriodically(new Runnable() {
@@ -572,6 +586,14 @@ public class DesktopClient implements Client {
         }
         reply(e);
         return true;
+    }
+
+    private void loadPersonalActiveDID() {
+        Envelope e = Envelope.documentFactory();
+        e.addNVP("identityType", DID.Type.IDENTITY.name());
+        e.addNVP("external", true);
+        e.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITY);
+        sendMessage(e);
     }
 
     public boolean connect() {

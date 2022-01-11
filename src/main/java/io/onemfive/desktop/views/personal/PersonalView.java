@@ -8,6 +8,7 @@ import io.onemfive.desktop.views.home.HomeView;
 import io.onemfive.desktop.views.personal.agora.AgoraView;
 import io.onemfive.desktop.views.personal.blog.BlogView;
 import io.onemfive.desktop.views.personal.calendar.CalendarView;
+import io.onemfive.desktop.views.personal.contacts.ContactsView;
 import io.onemfive.desktop.views.personal.dashboard.DashboardView;
 import io.onemfive.desktop.views.personal.identities.IdentitiesView;
 import io.onemfive.desktop.views.personal.wallet.WalletView;
@@ -24,7 +25,7 @@ public class PersonalView extends ActivatableView {
     private Scene scene;
     private TabPane pane;
     @FXML
-    private Tab dashboardTab, identitiesTab, walletTab;
+    private Tab dashboardTab, identitiesTab, walletTab, contactTab;
 //            blogTab, agoraTab, calendarTab;
 
     private Navigation.Listener navigationListener;
@@ -42,6 +43,7 @@ public class PersonalView extends ActivatableView {
         dashboardTab.setText(Resources.get("personalView.tabs.dashboard").toUpperCase());
         identitiesTab.setText(Resources.get("personalView.tabs.identities").toUpperCase());
         walletTab.setText(Resources.get("personalView.tabs.wallet").toUpperCase());
+        contactTab.setText(Resources.get("personalView.tabs.contacts").toUpperCase());
 
         navigationListener = viewPath -> {
             if (viewPath.size() == 3 && viewPath.indexOf(PersonalView.class) == 1)
@@ -62,6 +64,8 @@ public class PersonalView extends ActivatableView {
                 MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class);
             else if (newValue == walletTab)
                 MVC.navigation.navigateTo(HomeView.class, PersonalView.class, WalletView.class);
+            else if (newValue == contactTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, ContactsView.class);
         };
 
         LOG.info("Initialized.");
@@ -83,6 +87,8 @@ public class PersonalView extends ActivatableView {
             MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class);
         else if (pane.getSelectionModel().getSelectedItem() == walletTab)
             MVC.navigation.navigateTo(HomeView.class, PersonalView.class, WalletView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == contactTab)
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, ContactsView.class);
         else
             MVC.navigation.navigateTo(HomeView.class, PersonalView.class, DashboardView.class);
 
@@ -113,6 +119,7 @@ public class PersonalView extends ActivatableView {
             if (view instanceof DashboardView) tab = dashboardTab;
         else if (view instanceof IdentitiesView) tab = identitiesTab;
         else if (view instanceof WalletView) tab = walletTab;
+        else if (view instanceof ContactsView) tab = contactTab;
         else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
 
         if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {

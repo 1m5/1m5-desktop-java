@@ -22,6 +22,10 @@
 
     </Tab>
 
+    <Tab fx:id="contactTab" closable="false">
+
+    </Tab>
+
 <!--    <Tab fx:id="blogTab" closable="false">-->
 
 <!--    </Tab>-->
