@@ -57,6 +57,7 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
     @Override
     public void init() {
         LOG.info("DesktopApp initializing...\n\tThread name: " + Thread.currentThread().getName());
+
         LocaleUtil.currentLocale = Locale.US; // Default - TODO: load locale from preferences
         // Launch Service Bus
         // TODO: Check to see if Service Bus already running. If so, use it.

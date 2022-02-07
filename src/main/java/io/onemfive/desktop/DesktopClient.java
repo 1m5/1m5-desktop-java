@@ -590,7 +590,7 @@ public class DesktopClient implements Client {
 
     private void loadPersonalActiveDID() {
         Envelope e = Envelope.documentFactory();
-        e.addNVP("identityType", DID.Type.IDENTITY.name());
+        e.addNVP("identityType", DID.DIDType.IDENTITY.name());
         e.addNVP("external", true);
         e.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITY);
         sendMessage(e);
