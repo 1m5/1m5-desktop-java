@@ -3,12 +3,80 @@
 ## Services
 
 ### Commons
+Open to everyone who is using 1M5.
 
-#### Agora
+#### Agora (future)
+Open marketplace where participants are anonymous but items are not.
+
+All participants must go through Non-Aggression Principle training
+prior to being given access to the commons agora.
+
+Item to sell must get approval from a high reputation judge that it
+does not violate the Non-Aggression Principle (NAP).
+
+If a judge denies the item claiming it violates the NAP, the participant
+can elevate to a supreme judge.
+
+If the supreme judge overrides the decision, the judge gets a reprimand.
+
+After 3 reprimands, the judge is removed from being a judge.
+
+If the supreme judge upholds the decision, the participant gets a private mark.
+
+After 3 marks, the participant can't sell in the marketplace until they have gone through NAP training again.
+
+After training, a mark is removed.
+
+After 10 successful item sells, a mark gets removed.
+
+Judges and supreme judges get judged too when they sell an item.
+
+If a judge gets a mark, they lose the ability to judge until that mark is removed, either through training or by selling 10 items with no marks.
+
+If a supreme judge gets a mark, they get demoted to judge.
+
+If a judge elevates a decision to a founding judge and the decision is overturned, the supreme
+judge gets a reprimand.
+
+After 3 reprimands, the supreme judge is demoted to judge.
+
+A supreme judge loses a reprimand after 10 successful elevated judgements.
+
+If the founding judge upholds the decision, the judge gets a reprimand.
+
+After 3 reprimands, the judge loses their ability to judge.
+
+A judge loses a reprimand after 10 successful judgements.
+
+Participants become judges when they have 100 successful trades and no marks.
+
+Judges become supreme judges when they have 1000 successful judgements and no reprimands.
+
+There are only up to four founding judges at any given time.
+
+Founding judges get elected by current founding judges upon a vacancy requiring unanimity.
+
+Fees are 0.5% per transaction.
+
+50% of the fee goes to developers and 50% goes to judges.
+
+Judges fees are broken down as follows: 33% spread among active judges, 33% spread evenly among active supreme judges, 33% spread among active founding judges.
+
+Judges are considered active if they have judged at least one decision within the last 30 days.
+
+Supreme judges are considered active if they have judged at least one decision within the last 126 days.
+
+Founding judges are considered active if they have judged at least one decision within the last 252 days or have voted in a founding judge.
+
+Founding judges can change the parameters on when a judge and supreme judge are chosen but must be unanimous.
 
 #### Browser
+Browses public sites using Tor. Will use I2P or other protocols to tunnel to Tor if/when needed.
 
 #### Dashboard
+Shows summary information on commons activities.
+
+* Status of any open exchange request
 
 #### DEX (BTC-USD)
 Purely noncustodial (2-2 multi-sig) escrows where only the exchange
@@ -16,7 +84,7 @@ participants' keys are used. There is no dispute resolution.
 A node with more than 10 successful exchanges will flag another
 node as a disputed exchange upon an unsuccessful exchange
 (BTC is stuck in escrow for a period of 10 days).
-Upon 3 flags of a node, the system bars that node from the exchange.
+Upon 3 flags of a node by a reputable node, the network bars that node from the exchange.
 
 ##### Crypto Supported
 Only Bitcoin (BTC) is supported.
@@ -70,40 +138,92 @@ Only USD is supported using Zelle and Mail.
 17. (S) Bob->Alice: Escrow Closed
 18. (S) Alice->Peers: Alice's Request Closed
 
-#### Topics
+#### Topics (future)
+Can request information on topics - information comes in asynchronously over
+time as it is found...like a decentralized RSS feed.
 
 ### Community
 
-#### Agora
+#### Dashboard (future)
+Community Dashboard
+* Shows Communities created (future)
+* Shows Communities joined (future)
 
-#### Calendar
+#### Search (future)
+Search for Communities with similar interests
+* Create Community (future) - creates a new tab with directions on setting up the community
+* Request to join Community (future)
 
-#### Dashboard
+#### Community 1 (future)
+Each Community gets a separate tab
 
-#### Search
+##### Manage (future)
+Provide community management tools
+* Determine who can join the community (future)
+* Remove community member (future)
 
-#### Social
+##### Agora (future)
+Community Shops (future) - Community runs the shops, e.g. intentional communities.
 
-#### Wallet
+##### Calendar (future)
+Community Calendar
+
+##### Social
+Communications between Community members and between communities.
+* Send text to Contact
+
+##### Wallet (future)
+Community Wallet
+
+Creates shared multi-sig wallets in the local BTC core node
+distributing them to all participants.
+
+* Multiple wallets supported (future)
+* Create shared multi-wallet distributing to participants (future)
+* One shared wallet automatically created for each Community (future)
+* One shared wallet per Community Agora shop can be created (future)
+* Can send/receive BTC using the local BTC core node.
+* Can import private key to a wallet. (future)
+* Can sweep private key to a wallet. (future)
+* Can see community transactions.
+* Can move BTC to a cold wallet (generated PDF) saved to a local flash drive. (future)
 
 ### Personal
 
-#### Agora
+#### Agora (future)
+Personal Shops
+* Determine who can see the shop (future)
+* Manage Items (future)
 
-#### Blog
+#### Blog (future)
+Personal Blogs
+* Determine who can see the blog (future)
+* Publishing lifecycle (future)
+* Determine who can edit the blog (future)
 
-#### Calendar
+#### Calendar (future)
+Personal Calendar
+
+#### Contacts
+* Add Contact (future)
+* Remove Contact (future)
+* View Contact Detail (future)
+* View Contacts list (future)
 
 #### Identities
+* Add Identity
+* Remove Identity (future)
+* View Identity detail (future)
+* View Identity list (future)
 
 #### Wallet
 * Creates a local wallet in the local BTC core node.
 * Multiple wallets supported.
 * Can send/receive BTC using the local BTC core node.
-* Can sweep private keys to a wallet.
+* Can import private key to a wallet. (future)
+* Can sweep private key to a wallet. (future)
 * Can see personal transactions.
-* Can move BTC to a cold wallet (generated PDF) saved
-to a local flash drive.
+* Can move BTC to a cold wallet (generated PDF) saved to a local flash drive. (future)
 
 ## Build
 On Linux:
