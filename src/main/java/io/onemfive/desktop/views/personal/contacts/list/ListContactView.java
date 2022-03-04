@@ -7,6 +7,8 @@ import ra.common.Envelope;
 
 public class ListContactView extends BaseContactView implements TopicListener {
 
+    public static final String CONTACTS_LIST = "CONTACTS_LIST";
+
     @Override
     public void modelUpdated(String topic, Object object) {
         LOG.info("Updating model with topic: "+topic);
