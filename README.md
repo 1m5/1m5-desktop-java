@@ -205,14 +205,16 @@ Personal Blogs
 Personal Calendar
 
 #### Contacts
-* Add Contact (future)
+* Add Contact (Import) (future)
 * Remove Contact (future)
 * View Contact Detail (future)
 * View Contacts list (future)
 
 #### Identities
-* Add Identity
+* Create Identity
+* Add Identity (Import) (future)
 * Remove Identity (future)
+* Destroy Identity (future)
 * View Identity detail (future)
 * View Identity list (future)
 
