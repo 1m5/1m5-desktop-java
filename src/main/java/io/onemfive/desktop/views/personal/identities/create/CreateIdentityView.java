@@ -6,15 +6,12 @@ import io.onemfive.desktop.components.InputTextField;
 import io.onemfive.desktop.components.PasswordTextField;
 import io.onemfive.desktop.components.overlays.popups.Popup;
 import io.onemfive.desktop.util.Layout;
+import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.desktop.views.personal.identities.BaseIdentityView;
 import io.onemfive.desktop.views.personal.identities.IdentitiesView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,9 +21,8 @@ import ra.common.identity.DID;
 import ra.did.DIDService;
 
 import static io.onemfive.desktop.DesktopClient.*;
-import static java.util.Objects.nonNull;
 
-public class CreateIdentityView extends BaseIdentityView implements TopicListener {
+public class CreateIdentityView extends ActivatableView implements TopicListener {
 
     public static final String IDENTITY_CREATED = "IDENTITY_CREATED";
 
@@ -51,11 +47,7 @@ public class CreateIdentityView extends BaseIdentityView implements TopicListene
 
     @Override
     protected void initialize() {
-        LOG.info("Initializing...");
-        pane = (GridPane)root;
-
-        // Identities
-        Label identitiesLabel = new Label(identitiesText);
+        super.initialize();
 
         // Create Identity
         identityAliasTxt = new InputTextField();
@@ -69,7 +61,7 @@ public class CreateIdentityView extends BaseIdentityView implements TopicListene
         createIdentity = new AutoTooltipButton(addText);
         createIdentity.getStyleClass().add("action-button");
 
-        VBox identityVBox = new VBox(Layout.GRID_GAP, identitiesLabel, identityAliasTxt, identityPwdText, identityPwd2Text, identityDescription, createIdentity);
+        VBox identityVBox = new VBox(Layout.GRID_GAP, identityAliasTxt, identityPwdText, identityPwd2Text, identityDescription, createIdentity);
 
         HBox mainHBox = new HBox(Layout.GRID_GAP, identityVBox);
 
@@ -84,12 +76,6 @@ public class CreateIdentityView extends BaseIdentityView implements TopicListene
         createIdentity.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(identityAddresses.size()==10) {
-                    new Popup().information(Resources.get("personalIdentifiesView.maxIdentities"))
-                            .closeButtonText(Resources.get("shared.ok"))
-                            .show();
-                    return;
-                }
                 if(identityAliasTxt.getText().isEmpty()
                         || identityPwdText.getText().isEmpty()
                         || identityPwd2Text.getText().isEmpty()) {

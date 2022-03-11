@@ -1,285 +1,113 @@
 package io.onemfive.desktop.views.personal.identities;
 
-import io.onemfive.desktop.DesktopClient;
-import io.onemfive.desktop.components.AutoTooltipButton;
-import io.onemfive.desktop.components.InputTextField;
-import io.onemfive.desktop.components.PasswordTextField;
-import io.onemfive.desktop.components.overlays.popups.Popup;
-import io.onemfive.desktop.util.Layout;
+import io.onemfive.desktop.MVC;
+import io.onemfive.desktop.Navigation;
 import io.onemfive.desktop.views.ActivatableView;
-import io.onemfive.desktop.views.TopicListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import io.onemfive.desktop.views.View;
+import io.onemfive.desktop.views.home.HomeView;
+import io.onemfive.desktop.views.personal.PersonalView;
+import io.onemfive.desktop.views.personal.identities.add.AddIdentityView;
+import io.onemfive.desktop.views.personal.identities.create.CreateIdentityView;
+import io.onemfive.desktop.views.personal.identities.dashboard.DashboardIdentityView;
+import io.onemfive.desktop.views.personal.identities.details.DetailsIdentityView;
+import io.onemfive.desktop.views.personal.identities.list.ListIdentityView;
+import javafx.beans.value.ChangeListener;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import ra.common.Envelope;
-import ra.common.identity.DID;
-import ra.common.network.ControlCommand;
-import ra.did.DIDService;
 import ra.common.Resources;
 
-import java.util.List;
+public class IdentitiesView extends ActivatableView {
 
-import static io.onemfive.desktop.DesktopClient.*;
-import static java.util.Objects.nonNull;
+    private Scene scene;
+    private TabPane pane;
+    @FXML
+    private Tab addTab, createTab, dashboardTab, detailsTab, listTab;
 
-public class IdentitiesView extends ActivatableView implements TopicListener {
-
-    public static final String IDENTITIES_LIST = "IDENTITIES_LIST";
-    public static final String ACTIVE_IDENTITY = "ACTIVE_IDENTITY";
-    public static final String IDENTITY_ADDED = "IDENTITY_ADDED";
-
-    private GridPane pane;
-    private int gridRow = 0;
-
-    private ObservableList<Object> identityDIDs = FXCollections.observableArrayList();
-    private ObservableList<String> identityAddresses = FXCollections.observableArrayList();
-
-    private ListView<Object> identitiesList;
-
-    private final String authNText = Resources.get("personalIdentitiesView.authn");
-    private final String aliasPrompt = Resources.get("shared.alias");
-    private final String pwdPrompt = Resources.get("shared.passphrase");
-    private final String pwd2Prompt = Resources.get("shared.passphraseAgain");
-
-    private final String fingerprintPrompt = Resources.get("shared.fingerprint");
-    private final String addressPrompt = Resources.get("shared.address");
-    private final String descriptionPrompt = Resources.get("shared.description");
-    private final String generateText = Resources.get("shared.generate");
-    private final String deleteText = Resources.get("shared.delete");
-    private final String editText = Resources.get("shared.edit");
-    private final String addText = Resources.get("shared.add");
-    private final String identitiesText = Resources.get("personalIdentitiesView.identities");
-
-    private ComboBox<String> authNAliasComboBox;
-    private PasswordTextField authNPwdText;
-    private InputTextField identityAliasTxt;
-    private PasswordTextField identityPwdText;
-    private PasswordTextField identityPwd2Text;
-    private InputTextField identityDescription;
-
-    private Button authN;
-    private Button addIdentity;
-    private Button editIdentity;
-    private Button deleteIdentity;
+    private Navigation.Listener navigationListener;
+    private ChangeListener<Tab> tabChangeListener;
+//    private EventHandler<KeyEvent> keyEventEventHandler;
 
     @Override
     protected void initialize() {
         LOG.info("Initializing...");
-        pane = (GridPane)root;
 
-        // Authenticate Identity
-        authNAliasComboBox = new ComboBox<>();
-        authNAliasComboBox.setItems(identityAddresses);
-        authNAliasComboBox.getStyleClass().add("jfx-combo-box");
-        authNAliasComboBox.setValue("Anonymous");
-        authNPwdText = new PasswordTextField();
-        authNPwdText.setVisible(false);
-        authN = new AutoTooltipButton(authNText);
-        authN.setDefaultButton(true);
-        authN.getStyleClass().add("action-button");
-        authN.setVisible(false);
-        HBox authNHBox = new HBox(Layout.GRID_GAP, authNAliasComboBox, authNPwdText, authN);
+        pane = (TabPane)root;
+        addTab.setText(Resources.get("personalIdentitiesView.tabs.add").toUpperCase());
+        createTab.setText(Resources.get("personalIdentitiesView.tabs.create").toUpperCase());
+        dashboardTab.setText(Resources.get("personalIdentitiesView.tabs.dashboard").toUpperCase());
+        detailsTab.setText(Resources.get("personalIdentitiesView.tabs.details").toUpperCase());
+        listTab.setText(Resources.get("personalIdentitiesView.tabs.list").toUpperCase());
 
-        // Identities
-        Label identitiesLabel = new Label(identitiesText);
+        navigationListener = viewPath -> {
+            if (viewPath.size() == 4 && viewPath.indexOf(IdentitiesView.class) == 2)
+                loadView(viewPath.tip());
+        };
 
-        // Add Identity
-        identityAliasTxt = new InputTextField();
-        identityAliasTxt.setPromptText(aliasPrompt);
-        identityPwdText = new PasswordTextField();
-        identityPwdText.setPromptText(pwdPrompt);
-        identityPwd2Text = new PasswordTextField();
-        identityPwd2Text.setPromptText(pwd2Prompt);
-        identityDescription = new InputTextField();
-        identityDescription.setPromptText(descriptionPrompt);
-        addIdentity = new AutoTooltipButton(addText);
-        addIdentity.getStyleClass().add("action-button");
-        editIdentity = new AutoTooltipButton(editText);
-        editIdentity.getStyleClass().add("action-raised");
-        deleteIdentity = new AutoTooltipButton(deleteText);
-        deleteIdentity.getStyleClass().add("button-raised");
-
-        // List Identities
-        identitiesList = new ListView<>();
-        identitiesList.setPrefSize(800, 250);
-        identitiesList.setItems(identityDIDs);
-        identitiesList.setEditable(false);
-        identitiesList.getStyleClass().add("listView");
-
-        VBox identityVBox = new VBox(Layout.GRID_GAP, identitiesLabel, identityAliasTxt, identityPwdText, identityPwd2Text, identityDescription, addIdentity, identitiesList);
-
-        HBox mainHBox = new HBox(Layout.GRID_GAP, identityVBox);
-
-        pane.add(authNHBox, 0, gridRow);
-        pane.add(mainHBox, 0, ++gridRow);
+        tabChangeListener = (ov, oldValue, newValue) -> {
+            if(newValue == addTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, AddIdentityView.class);
+            else if(newValue == createTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, CreateIdentityView.class);
+            else if (newValue == dashboardTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, DashboardIdentityView.class);
+            else if (newValue == detailsTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, DetailsIdentityView.class);
+            else if (newValue == listTab)
+                MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, ListIdentityView.class);
+        };
 
         LOG.info("Initialized.");
     }
 
     @Override
     protected void activate() {
-        if(nonNull(DesktopClient.getActivePersonalDID())) {
-            authNAliasComboBox.setValue(getActivePersonalDID().getUsername());
-        }
+        pane.getSelectionModel().selectedItemProperty().addListener(tabChangeListener);
+        MVC.navigation.addListener(navigationListener);
 
-        authNAliasComboBox.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                boolean isAnonymous = "Anonymous".equals(authNAliasComboBox.getValue());
-                authNPwdText.setVisible(!isAnonymous);
-                authN.setVisible(!isAnonymous);
-            }
-        });
+        if(pane.getSelectionModel().getSelectedItem() == addTab)
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, AddIdentityView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == createTab)
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, CreateIdentityView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == detailsTab)
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, DetailsIdentityView.class);
+        else if (pane.getSelectionModel().getSelectedItem() == listTab)
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, ListIdentityView.class);
+        else
+            MVC.navigation.navigateTo(HomeView.class, PersonalView.class, IdentitiesView.class, DashboardIdentityView.class);
 
-        authN.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-//                if(!authNAliasTxt.getText().isEmpty() && !authNPwdText.getText().isEmpty()) {
-//                    Envelope e = Envelope.documentFactory();
-//                    // 3. Update UI
-//                    e.addRoute(DesktopBusClient.class, DesktopBusClient.OPERATION_NOTIFY_UI);
-//                    // 2. Load ordered Contacts
-//                    e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-//                    // 1. Authenticate
-//                    DID did = new DID();
-//                    did.setUsername(authNAliasTxt.getText());
-//                    did.setPassphrase(authNPwdText.getText());
-//                    did.setPassphrase2(authNPwdText.getText());
-//                    AuthNRequest ar = new AuthNRequest();
-//                    ar.keyRingUsername = did.getUsername();
-//                    ar.keyRingPassphrase = did.getPassphrase();
-//                    ar.alias = did.getUsername(); // use username as default alias
-//                    ar.aliasPassphrase = did.getPassphrase(); // just use same passphrase
-//                    ar.autoGenerate = true;
-//                    e.setDID(did);
-//                    e.addData(AuthNRequest.class, ar);
-//                    e.addRoute(KeyRingService.class, KeyRingService.OPERATION_AUTHN);
-//                    // Send
-//                    DesktopBusClient.deliver(e);
-//                }
-            }
-        });
-
-        addIdentity.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(identityAddresses.size()==10) {
-                    new Popup().information(Resources.get("personalIdentifiesView.maxIdentities"))
-                            .closeButtonText(Resources.get("shared.ok"))
-                            .show();
-                    return;
-                }
-                if(identityAliasTxt.getText().isEmpty()
-                        || identityPwdText.getText().isEmpty()
-                        || identityPwd2Text.getText().isEmpty()) {
-                    new Popup().information(Resources.get("personalIdentifiesView.identityRequired"))
-                            .closeButtonText(Resources.get("shared.ok"))
-                            .show();
-                    return;
-                }
-                if(!identityPwdText.getText().equals(identityPwd2Text.getText())) {
-                    new Popup().information(Resources.get("personalIdentitiesView.pwdMustBeSame"))
-                            .closeButtonText(Resources.get("shared.ok"))
-                            .show();
-                    return;
-                }
-                if(!identityAliasTxt.getText().isEmpty()) {
-                    DID did = new DID();
-                    did.setUsername(identityAliasTxt.getText());
-                    did.setPassphrase(identityPwdText.getText());
-                    did.setPassphrase2(identityPwd2Text.getText());
-                    did.setDescription(identityDescription.getText());
-                    Envelope e = Envelope.documentFactory();
-                    e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-                    e.addNVP(VIEW_OP, IDENTITY_ADDED);
-                    e.addData(DID.class, did);
-                    e.addRoute(DIDService.class, DIDService.OPERATION_SAVE_IDENTITY);
-                    DesktopClient.deliver(e);
-                }
-            }
-        });
-
-        editIdentity.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                LOG.info(actionEvent.toString());
-            }
-        });
-
-        deleteIdentity.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                int index = identitiesList.getSelectionModel().getSelectedIndex();
-                if(index >= 0) {
-                    String itemStr = identityAddresses.get(index);
-                    LOG.info(itemStr);
-
-                }
-            }
-        });
-
-        updateIdentitiesList();
-        updateContactsList();
+//        if (root.getScene() != null) {
+//            scene = root.getScene();
+//            scene.addEventHandler(KeyEvent.KEY_RELEASED, keyEventEventHandler);
+//        }
     }
 
     @Override
     protected void deactivate() {
-        authN.setOnAction(null);
-        addIdentity.setOnAction(null);
-        editIdentity.setOnAction(null);
-        deleteIdentity.setOnAction(null);
+        pane.getSelectionModel().selectedItemProperty().removeListener(tabChangeListener);
+        MVC.navigation.removeListener(navigationListener);
+
+//        if (scene != null)
+//            scene.removeEventHandler(KeyEvent.KEY_RELEASED, keyEventEventHandler);
     }
 
-    @Override
-    public void modelUpdated(String topic, Object object) {
-        LOG.info("Updating Identities View model...");
-        Envelope e = (Envelope) object;
-        switch (topic) {
-            case IDENTITIES_LIST: {
-                List<DID> identities = (List<DID>)e.getValue("identities");
-                identitiesList.getItems().clear();
-                identitiesList.getItems().addAll(identities);
-                identityAddresses.add(identityAliasTxt.getText());
-                break;
-            }
-            case ACTIVE_IDENTITY: {
-                DID did = (DID)e.getValue("activeIdentity");
-                if(nonNull(did)) {
-                    DesktopClient.setActivePersonalDID(did);
-                }
-                break;
-            }
-            case IDENTITY_ADDED: {
-                identityAliasTxt.setText(null);
-                identityPwdText.setText(null);
-                identityPwd2Text.setText(null);
-                identityDescription.setText(null);
-                updateIdentitiesList();
-            }
+
+    private void loadView(Class<? extends View> viewClass) {
+        final Tab tab;
+        View view = MVC.loadView(viewClass);
+
+        if (view instanceof AddIdentityView) tab = addTab;
+        else if (view instanceof CreateIdentityView) tab = createTab;
+        else if (view instanceof DashboardIdentityView) tab = dashboardTab;
+        else if (view instanceof DetailsIdentityView) tab = detailsTab;
+        else if (view instanceof ListIdentityView) tab = listTab;
+        else throw new IllegalArgumentException("Navigation to " + viewClass + " is not supported");
+
+        if (tab.getContent() != null && tab.getContent() instanceof ScrollPane) {
+            ((ScrollPane) tab.getContent()).setContent(view.getRoot());
+        } else {
+            tab.setContent(view.getRoot());
         }
-    }
-
-    private void updateIdentitiesList() {
-        Envelope e = Envelope.documentFactory();
-        e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e.addNVP(VIEW_OP, IDENTITIES_LIST);
-        e.addRoute(DIDService.class, DIDService.OPERATION_GET_IDENTITIES);
-        DesktopClient.deliver(e);
-    }
-
-    private void updateContactsList() {
-        Envelope e = Envelope.documentFactory();
-        e.setCommandPath(ControlCommand.Send.name());
-        e.addNVP("contactsStart",1);
-        e.addNVP("contactsNumber", 10);
-        e.addNVP(VIEW_NAME, IdentitiesView.class.getName());
-        e.addRoute(DIDService.class, DIDService.OPERATION_GET_CONTACTS);
-        DesktopClient.deliver(e);
+        pane.getSelectionModel().select(tab);
     }
 }
