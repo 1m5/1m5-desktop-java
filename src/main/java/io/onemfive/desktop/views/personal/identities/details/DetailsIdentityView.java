@@ -2,7 +2,6 @@ package io.onemfive.desktop.views.personal.identities.details;
 
 import io.onemfive.desktop.views.ActivatableView;
 import io.onemfive.desktop.views.TopicListener;
-import io.onemfive.desktop.views.personal.identities.BaseIdentityView;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import ra.common.Envelope;

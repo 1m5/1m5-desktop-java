@@ -82,7 +82,6 @@ public class DesktopApp extends Application implements Thread.UncaughtExceptionH
 
         // Initialize Desktop Bus Client
         desktopClient = DesktopClient.getInstance(properties);
-        desktopClient.start();
 
         // Load maven model
         MavenXpp3Reader reader = new MavenXpp3Reader();

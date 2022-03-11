@@ -21,6 +21,10 @@
 
     </Tab>
 
+    <Tab fx:id="createTab" closable="false">
+
+    </Tab>
+
     <Tab fx:id="addTab" closable="false">
 
     </Tab>

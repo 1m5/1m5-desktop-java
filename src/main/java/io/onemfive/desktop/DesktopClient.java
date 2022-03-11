@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import okhttp3.*;
+import okhttp3.Protocol;
 import onemfive.ManCon;
 import onemfive.ManConStatus;
 import ra.btc.BTCWallet;
@@ -30,8 +31,7 @@ import ra.btc.RPCCommand;
 import ra.btc.Transaction;
 import ra.btc.rpc.RPCRequest;
 import ra.btc.rpc.RPCResponse;
-import ra.common.Client;
-import ra.common.Envelope;
+import ra.common.*;
 import ra.common.file.Multipart;
 import ra.common.identity.DID;
 import ra.common.messaging.EventMessage;
@@ -42,12 +42,12 @@ import ra.common.service.ServiceReport;
 import ra.did.DIDService;
 import ra.maildrop.MailDropService;
 import ra.notification.NotificationService;
-import ra.common.JSONParser;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -75,25 +75,8 @@ public class DesktopClient implements Client {
     private ConnectionSpec httpSpec;
     private OkHttpClient httpClient;
     private final int apiPort;
-
-    // Personal
-    private DID activePersonalDID;
-    private BTCWallet activeWallet;
-    private final ObservableList<Transaction> transactions = FXCollections.observableArrayList();
-    private final Map<String,DID> localIdentities = new HashMap<>();
-
-    // Community
-    private DID activeCommunityDID;
-    private BTCWallet activeCommunityWallet;
-    private final ObservableList<String> communityTransactions = FXCollections.observableArrayList();
-    private final Map<String,DID> communityIdentities = new HashMap<>();
-    private DID activeCommunityIdentity;
-
-    // Public
-    private BTCWallet publicCharityWallet;
-    private final ObservableList<String> charitableTransactions = FXCollections.observableArrayList();
-    private final Map<String,DID> publicIdentities = new HashMap<>();
-    private DID activePublicIdentity;
+    private Cache cache;
+    private String cacheFile;
 
     private Properties properties;
 
@@ -103,36 +86,16 @@ public class DesktopClient implements Client {
         this.apiPort = apiPort;
     }
 
-    public static DesktopClient getInstance(Properties properties) {
-        if(instance == null) {
-            int apiPort = Integer.parseInt(properties.getProperty("1m5.desktop.api.port"));
-            instance = new DesktopClient(apiPort);
-            instance.properties = properties;
-        }
-        if(screenBounds.getWidth() >= 768 && screenBounds.getHeight() >= 720)
-            DesktopClient.clientType = ClientType.DESKTOP;
-        else if(screenBounds.getWidth()<=414 && screenBounds.getHeight() <= 896)
-            DesktopClient.clientType = ClientType.MOBILE;
-        else
-            DesktopClient.clientType = ClientType.TAB;
-        LOG.info(screenBounds.toString()+"; Screens: "+numberOfScreens+"; Type: "+clientType.name());
+    public static DesktopClient get() {
         return instance;
     }
 
-    public static DID getActivePersonalDID() {
-        return instance.activePersonalDID;
-    }
-
-    public static void setActivePersonalDID(DID did) {
-        instance.activePersonalDID = did;
-    }
-
-    public static DID getActiveCommunityIdentity() {
-        return instance.activeCommunityIdentity;
-    }
-
-    public static void setActiveCommunityIdentity(DID did) {
-        instance.activeCommunityDID = did;
+    static DesktopClient getInstance(Properties properties) {
+        int apiPort = Integer.parseInt(properties.getProperty("1m5.desktop.api.port"));
+        instance = new DesktopClient(apiPort);
+        instance.properties = properties;
+        instance.start();
+        return instance;
     }
 
     public static ClientType getClientType() {
@@ -206,12 +169,36 @@ public class DesktopClient implements Client {
         return instance.globals.get(name);
     }
 
+    public static Cache getCache() {
+        if(instance.cache==null) {
+            instance.loadCache();
+        }
+        return instance.cache;
+    }
+
+    public void loadCache() {
+        cache = new Cache();
+        try {
+            cache.fromJSON(new String(FileUtil.readFile(cacheFile)));
+        } catch (IOException e) {
+            LOG.severe(e.getLocalizedMessage());
+            // TODO: notify end user
+            System.exit(-1);
+        }
+    }
+
+    public void saveCache() {
+        if(cache!=null) {
+            FileUtil.writeFile(cache.toJSON().getBytes(StandardCharsets.UTF_8), cacheFile);
+        }
+    }
+
     public static void setActiveWallet(BTCWallet activeWallet) {
-        instance.activeWallet = activeWallet;
+        instance.getCache().setPersonalActiveWallet(activeWallet);
     }
 
     public static BTCWallet getActiveWallet() {
-        return instance.activeWallet;
+        return instance.getCache().getPersonalActiveWallet();
     }
 
     @Override
@@ -265,7 +252,22 @@ public class DesktopClient implements Client {
                 .readTimeout(5, TimeUnit.MINUTES)
                 .build();
 
-        loadPersonalActiveDID();
+        try {
+            cacheFile = SystemSettings.getUserAppCacheDir("1M5","Client", true).getAbsolutePath();
+        } catch (IOException e) {
+            LOG.severe(e.getLocalizedMessage());
+            // TODO: Notify User Exiting
+            System.exit(-1);
+        }
+        loadCache();
+
+        if(screenBounds.getWidth() >= 768 && screenBounds.getHeight() >= 720)
+            DesktopClient.clientType = ClientType.DESKTOP;
+        else if(screenBounds.getWidth()<=414 && screenBounds.getHeight() <= 896)
+            DesktopClient.clientType = ClientType.MOBILE;
+        else
+            DesktopClient.clientType = ClientType.TAB;
+        LOG.info(screenBounds.toString()+"; Screens: "+numberOfScreens+"; Type: "+clientType.name());
 
         // Setup Mailbox Checker Task for default system
 //        MVC.runPeriodically(new Runnable() {
