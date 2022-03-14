@@ -259,6 +259,8 @@ public class DesktopClient implements Client {
             cacheFile = cacheJsonFile.getAbsolutePath();
             if(!cacheJsonFile.exists()) {
                 cache = new Cache();
+                cache.setActivePersonalDID(new DID());
+                cache.setPersonalActiveWallet(new BTCWallet());
                 saveCache();
             }
         } catch (IOException e) {

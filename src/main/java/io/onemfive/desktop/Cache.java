@@ -52,12 +52,22 @@ public class Cache implements JSONSerializable {
 
     @Override
     public Map<String, Object> toMap() {
-        return null;
+        Map<String,Object> m = new HashMap<>();
+        if(activePersonalDID!=null) m.put("activePersonalDID", activePersonalDID.toMap());
+        if(activeWallet!=null) m.put("activeWallet", activeWallet.toMap());
+        return m;
     }
 
     @Override
-    public void fromMap(Map<String, Object> map) {
-
+    public void fromMap(Map<String, Object> m) {
+        if(m.get("activePersonalDID")!=null) {
+            activePersonalDID = new DID();
+            activePersonalDID.fromMap((Map<String,Object>)m.get("activePersonalDID"));
+        }
+        if(m.get("activeWallet")!=null) {
+            activeWallet = new BTCWallet();
+            activeWallet.fromMap((Map<String,Object>)m.get("activeWallet"));
+        }
     }
 
     public String toJSON() {
