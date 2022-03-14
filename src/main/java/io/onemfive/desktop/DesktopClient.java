@@ -43,6 +43,7 @@ import ra.did.DIDService;
 import ra.maildrop.MailDropService;
 import ra.notification.NotificationService;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -253,7 +254,13 @@ public class DesktopClient implements Client {
                 .build();
 
         try {
-            cacheFile = SystemSettings.getUserAppCacheDir("1M5","Client", true).getAbsolutePath();
+            File clientDir = SystemSettings.getUserAppCacheDir(".1m5","client", true);
+            File cacheJsonFile = new File(clientDir, "cache.json");
+            cacheFile = cacheJsonFile.getAbsolutePath();
+            if(!cacheJsonFile.exists()) {
+                cache = new Cache();
+                saveCache();
+            }
         } catch (IOException e) {
             LOG.severe(e.getLocalizedMessage());
             // TODO: Notify User Exiting
