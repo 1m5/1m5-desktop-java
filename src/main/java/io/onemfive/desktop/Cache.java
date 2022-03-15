@@ -18,20 +18,20 @@ public class Cache implements JSONSerializable {
     private DID activePersonalDID;
     private BTCWallet activeWallet;
     private final ObservableList<Transaction> transactions = FXCollections.observableArrayList();
-    private final Map<String,DID> localIdentities = new HashMap<>();
-    private final Map<String,DID> contacts = new HashMap<>();
+    private Map<String,DID> localIdentities = new HashMap<>();
+    private Map<String,DID> contacts = new HashMap<>();
 
     // Community
-    private DID activeCommunityDID;
+    private DID activeCommunity;
+    private DID activeCommunityDID; // User's DID within active Community
     private BTCWallet activeCommunityWallet;
-    private final ObservableList<String> communityTransactions = FXCollections.observableArrayList();
-    private final Map<String,DID> communityIdentities = new HashMap<>();
-    private DID activeCommunityIdentity;
+    private final ObservableList<String> activeCommunityTransactions = FXCollections.observableArrayList();
+    private Map<String,DID> communities = new HashMap<>();
 
     // Public
     private BTCWallet publicCharityWallet;
-    private final ObservableList<String> charitableTransactions = FXCollections.observableArrayList();
-    private final Map<String,DID> publicIdentities = new HashMap<>();
+    private final ObservableList<String> activeCharitableTransactions = FXCollections.observableArrayList();
+    private Map<String,DID> publicCharities = new HashMap<>();
     private DID activePublicDID;
 
     public void setPersonalActiveWallet(BTCWallet personalActiveWallet) {
@@ -55,6 +55,11 @@ public class Cache implements JSONSerializable {
         Map<String,Object> m = new HashMap<>();
         if(activePersonalDID!=null) m.put("activePersonalDID", activePersonalDID.toMap());
         if(activeWallet!=null) m.put("activeWallet", activeWallet.toMap());
+        if(activeCommunity!=null) m.put("activeCommunity", activeCommunity.toMap());
+        if(activeCommunityDID!=null) m.put("activeCommunityDID", activeCommunityDID.toMap());
+        if(activeCommunityWallet!=null) m.put("activeCommunityWallet", activeCommunityWallet.toMap());
+        if(publicCharityWallet!=null) m.put("publicCharityWallet", publicCharityWallet.toMap());
+        if(activePublicDID!=null) m.put("activePublicDID", activePublicDID.toMap());
         return m;
     }
 
@@ -67,6 +72,26 @@ public class Cache implements JSONSerializable {
         if(m.get("activeWallet")!=null) {
             activeWallet = new BTCWallet();
             activeWallet.fromMap((Map<String,Object>)m.get("activeWallet"));
+        }
+        if(m.get("activeCommunity")!=null) {
+            activeCommunity = new DID();
+            activeCommunity.fromMap((Map<String,Object>)m.get("activeCommunity"));
+        }
+        if(m.get("activeCommunityDID")!=null) {
+            activeCommunityDID = new DID();
+            activeCommunityDID.fromMap((Map<String,Object>)m.get("activeCommunityDID"));
+        }
+        if(m.get("activeCommunityWallet")!=null) {
+            activeCommunityWallet = new BTCWallet();
+            activeCommunityWallet.fromMap((Map<String,Object>)m.get("activeCommunityWallet"));
+        }
+        if(m.get("publicCharityWallet")!=null) {
+            publicCharityWallet = new BTCWallet();
+            publicCharityWallet.fromMap((Map<String,Object>)m.get("publicCharityWallet"));
+        }
+        if(m.get("activePublicDID")!=null) {
+            activePublicDID = new DID();
+            activePublicDID.fromMap((Map<String,Object>)m.get("activePublicDID"));
         }
     }
 
