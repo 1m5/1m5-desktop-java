@@ -34,6 +34,8 @@ public class Cache implements JSONSerializable {
     private Map<String,DID> publicCharities = new HashMap<>();
     private DID activePublicDID;
 
+    private final Map<String,Object> store = new HashMap<>();
+
     public void setPersonalActiveWallet(BTCWallet personalActiveWallet) {
         this.activeWallet = personalActiveWallet;
     }
@@ -140,6 +142,14 @@ public class Cache implements JSONSerializable {
 
     public void setActivePublicDID(DID activePublicDID) {
         this.activePublicDID = activePublicDID;
+    }
+
+    public void saveToStore(String name, Object value) {
+        store.put(name, value);
+    }
+
+    public Object getFromStore(String name) {
+        return store.get(name);
     }
 
     @Override
