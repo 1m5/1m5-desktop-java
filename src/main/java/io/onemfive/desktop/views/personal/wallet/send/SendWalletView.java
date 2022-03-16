@@ -50,7 +50,7 @@ public class SendWalletView extends BaseWalletView implements TopicListener {
         sendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                SendToAddress req = new SendToAddress(DesktopClient.getActiveWallet().getName(),
+                SendToAddress req = new SendToAddress(DesktopClient.getCache().getActiveWallet().getName(),
                         publicKeyTxt.getText(),
                         Double.parseDouble(receiverAmountTxt.getText()));
                 req.subtractFeeFromAmount = subtractFeeFromAmountCheck.isSelected();

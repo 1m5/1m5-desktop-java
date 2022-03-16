@@ -66,10 +66,10 @@ public class ReceiveWalletView extends BaseWalletView implements TopicListener {
         generateAddressButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sendBTCRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
+                sendBTCRequest(new GetNewAddress((DesktopClient.getCache().getActiveWallet()).getName(), "", AddressType.BECH32));
             }
         });
-        sendBTCRequest(new GetNewAddress((DesktopClient.getActiveWallet()).getName(), "", AddressType.BECH32));
+        sendBTCRequest(new GetNewAddress((DesktopClient.getCache().getActiveWallet()).getName(), "", AddressType.BECH32));
         LOG.info("Activated.");
     }
 

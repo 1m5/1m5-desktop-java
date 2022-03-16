@@ -62,10 +62,10 @@ public class TransactionWalletView extends BaseWalletView implements TopicListen
             @Override
             public void handle(ActionEvent actionEvent) {
                 txListObservable.clear();
-                sendBTCRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
+                sendBTCRequest(new ListTransactions(DesktopClient.getCache().getActiveWallet().getName()));
             }
         });
-        sendBTCRequest(new ListTransactions(DesktopClient.getActiveWallet().getName()));
+        sendBTCRequest(new ListTransactions(DesktopClient.getCache().getActiveWallet().getName()));
         LOG.info("Activated.");
     }
 

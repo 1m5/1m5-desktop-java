@@ -194,14 +194,6 @@ public class DesktopClient implements Client {
         }
     }
 
-    public static void setActiveWallet(BTCWallet activeWallet) {
-        instance.getCache().setPersonalActiveWallet(activeWallet);
-    }
-
-    public static BTCWallet getActiveWallet() {
-        return instance.getCache().getPersonalActiveWallet();
-    }
-
     @Override
     public void reply(Envelope e) {
         String viewName = (String)e.getValue(VIEW_NAME);

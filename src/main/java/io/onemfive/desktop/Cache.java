@@ -50,6 +50,98 @@ public class Cache implements JSONSerializable {
         return activePersonalDID;
     }
 
+    public BTCWallet getActiveWallet() {
+        return activeWallet;
+    }
+
+    public void setActiveWallet(BTCWallet activeWallet) {
+        this.activeWallet = activeWallet;
+    }
+
+    public ObservableList<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public Map<String, DID> getLocalIdentities() {
+        return localIdentities;
+    }
+
+    public void setLocalIdentities(Map<String, DID> localIdentities) {
+        this.localIdentities = localIdentities;
+    }
+
+    public Map<String, DID> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Map<String, DID> contacts) {
+        this.contacts = contacts;
+    }
+
+    public DID getActiveCommunity() {
+        return activeCommunity;
+    }
+
+    public void setActiveCommunity(DID activeCommunity) {
+        this.activeCommunity = activeCommunity;
+    }
+
+    public DID getActiveCommunityDID() {
+        return activeCommunityDID;
+    }
+
+    public void setActiveCommunityDID(DID activeCommunityDID) {
+        this.activeCommunityDID = activeCommunityDID;
+    }
+
+    public BTCWallet getActiveCommunityWallet() {
+        return activeCommunityWallet;
+    }
+
+    public void setActiveCommunityWallet(BTCWallet activeCommunityWallet) {
+        this.activeCommunityWallet = activeCommunityWallet;
+    }
+
+    public ObservableList<String> getActiveCommunityTransactions() {
+        return activeCommunityTransactions;
+    }
+
+    public Map<String, DID> getCommunities() {
+        return communities;
+    }
+
+    public void setCommunities(Map<String, DID> communities) {
+        this.communities = communities;
+    }
+
+    public BTCWallet getPublicCharityWallet() {
+        return publicCharityWallet;
+    }
+
+    public void setPublicCharityWallet(BTCWallet publicCharityWallet) {
+        this.publicCharityWallet = publicCharityWallet;
+    }
+
+    public ObservableList<String> getActiveCharitableTransactions() {
+        return activeCharitableTransactions;
+    }
+
+    public Map<String, DID> getPublicCharities() {
+        return publicCharities;
+    }
+
+    public void setPublicCharities(Map<String, DID> publicCharities) {
+        this.publicCharities = publicCharities;
+    }
+
+    public DID getActivePublicDID() {
+        return activePublicDID;
+    }
+
+    public void setActivePublicDID(DID activePublicDID) {
+        this.activePublicDID = activePublicDID;
+    }
+
     @Override
     public Map<String, Object> toMap() {
         Map<String,Object> m = new HashMap<>();
